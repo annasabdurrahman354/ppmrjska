@@ -91,7 +91,7 @@ class UserResource extends Resource
                             ->relationship(name: 'roles', titleAttribute: 'name', modifyQueryUsing: function (Builder $query) {
                                 return $query->whereNotIn('name', ['filament_user']);
                             })
-                            ->options(fn () => DB::table('roles')->pluck('name', 'id'))    
+                            ->options(fn () => DB::table('roles')->pluck('name', 'id'))
                             ->multiple()
                             ->native(false),
                         DateTimePicker::make('email_verified_at')
@@ -151,7 +151,6 @@ class UserResource extends Resource
                     })
                     ->schema([
                         Section::make('Data Pribadi')
-                        //->icon('heroicon-m-shopping-bag')
                         ->schema([
                             TextInput::make('nik')
                                 ->label('Nomor Induk Kewarganegaraan')
@@ -187,9 +186,8 @@ class UserResource extends Resource
                             'sm' => 1,
                             'md' => 2,
                         ]),
-                    
+
                     Section::make('Alamat Rumah')
-                        //->icon('heroicon-m-shopping-bag')
                         ->schema([
                             TextInput::make('alamat')
                                 ->label('Alamat Lengkap')
@@ -238,7 +236,6 @@ class UserResource extends Resource
                         ]),
 
                     Section::make('Informasi Sambung')
-                        //->icon('heroicon-m-shopping-bag')
                         ->schema([
                             TextInput::make('asal_kelompok')
                                 ->label('Asal Kelompok')
@@ -275,7 +272,7 @@ class UserResource extends Resource
                                 ->label('Pendidikan Terkahir')
                                 ->required()
                                 ->options(PendidikanTerakhir::class),
-                            
+
                             Cluster::make([
                                     Select::make('program_studi_jenjang')
                                         ->options([
@@ -324,7 +321,7 @@ class UserResource extends Resource
                             'sm' => 1,
                             'md' => 2,
                         ]),
-                
+
                     // Family Section
                     Section::make('Keluarga')
                         ->schema([
@@ -353,7 +350,7 @@ class UserResource extends Resource
                             'sm' => 1,
                             'md' => 2,
                         ]),
-                
+
                     // Parent Section
                     Section::make('Orang Tua')
                     ->schema([

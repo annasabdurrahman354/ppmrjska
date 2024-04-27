@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Filament\Santri\Resources;
+namespace App\Filament\Shared\Resources;
 
 use App\Enums\JenisKelamin;
 use App\Enums\Sesi;
 use App\Enums\StatusKehadiran;
 use App\Enums\StatusPondok;
-use App\Filament\Santri\Resources\JurnalKelasResource\Pages;
+use App\Filament\Shared\Resources\JurnalKelasResource\Pages;
 use App\Models\DewanGuru;
 use App\Models\JurnalKelas;
 use App\Models\MateriHimpunan;
@@ -16,9 +16,9 @@ use App\Models\User;
 use Awcodes\Shout\Components\Shout;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms;
-use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -29,6 +29,7 @@ use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Notifications\Notification;
 use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
@@ -41,7 +42,6 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
-use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -55,7 +55,7 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
     protected static ?string $pluralModelLabel = 'Jurnal Kelas';
     protected static ?string $navigationLabel = 'Jurnal Kelas';
     protected static ?string $recordTitleAttribute = 'recordTitle';
-    
+
     protected static ?string $navigationGroup = 'Manajemen Kelas';
     protected static ?string $navigationIcon = 'heroicon-o-pencil-square';
     protected static ?int $navigationSort = 51;
@@ -84,16 +84,16 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                                             ->label('Sesi KBM')
                                             ->required()
                                             ->options(Sesi::class),
-                                        
+
                                         Select::make('kelas')
                                             ->label('Kelas')
                                             ->multiple()
-                                            ->disabled(!auth()->user()->can('rekap_kelas_lain_jurnal::kelas'))
-                                            ->dehydrated(!auth()->user()->can('rekap_kelas_lain_jurnal::kelas'))
-                                            ->maxItems(fn () => !auth()->user()->can('rekap_kelas_lain_jurnal::kelas') ? 1 : 6)
+                                            ->disabledOn('edit')
+                                            ->disabled(cant('rekap_kelas_lain_jurnal::kelas'))
+                                            ->dehydrated(cant('rekap_kelas_lain_jurnal::kelas'))
+                                            ->maxItems(fn () => cant('rekap_kelas_lain_jurnal::kelas') ? 1 : 6)
                                             ->options(
-                                                User::where('kelas', '!=', 'admin')
-                                                ->where('status_pondok', StatusPondok::AKTIF->value)
+                                                User::where('status_pondok', StatusPondok::AKTIF->value)
                                                 ->where('tanggal_lulus_pondok', null)
                                                 ->select('kelas')
                                                 ->orderBy('kelas')
@@ -102,7 +102,7 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                                                 ->pluck('kelas', 'kelas')
                                             )
                                             ->default(match (auth()->user()->kelas) {
-                                                'admin' => ['Takmili'],
+                                                config('filament-shield.super_admin.name') => ['Takmili'],
                                                 default => [auth()->user()->kelas]
                                             })
                                             ->live()
@@ -113,7 +113,7 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                                                     ->where('tanggal_lulus_pondok', null)
                                                     ->orderBy('nama')
                                                     ->get();
-                                                
+
                                                 $result = [];
                                                 foreach ($users as $user) {
                                                     $result[(string) Str::uuid()] = [
@@ -129,8 +129,9 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                                             ->inline()
                                             ->grouped()
                                             ->required()
-                                            ->disabled(auth()->user()->isNotSuperAdmin())
-                                            ->dehydrated(auth()->user()->isNotSuperAdmin())
+                                            ->disabledOn('edit')
+                                            ->disabled(isNotSuperAdmin())
+                                            ->dehydrated(isNotSuperAdmin())
                                             ->options(JenisKelamin::class)
                                             ->default(auth()->user()->jenis_kelamin)
                                             ->live()
@@ -141,7 +142,7 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                                                     ->where('tanggal_lulus_pondok', null)
                                                     ->orderBy('nama')
                                                     ->get();
-                                                
+
                                                 $result = [];
                                                 foreach ($users as $user) {
                                                     $result[(string) Str::uuid()] = [
@@ -155,8 +156,9 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                                         Select::make('perekap_id')
                                             ->label('Perekap')
                                             ->required()
-                                            ->disabled(auth()->user()->isNotSuperAdmin())
-                                            ->dehydrated(auth()->user()->isNotSuperAdmin())
+                                            ->disabledOn('edit')
+                                            ->disabled(isNotSuperAdmin())
+                                            ->dehydrated(isNotSuperAdmin())
                                             ->options(
                                                 User::select('nama', 'id')
                                                     ->distinct()
@@ -166,7 +168,7 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                                             ->default(auth()->user()->id)
                                             ->preload()
                                             ->searchable(['nama'])
-                                            ->columnSpanFull(),                
+                                            ->columnSpanFull(),
 
                                         Fieldset::make()
                                             ->label('Dewan Guru')
@@ -193,28 +195,28 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                                                     ->placeholder('Pilih dewan guru/santri takmili...')
                                                     ->hidden(fn (Get $get) => $get('dewan_guru_type') == null)
                                                     ->searchable()
-                                                    ->getSearchResultsUsing(fn (Get $get, string $search): array => 
+                                                    ->getSearchResultsUsing(fn (Get $get, string $search): array =>
                                                         match ($get('dewan_guru_type')) {
                                                             DewanGuru::class =>
                                                                 DewanGuru::where('nama', 'like', "%{$search}%")
                                                                     ->limit(20)->pluck('nama', 'id')
                                                                     ->toArray(),
-                                                            User::class =>  
+                                                            User::class =>
                                                                 User::where('nama', 'like', "%{$search}%")
                                                                     ->where('kelas', 'takmili')
                                                                     ->limit(20)->pluck('nama', 'id')
                                                                     ->toArray()
                                                         }
-                                                        
+
                                                     )
-                                                    ->getOptionLabelUsing(fn (Get $get, $value): ?string => 
+                                                    ->getOptionLabelUsing(fn (Get $get, $value): ?string =>
                                                         match ($get('dewan_guru_type')) {
                                                             DewanGuru::class =>
                                                                 DewanGuru::find($value)?->nama,
-                                                            User::class =>  
+                                                            User::class =>
                                                                 User::find($value)?->nama
                                                         }
-                                                        
+
                                                     )
                                                     ->live(),
                                             ])
@@ -231,8 +233,8 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                                             ->content('Belum ada presensi santri!')
                                             ->type('info')
                                             ->color(Color::Yellow)
-                                            ->visible(fn (Get $get) => count($get('presensiKelas')) == 0 || $get('presensiKelas') == null),
-                                        
+                                            ->visible(fn(Get $get) => !filled($get('presensiKelas'))),
+
                                         Repeater::make('presensiKelas')
                                             ->hiddenLabel()
                                             ->relationship('presensiKelas')
@@ -246,7 +248,7 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                                                     ->where('tanggal_lulus_pondok', null)
                                                     ->orderBy('nama')
                                                     ->get();
-                                                
+
                                                 $result = [];
                                                 foreach ($users as $user) {
                                                     $result[(string) Str::uuid()] = [
@@ -262,11 +264,12 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                                                     ->placeholder('Pilih santri sesuai kelas...')
                                                     ->required()
                                                     ->distinct()
-                                                    ->disabled(auth()->user()->isNotSuperAdmin())
-                                                    ->dehydrated(auth()->user()->isNotSuperAdmin())
+                                                    ->disabledOn('edit')
+                                                    ->disabled(isNotSuperAdmin())
+                                                    ->dehydrated(isNotSuperAdmin())
                                                     ->searchable()
                                                     ->preload()
-                                                    ->getSearchResultsUsing(fn (string $search, Get $get): array => 
+                                                    ->getSearchResultsUsing(fn (string $search, Get $get): array =>
                                                         User::where('nama', 'like', "%{$search}%")
                                                             ->where('jenis_kelamin', $get('../../jenis_kelamin'))
                                                             ->whereIn('kelas', $get('../../kelas'))
@@ -278,7 +281,7 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                                                     )
                                                     ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->nama)
                                                     ->columnSpan(4),
-                            
+
                                                 ToggleButtons::make('status_kehadiran')
                                                     ->hiddenLabel()
                                                     ->inline()
@@ -329,18 +332,18 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                                             ->afterStateUpdated(function(Set $set) {
                                                 $set('materi_awal_id', null);
                                             }),
-        
+
                                         Select::make('materi_awal_id')
                                             ->hiddenLabel()
                                             ->placeholder('Pilih surat Al-Quran/himpunan/materi kelas/hafalan...')
                                             ->hidden(fn (Get $get) => $get('materi_awal_type') == null)
                                             ->searchable()
-                                            ->getSearchResultsUsing(fn (Get $get, string $search): array => 
+                                            ->getSearchResultsUsing(fn (Get $get, string $search): array =>
                                                 $get('materi_awal_type')::where('nama', 'like', "%{$search}%")
                                                     ->limit(20)->pluck('nama', 'id')
                                                     ->toArray(),
                                             )
-                                            ->getOptionLabelUsing(fn (Get $get, $value): ?string =>     
+                                            ->getOptionLabelUsing(fn (Get $get, $value): ?string =>
                                                     $get('materi_awal_type')::find($value)?->nama,
                                             )
                                             ->live()
@@ -348,7 +351,7 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                                                 $set('halaman_awal', null);
                                                 $set('ayat_awal', null);
                                             }),
-        
+
                                         TextInput::make('halaman_awal')
                                             ->numeric()
                                             ->minValue(fn (Get $get) => $get('materi_awal_type')::where('id',  $get('materi_awal_id'))->first()->halaman_awal ?? 1)
@@ -356,7 +359,7 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                                             ->hidden(fn (Get $get) => $get('materi_awal_type') == null || $get('materi_awal_id') == null)
                                             ->default(null)
                                             ->columnSpan(fn (Get $get) => ($get('materi_awal_type') != MateriSurat::class) ? 2 : 1),
-        
+
                                         TextInput::make('ayat_awal')
                                             ->numeric()
                                             ->minValue(1)
@@ -369,7 +372,7 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                                         'lg' => 2
                                     ])
                                     ->columnSpanFull(),
-        
+
                                 Fieldset::make()
                                     ->label('Materi Akhir')
                                     ->schema([
@@ -386,18 +389,18 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                                             ->afterStateUpdated(function(Set $set) {
                                                 $set('materi_akhir_id', null);
                                             }),
-        
+
                                         Select::make('materi_akhir_id')
                                             ->hiddenLabel()
                                             ->placeholder('Pilih surat Al-Quran/himpunan/materi kelas/hafalan...')
                                             ->hidden(fn (Get $get) => $get('materi_akhir_type') == null)
                                             ->searchable()
-                                            ->getSearchResultsUsing(fn (Get $get, string $search): array => 
+                                            ->getSearchResultsUsing(fn (Get $get, string $search): array =>
                                                 $get('materi_akhir_type')::where('nama', 'like', "%{$search}%")
                                                     ->limit(20)->pluck('nama', 'id')
                                                     ->toArray(),
                                             )
-                                            ->getOptionLabelUsing(fn (Get $get, $value): ?string =>     
+                                            ->getOptionLabelUsing(fn (Get $get, $value): ?string =>
                                                     $get('materi_akhir_type')::find($value)?->nama,
                                             )
                                             ->live()
@@ -405,7 +408,7 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                                                 $set('halaman_akhir', null);
                                                 $set('ayat_akhir', null);
                                             }),
-                                        
+
                                         TextInput::make('halaman_akhir')
                                             ->numeric()
                                             ->minValue(fn (Get $get) => $get('materi_akhir_type')::where('id',  $get('materi_akhir_id'))->first()->halaman_awal ?? 1)
@@ -413,7 +416,7 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                                             ->hidden(fn (Get $get) => $get('materi_akhir_type') == null || $get('materi_akhir_id') == null)
                                             ->default(null)
                                             ->columnSpan(fn (Get $get) => ($get('materi_akhir_type') != MateriSurat::class) ? 2 : 1),
-                                        
+
                                         TextInput::make('ayat_akhir')
                                             ->numeric()
                                             ->minValue(1)
@@ -426,18 +429,17 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                                         'lg' => 2
                                     ])
                                     ->columnSpanFull(),
-            
+
                                 TextInput::make('keterangan')
                                     ->label('Detail Materi')
                                     ->maxLength(255),
-                                    
+
                                 TextInput::make('link_rekaman')
-                                    ->hidden(!auth()->user()->can('ubah_materi_rekaman_jurnal::kelas'))
+                                    ->hidden(cant('ubah_materi_rekaman_jurnal::kelas'))
                                     ->label('Link Rekaman')
                                     ->default(null),
-                       
-                            ]),    
-                        ]), 
+                            ]),
+                        ]),
             ]);
     }
 
@@ -447,9 +449,7 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
             ->columns([
                 TextColumn::make('id')
                     ->label('ID')
-                    ->searchable(),
-                TextColumn::make('kelas')
-                    ->label('Kelas')
+                    ->hidden(isNotSuperAdmin())
                     ->searchable(),
                 TextColumn::make('tanggal')
                     ->label('Tanggal KBM')
@@ -459,11 +459,25 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                     ->label('Sesi KBM')
                     ->badge()
                     ->searchable(),
+                TextColumn::make('kelas')
+                    ->label('Kelas')
+                    ->searchable(),
                 TextColumn::make('jenis_kelamin')
                     ->label('Jenis Kelamin')
                     ->badge()
                     ->searchable()
                     ->sortable(),
+                TextColumn::make('statusKehadiranSaya')
+                    ->label('Kehadiran')
+                    ->color(fn (string $state): string => match ($state) {
+                        'hadir' => 'success',
+                        'telat' => 'primary',
+                        'izin' => 'warning',
+                        'sakit' => 'secondary',
+                        'alpa' => 'danger',
+                        'Bukan Kelas' => 'gray',
+                    })
+                    ->badge(),
                 TextColumn::make('dewanGuru.nama')
                     ->label('Dewan Guru')
                     ->searchable(),
@@ -483,12 +497,10 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                     ->sortable(),
                 TextColumn::make('ayat_awal')
                     ->label('Ayat Awal')
-                    //->hidden(fn (array $data) => $data['jenis_materi'] != MateriSurat::class)
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('ayat_akhir')
                     ->label('Ayat Akhir')
-                    //->hidden(fn (array $data) => $data['jenis_materi'] != MateriSurat::class)
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('keterangan')
@@ -552,14 +564,14 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                         if (! $data['jenis_materi']) {
                             return null;
                         }
-                 
+
                         return 'Materi: ' . match($data['jenis_materi']){
                             MateriSurat::class => 'Al Quran',
                             MateriHimpunan::class => 'Himpunan',
                             MateriTambahan::class => 'Lainnya',
                         };
                     }),
-                
+
                 Filter::make('halaman_awal')
                     ->form([
                         TextInput::make('halaman_mulai')
@@ -577,7 +589,7 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                         if (! $data['halaman_mulai']) {
                             return null;
                         }
-                 
+
                         return 'Mulai halaman: ' . $data['halaman_mulai'];
                     }),
             ])
@@ -588,15 +600,15 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
             ->actions([
                 Tables\Actions\ViewAction::make()
                     ->hidden(function (JurnalKelas $record){
-                        return !in_array(auth()->user()->kelas, $record->kelas);
+                        return !auth()->user()->cekPerekap($record) || !isKedisipilinan() || !isKeilmuan() || isNotSuperAdmin();
                     }),
                 Tables\Actions\EditAction::make()
                     ->hidden(function (JurnalKelas $record){
-                        return !in_array(auth()->user()->kelas, $record->kelas);
+                        return !auth()->user()->cekPerekap($record) || !isKedisipilinan() || !isKeilmuan() || isNotSuperAdmin();
                     }),
                 Action::make('updateMateriRekaman')
                     ->label('Ubah Materi & Rekaman')
-                    ->hidden(!auth()->user()->can('ubah_materi_rekaman_jurnal::kelas'))
+                    ->hidden(cant('ubah_materi_rekaman_jurnal::kelas'))
                     ->color('secondary')
                     ->fillForm(function (JurnalKelas $record): array {
                        return [
@@ -635,12 +647,12 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                                     ->placeholder('Pilih surat Al-Quran/himpunan/materi kelas/hafalan...')
                                     ->hidden(fn (Get $get) => $get('materi_awal_type') == null)
                                     ->searchable()
-                                    ->getSearchResultsUsing(fn (Get $get, string $search): array => 
+                                    ->getSearchResultsUsing(fn (Get $get, string $search): array =>
                                         $get('materi_awal_type')::where('nama', 'like', "%{$search}%")
                                             ->limit(20)->pluck('nama', 'id')
                                             ->toArray(),
                                     )
-                                    ->getOptionLabelUsing(fn (Get $get, $value): ?string =>     
+                                    ->getOptionLabelUsing(fn (Get $get, $value): ?string =>
                                             $get('materi_awal_type')::find($value)?->nama,
                                     )
                                     ->live()
@@ -692,12 +704,12 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                                     ->placeholder('Pilih surat Al-Quran/himpunan/materi kelas/hafalan...')
                                     ->hidden(fn (Get $get) => $get('materi_akhir_type') == null)
                                     ->searchable()
-                                    ->getSearchResultsUsing(fn (Get $get, string $search): array => 
+                                    ->getSearchResultsUsing(fn (Get $get, string $search): array =>
                                         $get('materi_akhir_type')::where('nama', 'like', "%{$search}%")
                                             ->limit(20)->pluck('nama', 'id')
                                             ->toArray(),
                                     )
-                                    ->getOptionLabelUsing(fn (Get $get, $value): ?string =>     
+                                    ->getOptionLabelUsing(fn (Get $get, $value): ?string =>
                                             $get('materi_akhir_type')::find($value)?->nama,
                                     )
                                     ->live()
@@ -705,7 +717,7 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                                         $set('halaman_akhir', null);
                                         $set('ayat_akhir', null);
                                     }),
-                                
+
                                 TextInput::make('halaman_akhir')
                                     ->numeric()
                                     ->minValue(fn (Get $get) => $get('materi_akhir_type')::where('id',  $get('materi_akhir_id'))->first()->halaman_awal ?? 1)
@@ -713,7 +725,7 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                                     ->hidden(fn (Get $get) => $get('materi_akhir_type') == null || $get('materi_akhir_id') == null)
                                     ->default(null)
                                     ->columnSpan(fn (Get $get) => ($get('materi_akhir_type') != MateriSurat::class) ? 2 : 1),
-                                
+
                                 TextInput::make('ayat_akhir')
                                     ->numeric()
                                     ->minValue(1)
@@ -731,12 +743,12 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                             ->label('Detail Materi')
                             ->maxLength(255)
                             ->default(null),
-                        
+
                         Forms\Components\Actions::make([
                             Forms\Components\Actions\Action::make('generate_nama_rekaman')
                                 ->label('Generate Nama Rekaman')
                                 ->action(function (Forms\Get $get, Forms\Set $set, JurnalKelas $record){
-                                    if (!filled($get('materi_awal_type')) || !filled($get('materi_akhir_type')) || !filled($get('materi_awal_id')) || !filled($get('materi_akhir_id')) 
+                                    if (!filled($get('materi_awal_type')) || !filled($get('materi_akhir_type')) || !filled($get('materi_awal_id')) || !filled($get('materi_akhir_id'))
                                         || !filled($get('halaman_awal')) || !filled($get('halaman_akhir')) || ($get('materi_awal_type') == MateriSurat::class && (!filled($get('ayat_awal')) || !filled($get('ayat_akhir'))))){
                                         Notification::make()
                                             ->title('Isi semua data terlebih dahulu!')
@@ -762,7 +774,7 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                                     }
                                 })
                         ]),
-                            
+
                         TextInput::make('nama_berkas_rekaman')
                             ->disabled()
                             ->label('Nama Berkas Rekaman'),
@@ -782,12 +794,12 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                         'link_rekaman' => $data['link_rekaman'],
                         'keterangan' => $data['keterangan'],
                     ])),
-                
+
                 Action::make('viewRekaman')
                     ->label('Lihat Rekaman')
                     ->modalSubmitAction(false)
                     ->hidden(function (JurnalKelas $record){
-                        return !$record->presensikelas()->where('user_id', auth()->user()->id)->exists();
+                        return !auth()->user()->cekKehadiran($record) || isNotSuperAdmin();
                     })
                     ->color('info')
                     ->fillForm(function (JurnalKelas $record): array {
@@ -822,12 +834,12 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                                 Select::make('materi_awal_id')
                                     ->hiddenLabel()
                                     ->searchable()
-                                    ->getSearchResultsUsing(fn (Get $get, string $search): array => 
+                                    ->getSearchResultsUsing(fn (Get $get, string $search): array =>
                                         $get('materi_awal_type')::where('nama', 'like', "%{$search}%")
                                             ->limit(20)->pluck('nama', 'id')
                                             ->toArray(),
                                     )
-                                    ->getOptionLabelUsing(fn (Get $get, $value): ?string =>     
+                                    ->getOptionLabelUsing(fn (Get $get, $value): ?string =>
                                             $get('materi_awal_type')::find($value)?->nama,
                                     )
                                     ->disabled()
@@ -867,23 +879,23 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                                 Select::make('materi_akhir_id')
                                     ->hiddenLabel()
                                     ->searchable()
-                                    ->getSearchResultsUsing(fn (Get $get, string $search): array => 
+                                    ->getSearchResultsUsing(fn (Get $get, string $search): array =>
                                         $get('materi_akhir_type')::where('nama', 'like', "%{$search}%")
                                             ->limit(20)->pluck('nama', 'id')
                                             ->toArray(),
                                     )
-                                    ->getOptionLabelUsing(fn (Get $get, $value): ?string =>     
+                                    ->getOptionLabelUsing(fn (Get $get, $value): ?string =>
                                             $get('materi_akhir_type')::find($value)?->nama,
                                     )
                                     ->disabled()
                                     ->dehydrated(),
-                                
+
                                 TextInput::make('halaman_akhir')
                                     ->numeric()
                                     ->disabled()
                                     ->dehydrated()
                                     ->columnSpan(fn (Get $get) => ($get('materi_akhir_type') != MateriSurat::class) ? 2 : 1),
-                                
+
                                 TextInput::make('ayat_akhir')
                                     ->numeric()
                                     ->disabled()
@@ -907,7 +919,7 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
             ])
             ->bulkActions([
                 BulkAction::make('updateMateriRekaman')
-                    ->hidden(!auth()->user()->can('ubah_materi_rekaman_jurnal::kelas'))
+                    ->hidden(cant('ubah_materi_rekaman_jurnal::kelas') || isNotSuperAdmin())
                     ->label('Perbarui Materi & Rekaman')
                     ->color('secondary')
                     ->fillForm(function (Collection $records): array {
@@ -949,12 +961,12 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                                     ->placeholder('Pilih surat Al-Quran/himpunan/materi kelas/hafalan...')
                                     ->hidden(fn (Get $get) => $get('materi_awal_type') == null)
                                     ->searchable()
-                                    ->getSearchResultsUsing(fn (Get $get, string $search): array => 
+                                    ->getSearchResultsUsing(fn (Get $get, string $search): array =>
                                         $get('materi_awal_type')::where('nama', 'like', "%{$search}%")
                                             ->limit(20)->pluck('nama', 'id')
                                             ->toArray(),
                                     )
-                                    ->getOptionLabelUsing(fn (Get $get, $value): ?string =>     
+                                    ->getOptionLabelUsing(fn (Get $get, $value): ?string =>
                                             $get('materi_awal_type')::find($value)?->nama,
                                     )
                                     ->live()
@@ -1006,12 +1018,12 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                                     ->placeholder('Pilih surat Al-Quran/himpunan/materi kelas/hafalan...')
                                     ->hidden(fn (Get $get) => $get('materi_akhir_type') == null)
                                     ->searchable()
-                                    ->getSearchResultsUsing(fn (Get $get, string $search): array => 
+                                    ->getSearchResultsUsing(fn (Get $get, string $search): array =>
                                         $get('materi_akhir_type')::where('nama', 'like', "%{$search}%")
                                             ->limit(20)->pluck('nama', 'id')
                                             ->toArray(),
                                     )
-                                    ->getOptionLabelUsing(fn (Get $get, $value): ?string =>     
+                                    ->getOptionLabelUsing(fn (Get $get, $value): ?string =>
                                             $get('materi_akhir_type')::find($value)?->nama,
                                     )
                                     ->live()
@@ -1019,7 +1031,7 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                                         $set('halaman_akhir', null);
                                         $set('ayat_akhir', null);
                                     }),
-                                
+
                                 TextInput::make('halaman_akhir')
                                     ->numeric()
                                     ->minValue(fn (Get $get) => $get('materi_akhir_type')::where('id',  $get('materi_akhir_id'))->first()->halaman_awal ?? 1)
@@ -1027,7 +1039,7 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                                     ->hidden(fn (Get $get) => $get('materi_akhir_type') == null || $get('materi_akhir_id') == null)
                                     ->default(null)
                                     ->columnSpan(fn (Get $get) => ($get('materi_akhir_type') != MateriSurat::class) ? 2 : 1),
-                                
+
                                 TextInput::make('ayat_akhir')
                                     ->numeric()
                                     ->minValue(1)
@@ -1050,7 +1062,7 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                             Forms\Components\Actions\Action::make('generate_nama_rekaman')
                                 ->label('Generate Nama Rekaman')
                                 ->action(function (Forms\Get $get, Forms\Set $set){
-                                    if (!filled($get('materi_awal_type')) || !filled($get('materi_akhir_type')) || !filled($get('materi_awal_id')) || !filled($get('materi_akhir_id')) 
+                                    if (!filled($get('materi_awal_type')) || !filled($get('materi_akhir_type')) || !filled($get('materi_awal_id')) || !filled($get('materi_akhir_id'))
                                         || !filled($get('halaman_awal')) || !filled($get('halaman_akhir')) || ($get('materi_awal_type') == MateriSurat::class && (!filled($get('ayat_awal')) || !filled($get('ayat_akhir'))))){
                                         Notification::make()
                                             ->title('Isi semua data terlebih dahulu!')
@@ -1076,7 +1088,7 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                                     }
                                 })
                         ]),
-                            
+
                         TextInput::make('nama_berkas_rekaman')
                                 ->disabled()
                                 ->label('Nama Berkas Rekaman'),
@@ -1101,11 +1113,14 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                         );
                     })
                     ->deselectRecordsAfterCompletion(),
-                    
+
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->hidden(isNotSuperAdmin()),
+                    Tables\Actions\ForceDeleteBulkAction::make()
+                        ->hidden(isNotSuperAdmin()),
+                    Tables\Actions\RestoreBulkAction::make()
+                        ->hidden(isNotSuperAdmin()),
                 ]),
             ])
             ->selectCurrentPageOnly();
@@ -1122,7 +1137,7 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
     public static function getRelations(): array
     {
         return [
-            
+
         ];
     }
 
@@ -1135,7 +1150,7 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
             'view' => Pages\ViewJurnalKelas::route('/{record}'),
             'edit' => Pages\EditJurnalKelas::route('/{record}/edit'),
             'presensi' => Pages\ManageJurnalKelasPresensiKelas::route('/{record}/presensi'),
-            
+
         ];
     }
 

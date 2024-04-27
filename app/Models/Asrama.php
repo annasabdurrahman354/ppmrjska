@@ -23,7 +23,7 @@ class Asrama extends Model
     protected $fillable = [
         'nama',
         'jenis_kelamin',
-        'kapasitas_kamar',
+        'kapasitas_per_kamar',
         'biaya_kamar',
         'pemilik',
         'kontak_pemilik',
@@ -39,8 +39,8 @@ class Asrama extends Model
 
     protected $casts = [
         'jenis_kelamin' => JenisKelamin::class,
-        'kapasitas_kamar' => 'integer',
-        'biaya_kamar' => 'integer',
+        'kapasitas_per_kamar' => 'integer',
+        'biaya_kamar' => 'array',
         'status_kepemilikan' => StatusKepemilikan::class,
     ];
    

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources;
 
+use App\Enums\StatusPondok;
 use App\Filament\Admin\Resources\JadwalMunaqosahResource\Pages;
 use App\Filament\Admin\Resources\JadwalMunaqosahResource\Widgets\CalendarWidget;
 use App\Models\JadwalMunaqosah;
@@ -16,6 +17,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Support\Colors\Color;
 use Filament\Tables;
@@ -48,7 +50,11 @@ class JadwalMunaqosahResource extends Resource
                             ->options(MateriMunaqosah::all()->pluck('recordTitle', 'id'))
                             ->searchable()
                             ->columnSpanFull()
-                            ->required(),
+                            ->required()
+                            ->live()
+                            ->afterStateUpdated(function(Set $set) {
+                                $set('plotJadwalMunaqosah', []);
+                            }),
                         DateTimePicker::make('waktu')
                             ->label('Waktu Munaqosah')
                             ->required(),
@@ -65,17 +71,18 @@ class JadwalMunaqosahResource extends Resource
                             ->label('Batas Akhir Pendaftaran')
                             ->required(),
                     ]),
-                
+
                 Section::make('Plot Jadwal Munaqosah')
                     ->schema([
                         Shout::make('st-empty')
                             ->content('Belum ada pendaftar!')
                             ->type('info')
                             ->color(Color::Yellow)
-                            ->visible(fn (Get $get) => count($get('plotJadwalMunaqosah')) == 0 || $get('plotJadwalMunaqosah') == null),
+                            ->visible(fn(Get $get) => !filled($get('plotJadwalMunaqosah'))),
                         Repeater::make('plotJadwalMunaqosah')
                             ->hiddenLabel()
                             ->relationship('plotJadwalMunaqosah')
+                            ->default([])
                             ->schema([
                                 Select::make('user_id')
                                     ->hiddenLabel()
@@ -88,7 +95,7 @@ class JadwalMunaqosahResource extends Resource
                                         $kelas = $materiMunaqosah->kelas;
                                         return User::where('kelas', $kelas)
                                             ->where('nama', 'like', "%{$search}%")
-                                            ->where('status_pondok', 'aktif')
+                                            ->where('status_pondok', StatusPondok::AKTIF->value)
                                             ->where('tanggal_lulus_pondok', null)
                                             ->limit(20)
                                             ->pluck('nama', 'id')
@@ -97,7 +104,7 @@ class JadwalMunaqosahResource extends Resource
                                     ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->nama)
                                     ->columnSpan(4),
                                 Toggle::make('status_terlaksana')
-                                    ->label('Sudah Terlaksana?')
+                                    ->label('Terlaksana?')
                                     ->default(false)
                                     ->required()
                                     ->columnSpan(1),

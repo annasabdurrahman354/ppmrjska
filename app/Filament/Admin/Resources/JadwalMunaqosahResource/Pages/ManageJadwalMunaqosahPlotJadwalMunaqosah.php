@@ -1,26 +1,31 @@
 <?php
 
-namespace App\Filament\Santri\Resources\JurnalKelasResource\Pages;
+namespace App\Filament\Admin\Resources\JadwalMunaqosahResource\Pages;
 
 use App\Enums\StatusKehadiran;
 use App\Enums\StatusPondok;
-use App\Filament\Santri\Resources\JurnalKelasResource;
+use App\Filament\Admin\Resources\JadwalMunaqosahResource;
+use App\Filament\Admin\Resources\JurnalKelasResource;
+use App\Models\JadwalMunaqosah;
 use App\Models\User;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 
-class ManageJurnalKelasPresensiKelas extends ManageRelatedRecords
+class ManageJadwalMunaqosahPlotJadwalMunaqosah extends ManageRelatedRecords
 {
-    protected static string $resource = JurnalKelasResource::class;
+    protected static string $resource = JadwalMunaqosahResource::class;
 
-    protected static string $relationship = 'presensiKelas';
+    protected static string $relationship = 'plotJadwalMunaqosah';
 
     protected static ?string $navigationIcon = 'fluentui-people-list-24';
 
@@ -30,17 +35,17 @@ class ManageJurnalKelasPresensiKelas extends ManageRelatedRecords
 
         $recordTitle = $recordTitle instanceof Htmlable ? $recordTitle->toHtml() : $recordTitle;
 
-        return "Kelola Presensi {$recordTitle}";
+        return "Kelola Plot Jadwal Munaqosah {$recordTitle}";
     }
 
     public function getBreadcrumb(): string
     {
-        return 'Kelola Presensi';
+        return 'Kelola Plot Jadwal Munaqosah';
     }
 
     public static function getNavigationLabel(): string
     {
-        return 'Kelola Presensi';
+        return 'Kelola Plot Jadwal Munaqosah';
     }
 
     public function form(Form $form): Form
@@ -49,46 +54,29 @@ class ManageJurnalKelasPresensiKelas extends ManageRelatedRecords
             ->schema([
                 Select::make('user_id')
                     ->hiddenLabel()
-                    ->placeholder('Pilih santri sesuai kelas...')
                     ->required()
                     ->searchable()
                     ->preload()
-                    ->getSearchResultsUsing(fn (string $search, $livewire): array => 
-                        User::where('nama', 'like', "%{$search}%")
-                            //->whereIn('kelas', $livewire->getOwnerRecord()->kelas)
-                            ->where('jenis_kelamin', $livewire->getOwnerRecord()->jenis_kelamin)
+                    ->placeholder('Pilih santri sesuai kelas munaqosah...')
+                    ->getSearchResultsUsing(function (string $search, JadwalMunaqosah $record): array{
+                        $materiMunaqosah = $record;
+                        $kelas = $materiMunaqosah->kelas;
+                        return User::where('kelas', $kelas)
+                            ->where('nama', 'like', "%{$search}%")
                             ->where('status_pondok', StatusPondok::AKTIF->value)
                             ->where('tanggal_lulus_pondok', null)
                             ->limit(20)
                             ->pluck('nama', 'id')
-                            ->toArray()
-                    )
+                            ->toArray();
+                    })
                     ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->nama)
                     ->columnSpan(4),
-
-                ToggleButtons::make('status_kehadiran')
-                    ->hiddenLabel()
-                    ->inline()
-                    ->grouped()
+                Toggle::make('status_terlaksana')
+                    ->label('Terlaksana?')
+                    ->default(false)
                     ->required()
-                    ->options([
-                        'hadir' => 'H',
-                        'telat' => 'T',
-                        'izin' => 'I',
-                        'sakit' => 'S',
-                        'alpa' => 'A',
-                    ])
-                    ->colors([
-                        'hadir' => 'success',
-                        'telat' => 'warning',
-                        'izin' => 'primary',
-                        'sakit' => 'secondary',
-                        'alpa' => 'danger',
-                    ])
-                    ->default(StatusKehadiran::ALPA->value)
                     ->columnSpan(1),
-            ])
-            ->columns(5);
+            ]);
     }
 
     public function infolist(Infolist $infolist): Infolist
@@ -97,7 +85,7 @@ class ManageJurnalKelasPresensiKelas extends ManageRelatedRecords
             ->columns(1)
             ->schema([
                 TextEntry::make('user.nama'),
-                TextEntry::make('status_kehadiran')
+                TextEntry::make('status_terlaksana')
                     ->badge(),
             ]);
     }
@@ -112,16 +100,20 @@ class ManageJurnalKelasPresensiKelas extends ManageRelatedRecords
                     ->searchable()
                     ->sortable(),
 
-               TextColumn::make('status_kehadiran')
-                    ->label('Kehadiran')
+               TextColumn::make('status_terlaksana')
+                    ->label('Terlaksana')
                     ->badge()
                     ->sortable(),
             ])
             ->filters([
             ])
             ->headerActions([
+                Tables\Actions\CreateAction::make(),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ]);
     }
 }

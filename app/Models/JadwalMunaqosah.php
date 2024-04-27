@@ -61,7 +61,7 @@ class JadwalMunaqosah extends Model
     protected function recordTitleCalendar(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->materiMunaqosah->kelas. ': '.$this->materiMunaqosah->jenis_materi->getLabel().' ('.(string) $this->waktu.')',
+            get: fn () => 'Kelas ' . $this->materiMunaqosah->kelas. ' (Semsester '.$this->materiMunaqosah->semester.'): '.$this->materiMunaqosah->jenis_materi->getLabel()
         );
     }
 }

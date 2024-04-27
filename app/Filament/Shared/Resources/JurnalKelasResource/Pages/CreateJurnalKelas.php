@@ -1,21 +1,14 @@
 <?php
 
-namespace App\Filament\Santri\Resources\JurnalKelasResource\Pages;
+namespace App\Filament\Shared\Resources\JurnalKelasResource\Pages;
 
-use App\Filament\Santri\Resources\JurnalKelasResource;
+use App\Filament\Shared\Resources\JurnalKelasResource;
 use Filament\Actions\Action;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateJurnalKelas extends CreateRecord
 {
     protected static string $resource = JurnalKelasResource::class;
-
-    protected function mutateFormDataBeforeCreate(array $data): array
-    {
-        dd($data);
-    
-        return $data;
-    }
 
     protected function getFormActions(): array
     {
@@ -42,7 +35,6 @@ class CreateJurnalKelas extends CreateRecord
     public function saveTemporarily()
     {
         $resources = static::getResource();
-        //dd($this->data);
         $this->create();
         $this->redirect($resources::getUrl('edit', ['record' => $this->record->getKey()]));
     }

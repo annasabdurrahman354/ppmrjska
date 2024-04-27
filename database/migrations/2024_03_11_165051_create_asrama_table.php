@@ -17,7 +17,7 @@ return new class extends Migration
             $table->ulid('id')->primary();
             $table->string('nama');
             $table->string('jenis_kelamin');
-            $table->tinyInteger('kapasitas_kamar');
+            $table->tinyInteger('kapasitas_per_kamar');
             $table->json('biaya_kamar');
             $table->string('pemilik')->nullable();
             $table->string('kontak_pemilik')->nullable();

@@ -27,13 +27,14 @@ class UsersTableSeeder extends Seeder
             'jenis_kelamin' => "laki-laki",
             'nis' => "0",
             'nomor_telepon' => "0",
-            'kelas' => 'admin',
+            'kelas' => '',
             'angkatan_pondok' => 0,
             'status_pondok' => "aktif",
             'tanggal_lulus_pondok' => null,
         ]);
 
-        Artisan::call('shield:super-admin', ['--user' => $sid]);    
+        Artisan::call('shield:super-admin', ['--user' => $sid]);
+        User::find($sid)->update(['kelas' => config('filament-shield.super_admin.name')]);
 
         $sid = Str::ulid();
         DB::table('users')->insert([

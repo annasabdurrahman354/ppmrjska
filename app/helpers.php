@@ -3,6 +3,54 @@
 use App\Models\JurnalKelas;
 use App\Models\MateriSurat;
 
+if(!function_exists('isKedisiplinan')) {
+    function isKedisiplinan() {
+        return auth()->user()->hasRole('dmcp_kedisiplinan');
+    }
+}
+
+if(!function_exists('isKeilmuan')) {
+    function isKeilmuan() {
+        return auth()->user()->hasRole('dmcp_keilmuan');
+    }
+}
+
+if(!function_exists('isDmcPasus')) {
+    function isDmcPasus() {
+        return auth()->user()->hasRole('dmcp%');
+    }
+}
+
+if(!function_exists('isSuperAdmin')) {
+    function isSuperAdmin() {
+        return auth()->user()->hasRole(config('filament-shield.super_admin.name'));
+    }
+}
+
+if(!function_exists('isNotSuperAdmin')) {
+    function isNotSuperAdmin() {
+        return !auth()->user()->hasRole(config('filament-shield.super_admin.name'));
+    }
+}
+
+if(!function_exists('cant')) {
+    function cant($abilities) {
+        if (isSuperAdmin()){
+            return false;
+        }
+        else return !auth()->user()->can($abilities);
+    }
+}
+
+if(!function_exists('can')) {
+    function can($abilities) {
+        if (isSuperAdmin()){
+            return true;
+        }
+        else return auth()->user()->can($abilities);
+    }
+}
+
 if(!function_exists('getRekamanFilename')) {
     function getRekamanFilename(JurnalKelas $record) {
         $result = '';
@@ -13,7 +61,7 @@ if(!function_exists('getRekamanFilename')) {
         }
         else {
             $result = $record->materiAwal->nama . "_" . $record->halaman_awal . "-" . ($record->materiAwal->id !== $record->materiAkhir->id ? $record->materiAkhir->nama . "_" . $record->halaman_akhir : $record->halaman_akhir);
-            $result .= "_" . '['.implode(",", $record->kelas).']' . "_" . $record->dewanGuru->nama_panggilan . "_" . $record->tanggal->format('d-m-Y'). "_" . $record->sesi->getLabel(); 
+            $result .= "_" . '['.implode(",", $record->kelas).']' . "_" . $record->dewanGuru->nama_panggilan . "_" . $record->tanggal->format('d-m-Y'). "_" . $record->sesi->getLabel();
         }
         return $result;
     }
@@ -36,7 +84,7 @@ if(!function_exists('getProgramStudi')) {
 if(!function_exists('matchPatternProgramStudi')) {
     function matchPatternProgramStudi($string) {
         $pattern = '/^[a-zA-Z]\d-\w+$/';
-    
+
         if (preg_match($pattern, $string)) {
             return true;
         } else {
@@ -44,7 +92,7 @@ if(!function_exists('matchPatternProgramStudi')) {
         }
     }
 }
-  
+
 if(!function_exists('getProgramStudiList')) {
     function getProgramStudiList(){
         return [
@@ -171,7 +219,7 @@ if(!function_exists('getProgramStudiList')) {
             "Teknologi Hasil Pertanian",
             "Teknologi Pendidikan",
             "Usaha Perjalanan Wisata"
-        ];    
+        ];
     }
 }
 

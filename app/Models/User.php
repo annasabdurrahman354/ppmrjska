@@ -2,9 +2,8 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-
 use App\Enums\JenisKelamin;
+use App\Enums\StatusKehadiran;
 use App\Enums\StatusPondok;
 use BezhanSalleh\FilamentShield\Traits\HasPanelShield;
 use Filament\Models\Contracts\FilamentUser;
@@ -18,13 +17,15 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Mpyw\ScopedAuth\AuthScopable;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Permission\Traits\HasRoles;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Illuminate\Database\Eloquent\Builder;
 
-class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, HasMedia
+class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, HasMedia, AuthScopable
 {
     use HasApiTokens, HasFactory, Notifiable;
     use HasPanelShield;
@@ -85,7 +86,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
         if ($panel->getId() === 'admin') {
             return $this->isSuperAdmin();
         }
- 
+
         return true;
     }
 
@@ -110,14 +111,19 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
         return !$this->hasRole(config('filament-shield.super_admin.name'));
     }
 
-    public function isKetuaKelas(): bool
+    public function cekPerekap(JurnalKelas $jurnalKelas): bool
     {
-        return $this->hasRole('ketua_kelas');
+        return $jurnalKelas->perekap_id == $this->id;
     }
 
-    public function isDmcPasus(): bool
+    public function cekKelasKBM(JurnalKelas $jurnalKelas): bool
     {
-        return $this->hasRole('dmcp%');
+        return $jurnalKelas->presensikelas()->where('user_id', $this->id)->exists();
+    }
+
+    public function cekKehadiran(JurnalKelas $jurnalKelas): bool
+    {
+        return $jurnalKelas->presensikelas()->where('user_id', $this->id)->where('status_kehadiran', StatusKehadiran::HADIR->value)->exists();
     }
 
     public function registerMediaConversions(Media $media = null): void
@@ -130,5 +136,17 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
     public function biodataSantri(): HasOne
     {
         return $this->hasOne(BiodataSantri::class);
+    }
+
+    protected static function booted(): void
+    {
+        static::addGlobalScope('notSuperAdmin', function (Builder $builder) {
+            $builder->where('kelas', '!=', config('filament-shield.super_admin.name'));
+        });
+    }
+
+    public function scopeForAuthentication(Builder $query): Builder
+    {
+        return $query->withoutGlobalScope('notSuperAdmin');
     }
 }

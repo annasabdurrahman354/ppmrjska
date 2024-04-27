@@ -58,7 +58,7 @@ class BiodataSantriResource extends Resource
                         Select::make('user_id')
                             ->label('Pemilik Biodata')
                             ->required()
-                            ->options(fn ($record): Collection => 
+                            ->options(fn ($record): Collection =>
                                 DB::table('users')
                                     ->whereNotIn('id', DB::table('biodata_santri')->select('user_id')->where('user_id', '!=',  $record->user_id ?? '')->get()->pluck('user_id'))
                                     ->get()
@@ -100,9 +100,8 @@ class BiodataSantriResource extends Resource
                         'sm' => 1,
                         'md' => 2,
                     ]),
-                
+
                 Section::make('Alamat Rumah')
-                    //->icon('heroicon-m-shopping-bag')
                     ->schema([
                         TextInput::make('alamat')
                             ->label('Alamat Lengkap')
@@ -151,7 +150,6 @@ class BiodataSantriResource extends Resource
                     ]),
 
                 Section::make('Informasi Sambung')
-                    //->icon('heroicon-m-shopping-bag')
                     ->schema([
                         TextInput::make('asal_kelompok')
                             ->label('Asal Kelompok')
@@ -188,7 +186,7 @@ class BiodataSantriResource extends Resource
                             ->label('Pendidikan Terkahir')
                             ->required()
                             ->options(PendidikanTerakhir::class),
-                        
+
                         Cluster::make([
                             Select::make('program_studi_jenjang')
                                 ->options([
@@ -211,7 +209,7 @@ class BiodataSantriResource extends Resource
                         ])
                         ->label('Program Studi')
                         ->columns(8),
-                       
+
                         TextInput::make('universitas')
                             ->label('Universitas')
                             ->required()
@@ -224,7 +222,7 @@ class BiodataSantriResource extends Resource
                             ->required()
                             ->numeric()
                             ->minValue(2015),
-                            
+
                         Select::make('status_kuliah')
                             ->label('Status Kuliah')
                             ->required()
@@ -237,7 +235,7 @@ class BiodataSantriResource extends Resource
                         'sm' => 1,
                         'md' => 2,
                     ]),
-            
+
                 // Family Section
                 Section::make('Keluarga')
                     ->schema([
@@ -266,7 +264,7 @@ class BiodataSantriResource extends Resource
                         'sm' => 1,
                         'md' => 2,
                     ]),
-            
+
                 // Parent Section
                 Section::make('Orang Tua')
                     ->schema([

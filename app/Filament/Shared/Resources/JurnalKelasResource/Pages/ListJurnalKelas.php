@@ -1,14 +1,15 @@
 <?php
 
-namespace App\Filament\Admin\Resources\JurnalKelasResource\Pages;
+namespace App\Filament\Shared\Resources\JurnalKelasResource\Pages;
 
 use App\Enums\StatusPondok;
-use App\Filament\Admin\Resources\JurnalKelasResource;
+use App\Filament\Shared\Resources\JurnalKelasResource;
 use App\Models\User;
 use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Database\Eloquent\Builder;
 
 class ListJurnalKelas extends ListRecords
 {
@@ -20,6 +21,7 @@ class ListJurnalKelas extends ListRecords
             Actions\CreateAction::make(),
             Action::make('createUsingQRCode')
                 ->label('Buat dengan QRCode')
+                ->hidden(cant('create_jurnal::kelas'))
                 ->action('createUsingQRCode')
                 ->color('secondary'),
         ];
@@ -49,5 +51,17 @@ class ListJurnalKelas extends ListRecords
             $tabs[$kelas] = Tab::make()->query(fn ($query) => $query->whereJsonContains('kelas', (string) $kelas));
         }
         return $tabs;
+    }
+
+    protected function getTableQuery() : Builder
+    {
+        $user =  auth()->user();
+        $model = (new (static::$resource::getModel()))->query();
+
+        if (isNotSuperAdmin() || !isKeilmuan()){
+            $model = $model->where('jenis_kelamin', $user->jenis_kelamin);
+        }
+
+        return $model;
     }
 }

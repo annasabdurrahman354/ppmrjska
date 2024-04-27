@@ -50,7 +50,7 @@ class KurikulumResource extends Resource
                         ->numeric()
                         ->minValue(2015)
                         ->columnSpanFull(),
-                        
+
                 Repeater::make('plot_kurikulum')
                     ->hiddenLabel()
                     ->itemLabel(function ($uuid, $component) {
@@ -66,7 +66,7 @@ class KurikulumResource extends Resource
                             ->content('Belum ada plotingan materi kurikulum!')
                             ->type('info')
                             ->color(Color::Yellow)
-                            ->visible(fn (Get $get) => count($get('plot_materi')) == 0 || $get('plot_materi') == null),
+                            ->visible(fn(Get $get) => !filled($get('plot_materi'))),
                         Repeater::make('plot_materi')
                             ->schema([
                                 ToggleButtons::make('materi_type')
@@ -84,8 +84,7 @@ class KurikulumResource extends Resource
                                     ->afterStateUpdated(function(Set $set) {
                                         $set('materi_id', null);
                                     }),
-                               
-                        
+
                                 Select::make('materi_id')
                                     ->hiddenLabel()
                                     ->placeholder('Pilih nomor juz Al-Quran...')
@@ -105,14 +104,14 @@ class KurikulumResource extends Resource
                                     ->placeholder('Pilih materi himpunan/materi kelas/hafalan...')
                                     ->hidden(fn (Get $get) => $get('materi_type') == null || $get('materi_type') == MateriJuz::class)
                                     ->searchable()
-                                    ->getSearchResultsUsing(fn (Get $get, string $search): array => 
+                                    ->getSearchResultsUsing(fn (Get $get, string $search): array =>
                                         $get('materi_type')::where('nama', 'like', "%{$search}%")
                                             ->limit(20)
                                             ->pluck('nama', 'id')
                                             ->sortBy('nama')
                                             ->toArray(),
                                     )
-                                    ->getOptionLabelUsing(fn (Get $get, $value): ?string =>     
+                                    ->getOptionLabelUsing(fn (Get $get, $value): ?string =>
                                             $get('materi_type')::find($value)?->nama,
                                     ),
 

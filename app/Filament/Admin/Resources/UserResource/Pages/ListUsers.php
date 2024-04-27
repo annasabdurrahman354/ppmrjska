@@ -44,10 +44,10 @@ class ListUsers extends ListRecords
 
     protected function getTableQuery(): Builder
     {
-        $user = auth()->user();
+
         $model = (new (static::$resource::getModel()))->with('roles');
 
-        if (!$user->isSuperAdmin()) {
+        if (isNotSuperAdmin()) {
             $model = $model->whereDoesntHave('roles', function ($query) {
                 $query->where('name', '=', config('filament-shield.super_admin.name'));
             });

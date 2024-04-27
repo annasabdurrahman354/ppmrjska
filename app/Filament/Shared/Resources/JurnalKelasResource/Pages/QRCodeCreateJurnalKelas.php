@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Filament\Santri\Resources\JurnalKelasResource\Pages;
+namespace App\Filament\Shared\Resources\JurnalKelasResource\Pages;
 
-use App\Filament\Santri\Resources\JurnalKelasResource;
-use Filament\Resources\Pages\Page;
 use App\Enums\JenisKelamin;
 use App\Enums\Sesi;
 use App\Enums\StatusKehadiran;
 use App\Enums\StatusPondok;
+use App\Filament\Shared\Resources\JurnalKelasResource;
 use App\Models\DewanGuru;
 use App\Models\JurnalKelas;
 use App\Models\MateriHimpunan;
@@ -36,6 +35,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
+use Filament\Resources\Pages\Page;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\IconPosition;
 use Illuminate\Support\Str;
@@ -54,12 +54,12 @@ class QRCodeCreateJurnalKelas extends Page implements HasForms, HasActions
 
     use InteractsWithForms;
     use HasUnsavedDataChangesAlert;
-    
+
     public ?array $data = [];
 
     public $record;
     public $mode = 'create';
-    
+
     public function mount(): void
     {
         $this->hasUnsavedDataChangesAlert();
@@ -89,7 +89,7 @@ class QRCodeCreateJurnalKelas extends Page implements HasForms, HasActions
                                             ->required()
                                             ->options(Sesi::class)
                                             ->live()
-                                            ->afterStateUpdated(function ($state, Set $set){ 
+                                            ->afterStateUpdated(function ($state, Set $set){
                                                     $set('waktu_terlambat', match ($state) {
                                                         Sesi::SUBUH->value => '05:00',
                                                         Sesi::PAGI_1->value => '08:45',
@@ -97,18 +97,18 @@ class QRCodeCreateJurnalKelas extends Page implements HasForms, HasActions
                                                         Sesi::SIANG->value => '13:45',
                                                         Sesi::MALAM->value => '20:00',
                                                     });
-                                                }                                            
-                                            ),      
+                                                }
+                                            ),
 
                                         Select::make('kelas')
                                             ->label('Kelas')
                                             ->multiple()
-                                            ->disabled(!auth()->user()->can('rekap_kelas_lain_jurnal::kelas'))
-                                            ->dehydrated(!auth()->user()->can('rekap_kelas_lain_jurnal::kelas'))
-                                            ->maxItems(fn () => !auth()->user()->can('rekap_kelas_lain_jurnal::kelas') ? 1 : 6)
+                                            ->disabledOn('edit')
+                                            ->disabled(cant('rekap_kelas_lain_jurnal::kelas'))
+                                            ->dehydrated(cant('rekap_kelas_lain_jurnal::kelas'))
+                                            ->maxItems(fn () => cant('rekap_kelas_lain_jurnal::kelas') ? 1 : 6)
                                             ->options(
-                                                User::where('kelas', '!=', 'admin')
-                                                ->where('status_pondok', StatusPondok::AKTIF->value)
+                                                User::where('status_pondok', StatusPondok::AKTIF->value)
                                                 ->where('tanggal_lulus_pondok', null)
                                                 ->select('kelas')
                                                 ->orderBy('kelas')
@@ -117,7 +117,7 @@ class QRCodeCreateJurnalKelas extends Page implements HasForms, HasActions
                                                 ->pluck('kelas', 'kelas')
                                             )
                                             ->default(match (auth()->user()->kelas) {
-                                                'admin' => ['Takmili'],
+                                                config('filament-shield.super_admin.name') => ['Takmili'],
                                                 default => [auth()->user()->kelas]
                                             })
                                             ->live()
@@ -128,7 +128,7 @@ class QRCodeCreateJurnalKelas extends Page implements HasForms, HasActions
                                                     ->where('tanggal_lulus_pondok', null)
                                                     ->orderBy('nama')
                                                     ->get();
-                                                
+
                                                 $result = [];
                                                 foreach ($users as $user) {
                                                     $result[(string) Str::uuid()] = [
@@ -144,8 +144,9 @@ class QRCodeCreateJurnalKelas extends Page implements HasForms, HasActions
                                             ->inline()
                                             ->grouped()
                                             ->required()
-                                            ->disabled(auth()->user()->isNotSuperAdmin())
-                                            ->dehydrated(auth()->user()->isNotSuperAdmin())
+                                            ->disabledOn('edit')
+                                            ->disabled(isNotSuperAdmin())
+                                            ->dehydrated(isNotSuperAdmin())
                                             ->options(JenisKelamin::class)
                                             ->default(auth()->user()->jenis_kelamin)
                                             ->live()
@@ -156,7 +157,7 @@ class QRCodeCreateJurnalKelas extends Page implements HasForms, HasActions
                                                     ->where('tanggal_lulus_pondok', null)
                                                     ->orderBy('nama')
                                                     ->get();
-                                                
+
                                                 $result = [];
                                                 foreach ($users as $user) {
                                                     $result[(string) Str::uuid()] = [
@@ -170,8 +171,9 @@ class QRCodeCreateJurnalKelas extends Page implements HasForms, HasActions
                                         Select::make('perekap_id')
                                             ->label('Perekap')
                                             ->required()
-                                            ->disabled(auth()->user()->isNotSuperAdmin())
-                                            ->dehydrated(auth()->user()->isNotSuperAdmin())
+                                            ->disabledOn('edit')
+                                            ->disabled(isNotSuperAdmin())
+                                            ->dehydrated(isNotSuperAdmin())
                                             ->options(
                                                 User::select('nama', 'id')
                                                     ->distinct()
@@ -181,7 +183,7 @@ class QRCodeCreateJurnalKelas extends Page implements HasForms, HasActions
                                             ->default(auth()->user()->id)
                                             ->preload()
                                             ->searchable(['nama'])
-                                            ->columnSpanFull(),  
+                                            ->columnSpanFull(),
 
                                         Fieldset::make()
                                             ->label('Dewan Guru')
@@ -208,28 +210,28 @@ class QRCodeCreateJurnalKelas extends Page implements HasForms, HasActions
                                                     ->placeholder('Pilih dewan guru/santri takmili...')
                                                     ->hidden(fn (Get $get) => $get('dewan_guru_type') == null)
                                                     ->searchable()
-                                                    ->getSearchResultsUsing(fn (Get $get, string $search): array => 
+                                                    ->getSearchResultsUsing(fn (Get $get, string $search): array =>
                                                         match ($get('dewan_guru_type')) {
                                                             DewanGuru::class =>
                                                                 DewanGuru::where('nama', 'like', "%{$search}%")
                                                                     ->limit(20)->pluck('nama', 'id')
                                                                     ->toArray(),
-                                                            User::class =>  
+                                                            User::class =>
                                                                 User::where('nama', 'like', "%{$search}%")
                                                                     ->where('kelas', 'takmili')
                                                                     ->limit(20)->pluck('nama', 'id')
                                                                     ->toArray()
                                                         }
-                                                        
+
                                                     )
-                                                    ->getOptionLabelUsing(fn (Get $get, $value): ?string => 
+                                                    ->getOptionLabelUsing(fn (Get $get, $value): ?string =>
                                                         match ($get('dewan_guru_type')) {
                                                             DewanGuru::class =>
                                                                 DewanGuru::find($value)?->nama,
-                                                            User::class =>  
+                                                            User::class =>
                                                                 User::find($value)?->nama
                                                         }
-                                                        
+
                                                     )
                                                     ->live(),
                                             ])
@@ -245,11 +247,10 @@ class QRCodeCreateJurnalKelas extends Page implements HasForms, HasActions
                                             ->content('Belum ada presensi santri!')
                                             ->type('info')
                                             ->color(Color::Yellow)
-                                            ->visible(fn (Get $get) => count($get('presensiKelas')) == 0 || $get('presensiKelas') == null),
-                                        
+                                            ->visible(fn(Get $get) => !filled($get('presensiKelas'))),
                                         TimePicker::make('waktu_terlambat')
                                             ->seconds(false)
-                                            ->default(fn (Get $get ) => 
+                                            ->default(fn (Get $get ) =>
                                                 match ($get('sesi')) {
                                                     Sesi::SUBUH->value => '05:15',
                                                     Sesi::PAGI_1->value => '08:45',
@@ -258,7 +259,7 @@ class QRCodeCreateJurnalKelas extends Page implements HasForms, HasActions
                                                     Sesi::MALAM->value => '20:00',
                                                     default => null
                                                 }
-                                            
+
                                             ),
 
                                         ViewField::make('qr-code')
@@ -278,7 +279,7 @@ class QRCodeCreateJurnalKelas extends Page implements HasForms, HasActions
                                                     ->where('tanggal_lulus_pondok', null)
                                                     ->orderBy('nama')
                                                     ->get();
-                                                
+
                                                 $result = [];
                                                 foreach ($users as $user) {
                                                     $result[(string) Str::uuid()] = [
@@ -294,11 +295,12 @@ class QRCodeCreateJurnalKelas extends Page implements HasForms, HasActions
                                                     ->placeholder('Pilih santri sesuai kelas...')
                                                     ->required()
                                                     ->distinct()
-                                                    ->disabled(auth()->user()->isNotSuperAdmin())
-                                                    ->dehydrated(auth()->user()->isNotSuperAdmin())
+                                                    ->disabledOn('edit')
+                                                    ->disabled(isNotSuperAdmin())
+                                                    ->dehydrated(isNotSuperAdmin())
                                                     ->searchable()
                                                     ->preload()
-                                                    ->getSearchResultsUsing(fn (string $search, Get $get): array => 
+                                                    ->getSearchResultsUsing(fn (string $search, Get $get): array =>
                                                         User::where('nama', 'like', "%{$search}%")
                                                             ->where('jenis_kelamin', $get('../../jenis_kelamin'))
                                                             ->whereIn('kelas', $get('../../kelas'))
@@ -310,7 +312,7 @@ class QRCodeCreateJurnalKelas extends Page implements HasForms, HasActions
                                                     )
                                                     ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->nama)
                                                     ->columnSpan(4),
-                            
+
                                                 ToggleButtons::make('status_kehadiran')
                                                     ->hiddenLabel()
                                                     ->inline()
@@ -361,18 +363,18 @@ class QRCodeCreateJurnalKelas extends Page implements HasForms, HasActions
                                             ->afterStateUpdated(function(Set $set) {
                                                 $set('materi_awal_id', null);
                                             }),
-        
+
                                         Select::make('materi_awal_id')
                                             ->hiddenLabel()
                                             ->placeholder('Pilih surat Al-Quran/himpunan/materi kelas/hafalan...')
                                             ->hidden(fn (Get $get) => $get('materi_awal_type') == null)
                                             ->searchable()
-                                            ->getSearchResultsUsing(fn (Get $get, string $search): array => 
+                                            ->getSearchResultsUsing(fn (Get $get, string $search): array =>
                                                 $get('materi_awal_type')::where('nama', 'like', "%{$search}%")
                                                     ->limit(20)->pluck('nama', 'id')
                                                     ->toArray(),
                                             )
-                                            ->getOptionLabelUsing(fn (Get $get, $value): ?string =>     
+                                            ->getOptionLabelUsing(fn (Get $get, $value): ?string =>
                                                     $get('materi_awal_type')::find($value)?->nama,
                                             )
                                             ->live()
@@ -380,7 +382,7 @@ class QRCodeCreateJurnalKelas extends Page implements HasForms, HasActions
                                                 $set('halaman_awal', null);
                                                 $set('ayat_awal', null);
                                             }),
-        
+
                                         TextInput::make('halaman_awal')
                                             ->numeric()
                                             ->minValue(fn (Get $get) => $get('materi_awal_type')::where('id',  $get('materi_awal_id'))->first()->halaman_awal ?? 1)
@@ -388,7 +390,7 @@ class QRCodeCreateJurnalKelas extends Page implements HasForms, HasActions
                                             ->hidden(fn (Get $get) => $get('materi_awal_type') == null || $get('materi_awal_id') == null)
                                             ->default(null)
                                             ->columnSpan(fn (Get $get) => ($get('materi_awal_type') != MateriSurat::class) ? 2 : 1),
-        
+
                                         TextInput::make('ayat_awal')
                                             ->numeric()
                                             ->minValue(1)
@@ -401,7 +403,7 @@ class QRCodeCreateJurnalKelas extends Page implements HasForms, HasActions
                                         'lg' => 2
                                     ])
                                     ->columnSpanFull(),
-        
+
                                 Fieldset::make()
                                     ->label('Materi Akhir')
                                     ->schema([
@@ -418,18 +420,18 @@ class QRCodeCreateJurnalKelas extends Page implements HasForms, HasActions
                                             ->afterStateUpdated(function(Set $set) {
                                                 $set('materi_akhir_id', null);
                                             }),
-        
+
                                         Select::make('materi_akhir_id')
                                             ->hiddenLabel()
                                             ->placeholder('Pilih surat Al-Quran/himpunan/materi kelas/hafalan...')
                                             ->hidden(fn (Get $get) => $get('materi_akhir_type') == null)
                                             ->searchable()
-                                            ->getSearchResultsUsing(fn (Get $get, string $search): array => 
+                                            ->getSearchResultsUsing(fn (Get $get, string $search): array =>
                                                 $get('materi_akhir_type')::where('nama', 'like', "%{$search}%")
                                                     ->limit(20)->pluck('nama', 'id')
                                                     ->toArray(),
                                             )
-                                            ->getOptionLabelUsing(fn (Get $get, $value): ?string =>     
+                                            ->getOptionLabelUsing(fn (Get $get, $value): ?string =>
                                                     $get('materi_akhir_type')::find($value)?->nama,
                                             )
                                             ->live()
@@ -437,7 +439,7 @@ class QRCodeCreateJurnalKelas extends Page implements HasForms, HasActions
                                                 $set('halaman_akhir', null);
                                                 $set('ayat_akhir', null);
                                             }),
-                                        
+
                                         TextInput::make('halaman_akhir')
                                             ->numeric()
                                             ->minValue(fn (Get $get) => $get('materi_akhir_type')::where('id',  $get('materi_akhir_id'))->first()->halaman_awal ?? 1)
@@ -445,7 +447,7 @@ class QRCodeCreateJurnalKelas extends Page implements HasForms, HasActions
                                             ->hidden(fn (Get $get) => $get('materi_akhir_type') == null || $get('materi_akhir_id') == null)
                                             ->default(null)
                                             ->columnSpan(fn (Get $get) => ($get('materi_akhir_type') != MateriSurat::class) ? 2 : 1),
-                                        
+
                                         TextInput::make('ayat_akhir')
                                             ->numeric()
                                             ->minValue(1)
@@ -458,23 +460,23 @@ class QRCodeCreateJurnalKelas extends Page implements HasForms, HasActions
                                         'lg' => 2
                                     ])
                                     ->columnSpanFull(),
-            
+
                                 TextInput::make('keterangan')
                                     ->label('Detail Materi')
                                     ->maxLength(255),
-                                    
+
                                 TextInput::make('link_rekaman')
-                                    ->hidden(!auth()->user()->can('ubah_materi_rekaman_jurnal::kelas'))
+                                    ->hidden(cant('ubah_materi_rekaman_jurnal::kelas'))
                                     ->label('Link Rekaman')
                                     ->default(null),
-                       
-                            ]),    
-                        ]), 
+
+                            ]),
+                        ]),
             ])
             ->statePath('data')
             ->model(JurnalKelas::class);
-    }  
-    
+    }
+
 
     public function addScannedUser($nis): void
     {
@@ -489,7 +491,7 @@ class QRCodeCreateJurnalKelas extends Page implements HasForms, HasActions
         }
         else {
             $scannedUser = User::where('nis', $nis)->select('id', 'nis', 'nama', 'kelas', 'jenis_kelamin')->first();
-           
+
             if(is_null($scannedUser)) {
                 Notification::make()
                     ->title('Santri dengan NIS '.$nis.' tidak ditemukan!')
@@ -509,8 +511,8 @@ class QRCodeCreateJurnalKelas extends Page implements HasForms, HasActions
                                 default =>  $this->data['presensiKelas'][$key]['status_kehadiran'] = "hadir",
                             };
                         }
-                        
-                        break; 
+
+                        break;
                     }
                 }
 
@@ -558,10 +560,10 @@ class QRCodeCreateJurnalKelas extends Page implements HasForms, HasActions
         if($this->mode == 'create'){
             $jurnalKelas = JurnalKelas::create($this->form->getState());
             $this->form->model($jurnalKelas)->saveRelationships();
-            $this->record = $jurnalKelas;            
+            $this->record = $jurnalKelas;
             $this->mode = 'edit';
             $this->rememberData();
-            
+
             Notification::make()
                 ->title('Jurnal kelas telah tersimpan!')
                 ->success()
@@ -587,15 +589,15 @@ class QRCodeCreateJurnalKelas extends Page implements HasForms, HasActions
         if($this->mode == 'create'){
             $jurnalKelas = JurnalKelas::create($this->form->getState());
             $this->form->model($jurnalKelas)->saveRelationships();
-            $this->record = $jurnalKelas;            
+            $this->record = $jurnalKelas;
             $this->mode = 'edit';
             $this->rememberData();
-            
+
             Notification::make()
                 ->title('Jurnal kelas telah tersimpan!')
                 ->success()
                 ->send();
-            
+
             $this->redirect($resources::getUrl('view', ['record' => $this->record->id]));
         }
         else{

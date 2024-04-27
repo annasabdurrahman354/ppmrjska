@@ -51,25 +51,23 @@ class MateriMunaqosahResource extends Resource
                         Select::make('kelas')
                             ->label('Kelas')
                             ->required()
-                            ->disabled(auth()->user()->isNotSuperAdmin())
                             ->disabledOn('edit')
                             ->options(
-                                User::where('kelas', '!=', 'admin')
-                                    ->select('kelas')
+                                User::select('kelas')
                                     ->distinct()
                                     ->get()
                                     ->sortBy('kelas')
                                     ->pluck('kelas', 'kelas'))
                             ->default(match (auth()->user()->kelas) {
-                                'admin' => 'Takmili',
+                                config('filament-shield.super_admin.name') => 'Takmili',
                                 default => auth()->user()->kelas
                             }),
-        
+
                         TextInput::make('semester')
                             ->required()
                             ->numeric()
-                            ->maxValue(8),
-        
+                            ->maxValue(10),
+
                         Cluster::make([
                             TextInput::make('tahun_ajaran_awal')
                                 ->required()
@@ -82,7 +80,7 @@ class MateriMunaqosahResource extends Resource
                                 ->gte('tahun_ajaran_awal'),
                         ])
                         ->label('Tahun Ajaran'),
-        
+
                         Select::make('dewan_guru_id')
                             ->label('Dewan Guru')
                             ->required()
@@ -107,14 +105,14 @@ class MateriMunaqosahResource extends Resource
                             ->placeholder('Bisa lebih dari satu.')
                             ->hidden(fn (Get $get) => $get('jenis_materi') == null)
                             ->multiple()
-                            ->getSearchResultsUsing(fn (Get $get, string $search): array => 
+                            ->getSearchResultsUsing(fn (Get $get, string $search): array =>
                                 $get('jenis_materi')::where('nama', 'like', "%{$search}%")
                                     ->limit(20)
                                     ->orderBy('nama')
                                     ->pluck('nama', 'nama')
                                     ->toArray(),
                             )
-                            ->getOptionLabelUsing(fn (Get $get, $values): ?string =>     
+                            ->getOptionLabelUsing(fn (Get $get, $values): ?string =>
                                     $get('jenis_materi')::whereIn('nama', $values)->pluck('nama', 'nama')->toArray()
                             )
                             ->hidden(function (Get $get) {
@@ -143,21 +141,21 @@ class MateriMunaqosahResource extends Resource
                             ->label('Pilih Hafalan')
                             ->placeholder('Bisa lebih dari satu.')
                             ->multiple()
-                            ->getSearchResultsUsing(fn (string $search): array => 
+                            ->getSearchResultsUsing(fn (string $search): array =>
                                 MateriHafalan::where('nama', 'like', "%{$search}%")
                                     ->limit(20)
                                     ->orderBy('nama')
                                     ->pluck('nama', 'nama')
                                     ->toArray(),
                             )
-                            ->getOptionLabelUsing(fn ($values): ?string =>     
+                            ->getOptionLabelUsing(fn ($values): ?string =>
                                 MateriHafalan::whereIn('nama', $values)->pluck('nama', 'nama')->toArray()
                             )
                             ->required(function (Get $get) {
                                 return $get('jenis_materi') == MateriHafalan::class;
                             })
                             ->live(),
-                            
+
                         TagsInput::make('indikator_materi')
                             ->label('Indikator Penilaian Materi')
                             ->hidden(function (Get $get) {
@@ -184,14 +182,14 @@ class MateriMunaqosahResource extends Resource
                             })
                             ->placeholder('Tuliskan indikator penilaian hafalan.'),
                         ]),
-                
+
                 Section::make('Jadwal Munaqosah')
                     ->schema([
                         Shout::make('st-empty')
                             ->content('Belum ada jadwal munaqosah untuk materi ini!')
                             ->type('info')
                             ->color(Color::Yellow)
-                            ->visible(fn (Get $get) => count($get('jadwalMunaqosah')) == 0 || $get('jadwalMunaqosah') == null),
+                            ->visible(fn(Get $get) => !filled($get('jadwalMunaqosah'))),
                         Repeater::make('jadwalMunaqosah')
                             ->hiddenLabel()
                             ->addable()

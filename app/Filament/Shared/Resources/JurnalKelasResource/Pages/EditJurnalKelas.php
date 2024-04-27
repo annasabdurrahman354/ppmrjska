@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Santri\Resources\JurnalKelasResource\Pages;
+namespace App\Filament\Shared\Resources\JurnalKelasResource\Pages;
 
-use App\Filament\Santri\Resources\JurnalKelasResource;
+use App\Filament\Shared\Resources\JurnalKelasResource;
 use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Resources\Pages\EditRecord;

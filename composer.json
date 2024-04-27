@@ -29,6 +29,7 @@
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
         "livewire/livewire": "^3.4",
+        "mpyw/scoped-auth": "^2.0",
         "saade/filament-fullcalendar": "3.0",
         "voku/stringy": "^6.5",
         "z3d0x/filament-logger": "^0.6.3"
