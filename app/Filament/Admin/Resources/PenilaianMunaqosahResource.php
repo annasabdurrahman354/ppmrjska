@@ -3,10 +3,14 @@
 namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\PenilaianMunaqosahResource\Pages;
+use App\Models\MateriMunaqosah;
 use App\Models\PenilaianMunaqosah;
+use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -31,16 +35,79 @@ class PenilaianMunaqosahResource extends Resource
         return $form
             ->schema([
                 Select::make('user_id')
+                    ->label('Santri')
                     ->relationship('user', 'nama')
-                    ->required(),
+                    ->required()
+                    ->live(),
+
                 Select::make('materi_munaqosah_id')
-                    ->relationship(name: 'materiMunaqosah', titleAttribute: 'recordTitle')
-                    ->searchable(['recordTitle'])
-                    ->required(),
-                TextInput::make('nilai_materi')
-                    ->columnSpanFull(),
-                TextInput::make('nilai_hafalan')
-                    ->columnSpanFull(),
+                    ->label('Materi Munaqosah')
+                    ->options(MateriMunaqosah::all()->sortBy('created_at')->pluck('recordTitle', 'id'))
+                    ->searchable()
+                    ->required()
+                    ->live()
+                    ->afterStateUpdated(
+                        function (Set $set, $state){
+                            if(filled($state)){
+                                $materiMunaqosah = MateriMunaqosah::where('id', $state)->first();
+
+                                $indikator_materi = [];
+
+                                foreach ($materiMunaqosah->indikator_materi as $indikator) {
+                                    $indikator_materi[$indikator] = 0;
+                                }
+
+                                $indikator_hafalan = [];
+                                foreach ($materiMunaqosah->indikator_hafalan as $indikator) {
+                                    $indikator_hafalan[$indikator] = 0;
+                                }
+
+                                $set('nilai_materi', $indikator_materi);
+                                $set('nilai_hafalan', $indikator_hafalan);
+
+                                $set('materi', $materiMunaqosah->materi);
+                                $set('hafalan', $materiMunaqosah->hafalan);
+                            }
+                        }
+                    ),
+
+                TagsInput::make('materi')
+                    ->label('Materi')
+                    ->placeholder('Materi yang diujikan')
+                    ->disabled()
+                    ->visible(fn(Get $get) => filled($get('materi_munaqosah_id'))),
+
+                TagsInput::make('hafalan')
+                    ->label('Hafalan')
+                    ->placeholder('Hafalan yang diujikan')
+                    ->disabled()
+                    ->dehydrated()
+                    ->default(function (Get $get){
+                        return filled($get('materi_munaqosah_id')) ?
+                            MateriMunaqosah::where('id', $get('materi_munaqosah_id'))->first()->hafalan
+                            : [];
+                    })
+                    ->visible(fn(Get $get) => filled($get('materi_munaqosah_id'))),
+
+                KeyValue::make('nilai_materi')
+                    ->label('Nilai Munaqosah Materi')
+                    ->columnSpanFull()
+                    ->keyLabel('Indikator Penilaian')
+                    ->keyPlaceholder('Indikator Penilaian')
+                    ->editableKeys(false)
+                    ->addable(false)
+                    ->deletable(false)
+                    ->visible(fn(Get $get) => filled($get('materi_munaqosah_id'))),
+
+                KeyValue::make('nilai_hafalan')
+                    ->label('Nilai Munaqosah Hafalan')
+                    ->columnSpanFull()
+                    ->keyLabel('Indikator Penilaian')
+                    ->keyPlaceholder('Indikator Penilaian')
+                    ->editableKeys(false)
+                    ->addable(false)
+                    ->deletable(false)
+                    ->visible(fn(Get $get) => filled($get('materi_munaqosah_id'))),
             ]);
     }
 

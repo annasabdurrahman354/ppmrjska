@@ -435,9 +435,9 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                                     ->maxLength(255),
 
                                 TextInput::make('link_rekaman')
-                                    ->hidden(cant('ubah_materi_rekaman_jurnal::kelas'))
                                     ->label('Link Rekaman')
-                                    ->default(null),
+                                    ->default(null)
+                                    ->visible(can('ubah_materi_rekaman_jurnal::kelas'))
                             ]),
                         ]),
             ]);
@@ -449,7 +449,7 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
             ->columns([
                 TextColumn::make('id')
                     ->label('ID')
-                    ->hidden(isNotSuperAdmin())
+                    ->visible(isSuperAdmin())
                     ->searchable(),
                 TextColumn::make('tanggal')
                     ->label('Tanggal KBM')
@@ -599,16 +599,16 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
-                    ->hidden(function (JurnalKelas $record){
-                        return !auth()->user()->cekPerekap($record) || !isKedisipilinan() || !isKeilmuan() || isNotSuperAdmin();
+                    ->visible(function (JurnalKelas $record){
+                        return auth()->user()->cekPerekap($record) || isKedisiplinan() || isKeilmuan() || isSuperAdmin();
                     }),
                 Tables\Actions\EditAction::make()
-                    ->hidden(function (JurnalKelas $record){
-                        return !auth()->user()->cekPerekap($record) || !isKedisipilinan() || !isKeilmuan() || isNotSuperAdmin();
+                    ->visible(function (JurnalKelas $record){
+                        return auth()->user()->cekPerekap($record) || isKedisiplinan() || isKeilmuan() || isSuperAdmin();
                     }),
                 Action::make('updateMateriRekaman')
                     ->label('Ubah Materi & Rekaman')
-                    ->hidden(cant('ubah_materi_rekaman_jurnal::kelas'))
+                    ->visible(can('ubah_materi_rekaman_jurnal::kelas'))
                     ->color('secondary')
                     ->fillForm(function (JurnalKelas $record): array {
                        return [
@@ -798,8 +798,8 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                 Action::make('viewRekaman')
                     ->label('Lihat Rekaman')
                     ->modalSubmitAction(false)
-                    ->hidden(function (JurnalKelas $record){
-                        return !auth()->user()->cekKehadiran($record) || isNotSuperAdmin();
+                    ->visible(function (JurnalKelas $record){
+                        return auth()->user()->cekKehadiran($record) || isSuperAdmin();
                     })
                     ->color('info')
                     ->fillForm(function (JurnalKelas $record): array {
@@ -919,7 +919,7 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
             ])
             ->bulkActions([
                 BulkAction::make('updateMateriRekaman')
-                    ->hidden(cant('ubah_materi_rekaman_jurnal::kelas') || isNotSuperAdmin())
+                    ->visible(can('ubah_materi_rekaman_jurnal::kelas'))
                     ->label('Perbarui Materi & Rekaman')
                     ->color('secondary')
                     ->fillForm(function (Collection $records): array {
@@ -1071,7 +1071,7 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                                         $set('nama_berkas_rekaman', '');
                                     }
                                     else {
-                                        $model = JurnalKelas::find($get('first_id'))->first();
+                                        $model = JurnalKelas::where('id', $get('first_id'))->first();
                                         $model->fill([
                                             'materi_awal_type' => $get('materi_awal_type'),
                                             'materi_akhir_type' => $get('materi_akhir_type'),
@@ -1116,11 +1116,11 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
 
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
-                        ->hidden(isNotSuperAdmin()),
+                        ->visible(isSuperAdmin()),
                     Tables\Actions\ForceDeleteBulkAction::make()
-                        ->hidden(isNotSuperAdmin()),
+                        ->visible(isSuperAdmin()),
                     Tables\Actions\RestoreBulkAction::make()
-                        ->hidden(isNotSuperAdmin()),
+                        ->visible(isSuperAdmin()),
                 ]),
             ])
             ->selectCurrentPageOnly();

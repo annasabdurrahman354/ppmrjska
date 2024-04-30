@@ -466,7 +466,7 @@ class QRCodeCreateJurnalKelas extends Page implements HasForms, HasActions
                                     ->maxLength(255),
 
                                 TextInput::make('link_rekaman')
-                                    ->hidden(cant('ubah_materi_rekaman_jurnal::kelas'))
+                                    ->visible(can('ubah_materi_rekaman_jurnal::kelas'))
                                     ->label('Link Rekaman')
                                     ->default(null),
 

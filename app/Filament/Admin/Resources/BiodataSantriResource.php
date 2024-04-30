@@ -316,6 +316,7 @@ class BiodataSantriResource extends Resource
             ->columns([
                 TextColumn::make('id')
                     ->label('ID')
+                    ->visible(isSuperAdmin())
                     ->searchable(),
                 TextColumn::make('user.nama')
                     ->label('Nama')
@@ -323,6 +324,10 @@ class BiodataSantriResource extends Resource
                     ->sortable(),
                 TextColumn::make('kotaLahir.nama')
                     ->label('Tempat Lahir')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('user.kelas')
+                    ->label('Kelas')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('tanggal_lahir')

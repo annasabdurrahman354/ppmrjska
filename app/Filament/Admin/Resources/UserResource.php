@@ -403,6 +403,7 @@ class UserResource extends Resource
             ->columns([
                 TextColumn::make('id')
                     ->label('ID')
+                    ->visible(isSuperAdmin())
                     ->searchable(),
                 TextColumn::make('nama')
                     ->label('Nama Lengkap')

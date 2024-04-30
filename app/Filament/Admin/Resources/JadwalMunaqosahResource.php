@@ -91,7 +91,7 @@ class JadwalMunaqosahResource extends Resource
                                     ->preload()
                                     ->placeholder('Pilih santri sesuai kelas munaqosah...')
                                     ->getSearchResultsUsing(function (string $search, Get $get): array{
-                                        $materiMunaqosah = MateriMunaqosah::find($get('../../materi_munaqosah_id'));
+                                        $materiMunaqosah = MateriMunaqosah::where('id', $get('../../materi_munaqosah_id'));
                                         $kelas = $materiMunaqosah->kelas;
                                         return User::where('kelas', $kelas)
                                             ->where('nama', 'like', "%{$search}%")

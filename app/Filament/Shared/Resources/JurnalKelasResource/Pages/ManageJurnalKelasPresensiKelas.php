@@ -122,19 +122,19 @@ class ManageJurnalKelasPresensiKelas extends ManageRelatedRecords
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
-                    ->hidden(isNotSuperAdmin()),
+                    ->visible(isSuperAdmin()),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
-                    ->hidden(isNotSuperAdmin()),
+                    ->visible(isSuperAdmin()),
                 Tables\Actions\EditAction::make()
-                    ->hidden(isNotSuperAdmin()),
+                    ->visible(isSuperAdmin()),
                 Tables\Actions\DeleteAction::make()
-                    ->hidden(isNotSuperAdmin()),
+                    ->visible(isSuperAdmin()),
             ])
             ->groupedBulkActions([
                 Tables\Actions\DeleteBulkAction::make()
-                    ->hidden(isNotSuperAdmin()),
+                    ->visible(isSuperAdmin()),
             ]);
     }
 }

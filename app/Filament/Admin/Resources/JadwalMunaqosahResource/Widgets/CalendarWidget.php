@@ -10,6 +10,9 @@ use App\Models\MateriMunaqosah;
 use App\Models\User;
 use Awcodes\Shout\Components\Shout;
 use Filament\Actions\Action;
+use Filament\Widgets\Concerns\InteractsWithPageFilters;
+use Illuminate\Database\Eloquent\Builder;
+use Livewire\Attributes\On;
 use Saade\FilamentFullCalendar\Actions\CreateAction;
 use Saade\FilamentFullCalendar\Actions\DeleteAction;
 use Saade\FilamentFullCalendar\Actions\EditAction;
@@ -29,6 +32,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class CalendarWidget extends FullCalendarWidget
 {
+    use InteractsWithPageFilters;
+
     public Model | string | null $model = JadwalMunaqosah::class;
 
     protected function getFormModel(): Model|string|null
@@ -38,7 +43,7 @@ class CalendarWidget extends FullCalendarWidget
 
     public function resolveEventRecord(array $data): JadwalMunaqosah
     {
-        return JadwalMunaqosah::find($data['id']);
+        return JadwalMunaqosah::where('id', $data['id']);
     }
 
     protected function getTablePage(): string
@@ -64,8 +69,6 @@ class CalendarWidget extends FullCalendarWidget
             )
             ->all();
     }
-
-
 
     protected function headerActions(): array
     {
@@ -174,7 +177,7 @@ class CalendarWidget extends FullCalendarWidget
                                 ->preload()
                                 ->placeholder('Pilih santri sesuai kelas munaqosah...')
                                 ->getSearchResultsUsing(function (string $search, Get $get): array{
-                                    $materiMunaqosah = MateriMunaqosah::find($get('../../materi_munaqosah_id'));
+                                    $materiMunaqosah = MateriMunaqosah::where('id', $get('../../materi_munaqosah_id'));
                                     $kelas = $materiMunaqosah->kelas;
                                     return User::where('kelas', $kelas)
                                         ->where('nama', 'like', "%{$search}%")
@@ -199,19 +202,5 @@ class CalendarWidget extends FullCalendarWidget
                         ->live()
                 ])
         ];
-    }
-
-    public function eventDidMount(): string
-    {
-        return <<<JS
-            function(info) {
-              var tooltip = new Tooltip(info.el, {
-                title: info.event.extendedProps.description,
-                placement: 'top',
-                trigger: 'hover',
-                container: 'body'
-              });
-            }
-        JS;
     }
 }

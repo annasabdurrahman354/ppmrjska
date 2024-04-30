@@ -14,13 +14,15 @@ class CreateBiodataSantri extends CreateRecord
         $index = strpos($string, "-");
         return substr($string, 0, $index);
       }
-      
-    function get_after_dash($string) {
+
+    function get_after_dash($string): string
+    {
         $index = strpos($string, "-");
         return substr($string, $index + 1);
     }
 
-    function matchPatterProgramStudi($string) {
+    function matchPatterProgramStudi($string): bool
+    {
         $pattern = '/^[a-zA-Z]\d-\w+$/';
 
         if (preg_match($pattern, $string)) {

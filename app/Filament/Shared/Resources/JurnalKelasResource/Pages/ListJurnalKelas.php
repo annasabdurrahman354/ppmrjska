@@ -21,7 +21,7 @@ class ListJurnalKelas extends ListRecords
             Actions\CreateAction::make(),
             Action::make('createUsingQRCode')
                 ->label('Buat dengan QRCode')
-                ->hidden(cant('create_jurnal::kelas'))
+                ->visible(can('create_jurnal::kelas'))
                 ->action('createUsingQRCode')
                 ->color('secondary'),
         ];
@@ -58,7 +58,7 @@ class ListJurnalKelas extends ListRecords
         $user =  auth()->user();
         $model = (new (static::$resource::getModel()))->query();
 
-        if (isNotSuperAdmin() || !isKeilmuan()){
+        if (isNotSuperAdmin() && !isKeilmuan()){
             $model = $model->where('jenis_kelamin', $user->jenis_kelamin);
         }
 

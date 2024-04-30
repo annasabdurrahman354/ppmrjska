@@ -43,6 +43,7 @@ class AdminPanelProvider extends PanelProvider
             ->databaseNotifications()->databaseNotificationsPolling('30s')
             ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\\Filament\\Admin\\Resources')
+            ->discoverResources(in: app_path('Filament/Shared/Resources'), for: 'App\\Filament\\Shared\\Resources')
             ->resources([
                 config('filament-logger.activity_resource')
             ])
@@ -78,11 +79,11 @@ class AdminPanelProvider extends PanelProvider
                     ->config(['dayGrid', 'timeGrid']),
                 QuickCreatePlugin::make()
                     ->includes([
-                        \App\Filament\Admin\Resources\UserResource::class,
-                        \App\Filament\Admin\Resources\KurikulumResource::class,
-                        \App\Filament\Admin\Resources\JurnalKelasResource::class,
+                        \App\Filament\Shared\Resources\JurnalKelasResource::class,
                         \App\Filament\Admin\Resources\MateriMunaqosahResource::class,
                         \App\Filament\Admin\Resources\JadwalMunaqosahResource::class,
+                        \App\Filament\Admin\Resources\KurikulumResource::class,
+                        \App\Filament\Admin\Resources\UserResource::class,
                     ]),
                 FilamentExceptionsPlugin::make(),
                 FilamentShieldPlugin::make()
