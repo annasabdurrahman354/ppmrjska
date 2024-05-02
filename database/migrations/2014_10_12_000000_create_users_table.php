@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('nomor_telepon', 16)->unique();
             $table->string('email', 96)->unique();
             $table->string('kelas');
-            $table->unsignedSmallInteger('angkatan_pondok');
+            $table->unsignedInteger('angkatan_pondok');
             $table->string('status_pondok');
             $table->date('tanggal_lulus_pondok')->nullable();
             $table->string('password');

@@ -2,7 +2,6 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -10,20 +9,23 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-
     public function up(): void
     {
         Schema::disableForeignKeyConstraints();
 
-        Schema::create('biodata_santri', function (Blueprint $table) {
+        Schema::table('calon_santri', function (Blueprint $table) {
             $table->ulid('id')->primary();
-            $table->foreignUlid('user_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
-            $table->unsignedInteger('tahun_pendaftaran');
-
+            $table->foreignUlid('gelombang_pendaftaran_id')->nullable()->references('id')->on('gelombang_pendaftaran')->cascadeOnUpdate()->nullOnDelete();
+            $table->string('nama', 96);
+            $table->string('nama_panggilan', 64);
+            $table->string('jenis_kelamin');
+            $table->string('nomor_telepon', 16);
+            $table->string('email', 96);
             $table->string('nik', 16)->unique();
             $table->unsignedSmallInteger('tempat_lahir_id');
             $table->foreign('tempat_lahir_id')->references('id')->on('kota');
             $table->date('tanggal_lahir');
+            $table->boolean('status_mubaligh');
             $table->string('kewarganegaraan');
             $table->string('golongan_darah');
             $table->string('ukuran_baju');
@@ -44,16 +46,6 @@ return new class extends Migration
             $table->foreign('kecamatan_id')->references('id')->on('kecamatan');
             $table->unsignedBigInteger('kelurahan_id');
             $table->foreign('kelurahan_id')->references('id')->on('kelurahan');
-
-            $table->string('alamat');
-            $table->unsignedBigInteger('kelurahan_id');
-            $table->foreign('kelurahan_id')->references('id')->on('kelurahan');
-            $table->unsignedBigInteger('kecamatan_id');
-            $table->foreign('kecamatan_id')->references('id')->on('kecamatan');
-            $table->unsignedSmallInteger('kota_id');
-            $table->foreign('kota_id')->references('id')->on('kota');
-            $table->unsignedTinyInteger('provinsi_id');
-            $table->foreign('provinsi_id')->references('id')->on('provinsi');
 
             $table->string('asal_kelompok', 96);
             $table->string('asal_desa', 96);
@@ -82,11 +74,12 @@ return new class extends Migration
         Schema::enableForeignKeyConstraints();
     }
 
+
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('biodata_santri');
+        Schema::dropIfExists('calon_santri');
     }
 };

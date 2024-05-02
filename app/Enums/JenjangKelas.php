@@ -5,7 +5,7 @@ use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
 enum JenjangKelas : string implements HasLabel, HasColor {
-    case PEGON_BACAAN = 'pegon_bacaan';
+    case PEGON_BACAAN = 'pegon bacaan';
     case LAMBATAN = 'lambatan';
     case CEPATAN = 'cepatan';
     case SARINGAN = 'saringan';

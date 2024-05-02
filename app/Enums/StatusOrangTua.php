@@ -8,7 +8,7 @@ enum StatusOrangTua : string implements HasLabel, HasColor {
     case LENGKAP = 'lengkap';
     case YATIM = 'yatim';
     case PIATU = 'piatu';
-    case YATIM_PIATU = 'yatim_piatu';
+    case YATIM_PIATU = 'yatim piatu';
 
     public function getLabel(): ?string
     {

@@ -2,37 +2,36 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePendaftaranTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
+
         Schema::create('pendaftaran', function (Blueprint $table) {
-            $table->id();
-            $table->string('ulid', 26)->unique();
-            $table->unsignedInteger('tahun');
-            $table->unsignedInteger('jumlah_gelombang');
-            $table->json('kontak_panitia');
-            $table->json('kontak_pengurus');
+            $table->ulid('id')->primary();
+            $table->unsignedInteger('tahun_pendaftaran');
+            $table->json('kontak_panitia')->default([]);
+            $table->json('kontak_pengurus')->default([]);
+            $table->json('berkas_pendaftaran')->default([]);
+            $table->json('indikator_penilaian')->default([]);
             $table->softDeletes();
             $table->timestamps();
         });
+
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('pendaftaran');
     }
-}
+};

@@ -6,8 +6,8 @@ use Filament\Support\Contracts\HasLabel;
 
 enum Sesi : string implements HasLabel, HasColor {
     case SUBUH = 'subuh';
-    case PAGI_1 = 'pagi_1';
-    case PAGI_2 = 'pagi_2';
+    case PAGI_1 = 'pagi 1';
+    case PAGI_2 = 'pagi 2';
     case SIANG = 'siang';
     case MALAM = 'malam';
 

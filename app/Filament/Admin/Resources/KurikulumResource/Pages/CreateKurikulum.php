@@ -10,7 +10,7 @@ class CreateKurikulum extends CreateRecord
     protected static string $resource = KurikulumResource::class;
 
     protected function mutateFormDataBeforeCreate(array $data): array
-{
+    {
         $semester = 1;
         $temp = [];
         $tempKurikulum = [];

@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Enums\BahasaMakna;
 use App\Enums\GolonganDarah;
+use App\Enums\JenisKelamin;
 use App\Enums\Kewarganegaraan;
 use App\Enums\MulaiMengaji;
 use App\Enums\PendidikanTerakhir;
+use App\Enums\StatusKuliah;
 use App\Enums\StatusOrangTua;
 use App\Enums\StatusPernikahan;
 use App\Enums\StatusTinggal;
@@ -30,40 +33,43 @@ class CalonSantri extends Model
     protected $fillable = [
         'gelombang_pendaftaran_id',
         'nama',
-        'nik',
+        'nama_panggilan',
+        'jenis_kelamin',
         'nomor_telepon',
         'email',
-        'jenis_kelamin',
-        'tempat_lahir',
+        'nik',
+        'status_mubaligh',
+        'tempat_lahir_id',
         'tanggal_lahir',
         'golongan_darah',
         'ukuran_baju',
-        'kewarganegaraan',
-        'status_menikah',
-        'status_orangtua',
-        'status_tinggal',
-        'anak_ke',
-        'jumlah_saudara',
         'pendidikan_terakhir',
-        'prodi',
+        'program_studi',
         'universitas',
         'angkatan_kuliah',
+        'status_kuliah',
+        'tanggal_lulus_kuliah',
         'alamat',
-        'provinsi_id',
-        'kota_id',
-        'kecamatan_id',
         'kelurahan_id',
-        'daerah',
-        'desa',
-        'kelompok',
+        'kecamatan_id',
+        'kota_id',
+        'provinsi_id',
+        'asal_kelompok',
+        'asal_desa',
+        'asal_daerah',
         'mulai_mengaji',
+        'bahasa_makna',
+        'kewarganegaraan',
+        'status_pernikahan',
+        'status_tinggal',
+        'status_orangtua',
+        'anak_nomor',
+        'jumlah_saudara',
         'nama_ayah',
-        'alamat_ayah',
         'nomor_telepon_ayah',
         'pekerjaan_ayah',
         'dapukan_ayah',
         'nama_ibu',
-        'alamat_ibu',
         'nomor_telepon_ibu',
         'pekerjaan_ibu',
         'dapukan_ibu',
@@ -75,60 +81,56 @@ class CalonSantri extends Model
      * @var array
      */
     protected $casts = [
-        'gelombang_pendaftaran_id' => 'integer',
-        'nama' => 'string',
-        'nik' => 'integer',
-        'nomor_telepon' => 'string',
-        'email' => 'string',
-        'jenis_kelamin' => 'boolean',
-        'tempat_lahir' => 'string',
+        'status_mubaligh' => 'boolean',
+        'jenis_kelamin' => JenisKelamin::class,
         'tanggal_lahir' => 'date',
         'golongan_darah' => GolonganDarah::class,
         'ukuran_baju' => UkuranBaju::class,
-        'kewarganegaraan' => Kewarganegaraan::class,
-        'status_menikah' => StatusPernikahan::class,
-        'status_orangtua' => StatusOrangTua::class,
-        'status_tinggal' => StatusTinggal::class,
-        'anak_ke' => 'integer',
-        'jumlah_saudara' => 'integer',
         'pendidikan_terakhir' => PendidikanTerakhir::class,
-        'prodi' => 'string',
-        'universitas' => 'string',
         'angkatan_kuliah' => 'integer',
-        'alamat' => 'string',
-        'daerah' => 'string',
-        'desa' => 'string',
-        'kelompok' => 'string',
+        'status_kuliah' => StatusKuliah::class,
+        'tanggal_lulus_kuliah' => 'date',
+        'kelurahan_id' => 'integer',
+        'kecamatan_id' => 'integer',
+        'kota_id' => 'integer',
+        'provinsi_id' => 'integer',
         'mulai_mengaji' => MulaiMengaji::class,
-        'nama_ayah' => 'string',
-        'alamat_ayah' => 'string',
-        'nomor_telepon_ayah' => 'string',
-        'pekerjaan_ayah' => 'string',
-        'dapukan_ayah' => 'string',
-        'nama_ibu' => 'string',
-        'alamat_ibu' => 'string',
-        'nomor_telepon_ibu' => 'string',
-        'pekerjaan_ibu' => 'string',
-        'dapukan_ibu' => 'string',
+        'bahasa_makna' => BahasaMakna::class,
+        'kewarganegaraan' => Kewarganegaraan::class,
+        'status_pernikahan' => StatusPernikahan::class,
+        'status_tinggal' => StatusTinggal::class,
+        'status_orangtua' => StatusOrangTua::class,
+        'anak_nomor' => 'integer',
+        'jumlah_saudara' => 'integer',
     ];
+
+    public function gelombangPendaftaran(): BelongsTo
+    {
+        return $this->belongsTo(GelombangPendaftaran::class, 'gelombang_pendaftaran_id');
+    }
 
     public function kelurahan(): BelongsTo
     {
-        return $this->belongsTo(Kelurahan::class);
+        return $this->belongsTo(Kelurahan::class, 'kelurahan_id');
     }
 
     public function kecamatan(): BelongsTo
     {
-        return $this->belongsTo(Kecamatan::class);
+        return $this->belongsTo(Kecamatan::class, 'kecamatan_id');
     }
 
     public function kota(): BelongsTo
     {
-        return $this->belongsTo(Kota::class);
+        return $this->belongsTo(Kota::class, 'kota_id');
     }
 
     public function provinsi(): BelongsTo
     {
         return $this->belongsTo(Provinsi::class, 'provinsi_id');
+    }
+
+    public function tempatLahir(): BelongsTo
+    {
+        return $this->belongsTo(Kota::class, 'tempat_lahir_id');
     }
 }

@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
@@ -21,10 +20,11 @@ class Pendaftaran extends Model
      */
 
     protected $fillable = [
-        'tahun',
-        'jumlah_gelombang',
+        'tahun_pendaftaran',
         'kontak_panitia',
         'kontak_pengurus',
+        'berkas_pendaftaran',
+        'indikator_penilaian',
     ];
 
      /**
@@ -33,16 +33,12 @@ class Pendaftaran extends Model
      * @var array
      */
     protected $casts = [
-        'tahun' => 'integer',
-        'jumlah_gelombang' => 'integer',
+        'tahun_pendaftaran' => 'integer',
         'kontak_panitia' => 'array',
         'kontak_pengurus' => 'array',
+        'berkas_pendaftaran' => 'array',
+        'indikator_penilaian' => 'array',
     ];
-
-    public function pendaftaran(): BelongsTo
-    {
-        return $this->belongsTo(Pendaftaran::class);
-    }
 
     public function gelombangPendaftaran(): HasMany
     {

@@ -7,6 +7,7 @@ use App\Enums\StatusKepemilikan;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Asrama extends Model
@@ -28,7 +29,7 @@ class Asrama extends Model
         'pemilik',
         'kontak_pemilik',
         'status_kepemilikan',
-        
+
     ];
 
     /**
@@ -43,5 +44,10 @@ class Asrama extends Model
         'biaya_kamar' => 'array',
         'status_kepemilikan' => StatusKepemilikan::class,
     ];
-   
+
+
+    public function kamarAsrama(): HasMany
+    {
+        return $this->hasMany(KamarAsrama::class);
+    }
 }

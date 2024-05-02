@@ -5,9 +5,9 @@ use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
 enum PembayaranMelalui : string implements HasLabel, HasColor {
-    case BENDAHARA_DMC_PASUS = 'bendahara_dmc_pasus';
-    case BENDAHARA_PPM = 'bendahara_ppm';
-    case TRANSFER_BANK = 'transfer_bank';
+    case BENDAHARA_DMC_PASUS = 'bendahara dmc pasus';
+    case BENDAHARA_PPM = 'bendahara ppm';
+    case TRANSFER_BANK = 'transfer bank';
 
     public function getLabel(): ?string
     {

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
@@ -22,10 +23,9 @@ class GelombangPendaftaran extends Model
     protected $fillable = [
         'pendaftaran_id',
         'nomor_gelombang',
-        'tanggal_awal_pendaftaran',
-        'tanggal_akhir_pendaftaran',
-        'tanggal_tes',
-        'tanggal_pengumuman',
+        'batas_awal_pendaftaran',
+        'batas_akhir_pendaftaran',
+        'rundown',
         'link_grup',
     ];
 
@@ -36,15 +36,18 @@ class GelombangPendaftaran extends Model
      */
     protected $casts = [
         'nomor_gelombang' => 'integer',
-        'tanggal_awal_pendaftaran' => 'date',
-        'tanggal_akhir_pendaftaran' => 'date',
-        'tanggal_tes' => 'date',
-        'tanggal_pengumuman' => 'date',
-        'link_grup' => 'string',
+        'batas_awal_pendaftaran' => 'date',
+        'batas_akhir_pendaftaran' => 'date',
+        'rundown' => 'array',
     ];
 
     public function calonSantri(): HasMany
     {
         return $this->hasMany(CalonSantri::class);
+    }
+
+    public function pendaftaran(): BelongsTo
+    {
+        return $this->belongsTo(Pendaftaran::class, 'pendaftaran_id');
     }
 }

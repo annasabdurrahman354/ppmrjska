@@ -31,7 +31,7 @@ class UserFactory extends Factory
             'email' => $this->faker->safeEmail(),
             'kelas' => $this->faker->randomElement(["2021","2022","2023","Takmili"]),
             'angkatan_pondok' => $this->faker->numberBetween(2021, 2023),
-            'status_pondok' => $this->faker->randomElement(["aktif", "lulus"]),
+            'status_pondok' => $this->faker->randomElement(["aktif", "sambang", "keluar", "lulus"]),
             'tanggal_lulus_pondok' => null,
             'password' => static::$password ??= Hash::make('password'),
             'email_verified_at' => now(),

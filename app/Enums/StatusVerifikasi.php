@@ -5,7 +5,7 @@ use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
 enum StatusVerifikasi : string implements HasLabel, HasColor {
-    case BELUM_TERVERIFIKASI = 'belum_terverifikasi';
+    case BELUM_TERVERIFIKASI = 'belum terverifikasi';
     case TERVERIFIKASI = 'terverifikasi';
     case DITOLAK = 'ditolak';
 

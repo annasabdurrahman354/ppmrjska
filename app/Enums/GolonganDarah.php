@@ -9,7 +9,7 @@ enum GolonganDarah : string implements HasLabel, HasColor {
     case B = 'b';
     case AB = 'ab';
     case O = 'o';
-    case BELUM_DIKETAHUI = 'belum_diketahui';
+    case BELUM_DIKETAHUI = 'belum diketahui';
 
     public function getLabel(): ?string
     {

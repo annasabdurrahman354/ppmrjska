@@ -6,7 +6,7 @@ use Filament\Support\Contracts\HasLabel;
 
 enum PendidikanTerakhir: string implements HasLabel, HasColor{
     case SMA = 'sma';
-    case PAKET_C = 'paket_c';
+    case PAKET_C = 'paket c';
     case S1 = 's1';
     case S2 = 's2';
     case D1 = 'd1';

@@ -5,8 +5,8 @@ use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
 enum StatusTagihan : string implements HasLabel, HasColor {
-    case BELUM_BAYAR = 'belum_bayar';
-    case BELUM_LUNAS = 'belum_lunas';
+    case BELUM_BAYAR = 'belum bayar';
+    case BELUM_LUNAS = 'belum lunas';
     case LUNAS = 'lunas';
     case KELEBIHAN = 'kelebihan';
 

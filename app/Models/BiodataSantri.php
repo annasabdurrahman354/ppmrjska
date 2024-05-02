@@ -22,7 +22,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class BiodataSantri extends Model
 {
     use HasFactory, HasUlids, SoftDeletes;
-    
+
     protected $table = 'biodata_santri';
 
     /**
@@ -34,7 +34,7 @@ class BiodataSantri extends Model
         'user_id',
         'tahun_pendaftaran',
         'nik',
-        'kota_lahir_id',
+        'tempat_lahir_id',
         'tanggal_lahir',
         'golongan_darah',
         'ukuran_baju',
@@ -78,24 +78,24 @@ class BiodataSantri extends Model
     protected $casts = [
         'tahun_pendaftaran' => 'integer',
         'tanggal_lahir' => 'date',
+        'golongan_darah' => GolonganDarah::class,
+        'ukuran_baju' => UkuranBaju::class,
+        'pendidikan_terakhir' => PendidikanTerakhir::class,
         'angkatan_kuliah' => 'integer',
+        'status_kuliah' => StatusKuliah::class,
         'tanggal_lulus_kuliah' => 'date',
         'kelurahan_id' => 'integer',
         'kecamatan_id' => 'integer',
         'kota_id' => 'integer',
         'provinsi_id' => 'integer',
-        'anak_nomor' => 'integer',
-        'jumlah_saudara' => 'integer',
-        'golongan_darah' => GolonganDarah::class,
-        'ukuran_baju' => UkuranBaju::class,
-        'pendidikan_terakhir' => PendidikanTerakhir::class,
-        'status_kuliah' => StatusKuliah::class,
         'mulai_mengaji' => MulaiMengaji::class,
         'bahasa_makna' => BahasaMakna::class,
         'kewarganegaraan' => Kewarganegaraan::class,
         'status_pernikahan' => StatusPernikahan::class,
         'status_tinggal' => StatusTinggal::class,
         'status_orangtua' => StatusOrangTua::class,
+        'anak_nomor' => 'integer',
+        'jumlah_saudara' => 'integer',
     ];
 
     public function user(): BelongsTo
@@ -108,24 +108,24 @@ class BiodataSantri extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function kotaLahir()
+    public function tempatLahir(): BelongsTo
     {
-        return $this->belongsTo(Kota::class, 'kota_lahir_id');
+        return $this->belongsTo(Kota::class, 'tempat_lahir_id');
     }
 
     public function kelurahan(): BelongsTo
     {
-        return $this->belongsTo(Kelurahan::class);
+        return $this->belongsTo(Kelurahan::class, 'kelurahan_id');
     }
 
     public function kecamatan(): BelongsTo
     {
-        return $this->belongsTo(Kecamatan::class);
+        return $this->belongsTo(Kecamatan::class, 'kecamatan_id');
     }
 
     public function kota(): BelongsTo
     {
-        return $this->belongsTo(Kota::class);
+        return $this->belongsTo(Kota::class, 'kota_id');
     }
 
     public function provinsi(): BelongsTo

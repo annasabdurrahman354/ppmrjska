@@ -13,9 +13,11 @@ return new class extends Migration
     {
         Schema::disableForeignKeyConstraints();
 
-        Schema::create('kurikulum', function (Blueprint $table) {
+        Schema::create('plot_kurikulum', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('angkatan_pondok');
+            $table->foreignId('kurikulum_id')->references('id')->on('kurikulum')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->string('jenjang_kelas');
+            $table->unsignedTinyInteger('semester');
             $table->timestamps();
             $table->softDeletes();
         });

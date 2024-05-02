@@ -6,15 +6,15 @@ use App\Enums\JenjangKelas;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Kurikulum extends Model
+class PlotKurikulum extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'kurikulum';
+    protected $table = 'plot_kurikulum';
 
     /**
      * The attributes that are mass assignable.
@@ -22,7 +22,9 @@ class Kurikulum extends Model
      * @var array
      */
     protected $fillable = [
-        'angkatan_pondok',
+        'kurikulum_id',
+        'jenjang_kelas',
+        'semester'
     ];
 
     /**
@@ -31,11 +33,17 @@ class Kurikulum extends Model
      * @var array
      */
     protected $casts = [
-        'angkatan_pondok' => 'integer',
+        'jenjang_kelas' => JenjangKelas::class,
+        'semester' => 'integer'
     ];
 
-    public function plotKurikulum(): HasMany
+    public function kurikulum(): BelongsTo
     {
-        return $this->hasMany(PlotKurikulum::class);
+       return $this->belongsTo(Kurikulum::class, 'kurikulum_id');
+    }
+
+    public function plotKurikulumMateri(): HasMany
+    {
+        return $this->hasMany(PlotKurikulumMateri::class);
     }
 }

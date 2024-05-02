@@ -28,14 +28,14 @@ class JurnalKelasFactory extends Factory
     public function definition(): array
     {
         $materi = $this->faker->randomElement([
-            
+
         ]);
 
         return [
             'kelas' => $this->faker->randomElement([['2021'],['2022'],['2023'],['2021', '2022', '2023', 'Takmili'], ['2021', '2022']]),
             'jenis_kelamin' => $this->faker->randomElement(["laki-laki","perempuan"]),
             'tanggal' => $this->faker->date(),
-            'sesi' => $this->faker->randomElement(["subuh","pagi_1","pagi_2","siang","malam"]),
+            'sesi' => $this->faker->randomElement(["subuh","pagi 1","pagi 2","siang","malam"]),
             'dewan_guru_id' => DewanGuru::factory(),
             'dewan_guru_type' => DewanGuru::class,
             'materi_awal_id' => MateriSurat::factory(),

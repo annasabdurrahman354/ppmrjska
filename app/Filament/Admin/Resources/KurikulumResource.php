@@ -51,8 +51,9 @@ class KurikulumResource extends Resource
                         ->minValue(2015)
                         ->columnSpanFull(),
 
-                Repeater::make('plot_kurikulum')
+                Repeater::make('plotKurikulum')
                     ->hiddenLabel()
+                    ->relationship('plotKurikulum')
                     ->itemLabel(function ($uuid, $component) {
                         $keys = array_keys($component->getState());
                         $index = array_search($uuid, $keys);
@@ -62,12 +63,17 @@ class KurikulumResource extends Resource
                         Select::make('jenjang_kelas')
                             ->required()
                             ->options(JenjangKelas::class),
+                        TextInput::make('semester')
+                            ->hidden()
+                            ->numeric(),
                         Shout::make('st-empty')
                             ->content('Belum ada plotingan materi kurikulum!')
                             ->type('info')
                             ->color(Color::Yellow)
                             ->visible(fn(Get $get) => !filled($get('plot_materi'))),
-                        Repeater::make('plot_materi')
+                        Repeater::make('plotKurikulumMateri')
+                            ->hiddenLabel()
+                            ->relationship('plotKurikulumMateri')
                             ->schema([
                                 ToggleButtons::make('materi_type')
                                     ->hiddenLabel()

@@ -10,7 +10,7 @@ enum StatusKehadiranSaya : string implements HasLabel, HasColor {
     case IZIN = 'izin';
     case SAKIT = 'sakit';
     case ALPA = 'alpa';
-    case BUKANKELAS = 'bukan_kelas';
+    case BUKANKELAS = 'bukan kelas';
 
     public function getLabel(): ?string
     {

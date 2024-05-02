@@ -5,8 +5,8 @@ use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
 enum StatusTinggal : string implements HasLabel, HasColor {
-    case BERSAMA_ORANG_TUA = 'bersama_orang_tua';
-    case BERSAMA_WALI = 'bersama_wali';
+    case BERSAMA_ORANG_TUA = 'bersama orang tua';
+    case BERSAMA_WALI = 'bersama wali';
     case MANDIRI = 'mandiri';
 
     public function getLabel(): ?string

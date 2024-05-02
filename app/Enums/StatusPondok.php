@@ -7,7 +7,7 @@ use Filament\Support\Contracts\HasLabel;
 enum StatusPondok : string implements HasLabel, HasColor {
     case AKTIF = 'aktif';
     case SAMBANG = 'sambang';
-    case KEPERLUAN_AKADEMIK = 'keperluan_akademik';
+    case KEPERLUAN_AKADEMIK = 'keperluan akademik';
     case NONAKTIF = 'nonaktif';
     case LULUS = 'lulus';
     case KELUAR = 'keluar';

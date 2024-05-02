@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Admin\Resources;
+namespace App\Filament\PPSB\Resources;
 
 use App\Enums\BahasaMakna;
 use App\Enums\GolonganDarah;
@@ -12,8 +12,8 @@ use App\Enums\StatusOrangTua;
 use App\Enums\StatusPernikahan;
 use App\Enums\StatusTinggal;
 use App\Enums\UkuranBaju;
-use App\Filament\Admin\Resources\BiodataSantriResource\Pages;
-use App\Models\BiodataSantri;
+use App\Filament\PPSB\Resources\CalonSantriResource\Pages;
+use App\Models\CalonSantri;
 use App\Models\Kecamatan;
 use App\Models\Kelurahan;
 use App\Models\Kota;
@@ -30,16 +30,14 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Guava\FilamentClusters\Forms\Cluster;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
-class BiodataSantriResource extends Resource
+class CalonSantriResource extends Resource
 {
-    protected static ?string $model = BiodataSantri::class;
-    protected static ?string $slug = 'biodata-santri';
-    protected static ?string $modelLabel = 'Biodata Santri';
-    protected static ?string $pluralModelLabel = 'Biodata Santri';
-    protected static ?string $navigationLabel = 'Biodata Santri';
+    protected static ?string $model = CalonSantri::class;
+    protected static ?string $slug = 'calon-santri';
+    protected static ?string $modelLabel = 'Calon Santri';
+    protected static ?string $pluralModelLabel = 'Calon Santri';
+    protected static ?string $navigationLabel = 'Calon Santri';
     protected static ?string $recordTitleAttribute = 'recordTitle';
 
     protected static ?string $navigationGroup = 'Manajemen Pengguna';
@@ -52,21 +50,8 @@ class BiodataSantriResource extends Resource
             ->schema([
                 Section::make('Data Pribadi')
                     ->schema([
-                        Select::make('user_id')
-                            ->label('Pemilik Biodata')
-                            ->required()
-                            ->options(fn ($record): Collection =>
-                                DB::table('users')
-                                    ->whereNotIn('id', DB::table('biodata_santri')->select('user_id')->where('user_id', '!=',  $record->user_id ?? '')->get()->pluck('user_id'))
-                                    ->get()
-                                    ->pluck('nama', 'id')
-                            )
-                            ->disabledOn('edit')
-                            ->searchable(),
-                        TextInput::make('tahun_pendaftaran')
-                            ->label('Tahun Pendaftaran')
-                            ->required()
-                            ->numeric(),
+                        //TODO gelombang_pendaftaran_id, nama, nama_panggilan, jenis_kelamin, nomor_telepom, email
+
                         TextInput::make('nik')
                             ->label('Nomor Induk Kewarganegaraan')
                             ->required()
@@ -80,6 +65,9 @@ class BiodataSantriResource extends Resource
                         DatePicker::make('tanggal_lahir')
                             ->label('Tanggal Lahir')
                             ->required(),
+
+                        //TODO status_mubaligh
+
                         Select::make('kewarganegaraan')
                             ->label('Kewarganegaraan')
                             ->required()
@@ -315,18 +303,9 @@ class BiodataSantriResource extends Resource
                     ->label('ID')
                     ->visible(isSuperAdmin())
                     ->searchable(),
-                TextColumn::make('user.nama')
-                    ->label('Nama')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('user.kelas')
-                    ->label('Kelas')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('tahun_pendaftaran')
-                    ->label('Tahun Pendaftaran')
-                    ->searchable()
-                    ->sortable(),
+
+                //TODO gelombang_pendaftaran->tahun, gelombang_pendaftaran->gelombang, nama, nama_panggilan, jenis_kelamin, nomor_telepon, email
+
                 TextColumn::make('nik')
                     ->label('Nomor Induk Kewarganegaraan')
                     ->searchable()
@@ -340,6 +319,9 @@ class BiodataSantriResource extends Resource
                     ->date()
                     ->searchable()
                     ->sortable(),
+
+                //TODO status_mubaligh (boolean)
+
                 TextColumn::make('kewarganegaraan')
                     ->label('Kewarganegaraan')
                     ->badge()
@@ -522,9 +504,9 @@ class BiodataSantriResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListBiodataSantris::route('/'),
-            'create' => Pages\CreateBiodataSantri::route('/create'),
-            'edit' => Pages\EditBiodataSantri::route('/{record}/edit'),
+            'index' => Pages\ListCalonSantri::route('/'),
+            'create' => Pages\CreateCalonSantri::route('/create'),
+            'edit' => Pages\EditCalonSantri::route('/{record}/edit'),
         ];
     }
 }

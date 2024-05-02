@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\StatusPenerimaan;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -22,10 +23,8 @@ class PenilaianCalonSantri extends Model
     protected $fillable = [
         'calon_santri_id',
         'penguji_id',
-        'nilai_bacaan',
-        'nilai_pegon',
-        'nilai_pengetahuan',
-        'nilai_wawasan',
+        'nilai_tes',
+        'nilai_akhir',
         'catatan_penguji',
         'rekomendasi_penguji',
         'status_penerimaan',
@@ -38,22 +37,20 @@ class PenilaianCalonSantri extends Model
      */
 
      protected $casts = [
-        'nilai_bacaan' => 'integer',
-        'nilai_pegon' => 'integer',
-        'nilai_pengetahuan' => 'integer',
-        'nilai_wawasan' => 'integer',
+        'nilai_tes' => 'array',
+        'nilai_akhir' => 'integer',
         'catatan_penguji' => 'string',
-        'rekomendasi_penguji' => 'string',
-        'status_penerimaan' => 'string',
+        'rekomendasi_penguji' => 'integer',
+        'status_penerimaan' => StatusPenerimaan::class,
     ];
 
     public function calonSantri(): BelongsTo
     {
-        return $this->belongsTo(CalonSantri::class);
+        return $this->belongsTo(CalonSantri::class, 'calon_santri_id');
     }
 
     public function penguji(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'penguji_id');
     }
 }
