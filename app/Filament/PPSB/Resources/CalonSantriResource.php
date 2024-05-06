@@ -4,6 +4,7 @@ namespace App\Filament\PPSB\Resources;
 
 use App\Enums\BahasaMakna;
 use App\Enums\GolonganDarah;
+use App\Enums\JenisKelamin;
 use App\Enums\Kewarganegaraan;
 use App\Enums\MulaiMengaji;
 use App\Enums\PendidikanTerakhir;
@@ -14,22 +15,29 @@ use App\Enums\StatusTinggal;
 use App\Enums\UkuranBaju;
 use App\Filament\PPSB\Resources\CalonSantriResource\Pages;
 use App\Models\CalonSantri;
+use App\Models\GelombangPendaftaran;
 use App\Models\Kecamatan;
 use App\Models\Kelurahan;
 use App\Models\Kota;
 use App\Models\Provinsi;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Guava\FilamentClusters\Forms\Cluster;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class CalonSantriResource extends Resource
 {
@@ -50,8 +58,32 @@ class CalonSantriResource extends Resource
             ->schema([
                 Section::make('Data Pribadi')
                     ->schema([
-                        //TODO gelombang_pendaftaran_id, nama, nama_panggilan, jenis_kelamin, nomor_telepom, email
-
+                        Select::make('gelombang_pendaftaran_id')
+                            ->label('Gelombang Pendaftaran')
+                            ->required()
+                            ->options(fn ($record): Collection =>
+                                GelombangPendaftaran::all()->pluck('name', 'id')
+                            )
+                            ->disabledOn('edit')
+                            ->searchable(),
+                        TextInput::make('nama')
+                            ->label('Nama')
+                            ->required(),
+                        TextInput::make('nama_panggilan')
+                            ->label('Nama Panggilan')
+                            ->required(),
+                        Select::make('jenis_kelamin')
+                            ->label('Jenis Kelamin')
+                            ->options(JenisKelamin::class)
+                            ->required(),
+                        TextInput::make('nomor_telepon')
+                            ->label('Nomor Telepon')
+                            ->tel()
+                            ->required(),
+                        TextInput::make('email')
+                            ->label('Email')
+                            ->email()
+                            ->required(),
                         TextInput::make('nik')
                             ->label('Nomor Induk Kewarganegaraan')
                             ->required()
@@ -65,9 +97,13 @@ class CalonSantriResource extends Resource
                         DatePicker::make('tanggal_lahir')
                             ->label('Tanggal Lahir')
                             ->required(),
-
-                        //TODO status_mubaligh
-
+                        ToggleButtons::make('status_mubaligh')
+                            ->label('Apakah sudah pernah mendapat ijazah mubaligh?')
+                            ->options([
+                                true => 'Sudah',
+                                false => 'Belum',
+                            ])
+                            ->required(),
                         Select::make('kewarganegaraan')
                             ->label('Kewarganegaraan')
                             ->required()
@@ -303,9 +339,34 @@ class CalonSantriResource extends Resource
                     ->label('ID')
                     ->visible(isSuperAdmin())
                     ->searchable(),
-
-                //TODO gelombang_pendaftaran->tahun, gelombang_pendaftaran->gelombang, nama, nama_panggilan, jenis_kelamin, nomor_telepon, email
-
+                TextColumn::make('gelombangPendaftaran.pendaftaran.tahun_pendaftaran')
+                    ->label('Tahun Pendaftaran')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('gelombangPendaftaran.nomor_gelombang')
+                    ->label('Tahun Pendaftaran')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('nama')
+                    ->label('Nama')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('nama_panggilan')
+                    ->label('Nama Panggilan')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('jenis_kelamin')
+                    ->label('Jenis Kelamin')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('nomor_telepon')
+                    ->label('Nomor Telepon')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('email')
+                    ->label('Email')
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('nik')
                     ->label('Nomor Induk Kewarganegaraan')
                     ->searchable()
@@ -319,9 +380,9 @@ class CalonSantriResource extends Resource
                     ->date()
                     ->searchable()
                     ->sortable(),
-
-                //TODO status_mubaligh (boolean)
-
+                ToggleColumn::make('status_mubaligh')
+                    ->label('Status Mubaligh')
+                    ->sortable(),
                 TextColumn::make('kewarganegaraan')
                     ->label('Kewarganegaraan')
                     ->badge()
@@ -483,9 +544,13 @@ class CalonSantriResource extends Resource
             ])
             ->filters([
                 //
-            ])
+            ], layout: Tables\Enums\FiltersLayout::AboveContentCollapsible)
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->visible(isSuperAdmin()),
+                Tables\Actions\ViewAction::make(),
+                Tables\Actions\Action::make('isiPenilaian')
+                    ->label('Penilaian')
             ])
             ->bulkActions([
                 //Tables\Actions\BulkActionGroup::make([
@@ -507,6 +572,7 @@ class CalonSantriResource extends Resource
             'index' => Pages\ListCalonSantri::route('/'),
             'create' => Pages\CreateCalonSantri::route('/create'),
             'edit' => Pages\EditCalonSantri::route('/{record}/edit'),
+            'view' => Pages\ViewCalonSantri::route('/{record}'),
         ];
     }
 }

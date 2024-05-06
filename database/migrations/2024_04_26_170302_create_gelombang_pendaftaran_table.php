@@ -20,7 +20,7 @@ return new class extends Migration
             $table->unsignedTinyInteger('nomor_gelombang');
             $table->date('batas_awal_pendaftaran');
             $table->date('batas_akhir_pendaftaran');
-            $table->json('rundown');
+            $table->json('timeline');
             $table->string('link_grup')->nullable();
             $table->timestamps();
             $table->softDeletes();

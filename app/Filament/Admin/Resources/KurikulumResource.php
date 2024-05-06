@@ -149,6 +149,9 @@ class KurikulumResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label('ID')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('angkatan_pondok')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')

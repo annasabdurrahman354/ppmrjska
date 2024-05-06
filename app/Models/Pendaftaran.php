@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
@@ -43,5 +44,10 @@ class Pendaftaran extends Model
     public function gelombangPendaftaran(): HasMany
     {
         return $this->hasMany(GelombangPendaftaran::class);
+    }
+
+    function calonSantri(): HasManyThrough
+    {
+        return $this->hasManyThrough(CalonSantri::class, GelombangPendaftaran::class);
     }
 }

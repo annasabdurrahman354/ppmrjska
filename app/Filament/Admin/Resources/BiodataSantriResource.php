@@ -106,25 +106,25 @@ class BiodataSantriResource extends Resource
                             ->options(PendidikanTerakhir::class),
 
                         Cluster::make([
-                            Select::make('program_studi_jenjang')
-                                ->options([
-                                    'S1' => 'S1',
-                                    'S2' => 'S2',
-                                    'S3' => 'S3',
-                                    'D3' => 'D3',
-                                    'D4' => 'D4',
-                                    'Profesi' => 'Profesi',
-                                ])
-                                ->default('S1')
-                                ->required(),
-                            TextInput::make('program_studi')
-                                ->label('Program Studi')
-                                ->required()
-                                ->maxLength(96)
-                                ->columnSpan(7)
-                                ->autocapitalize('words')
-                                ->datalist(getProgramStudiList()),
-                        ])
+                                Select::make('program_studi_jenjang')
+                                    ->options([
+                                        'S1' => 'S1',
+                                        'S2' => 'S2',
+                                        'S3' => 'S3',
+                                        'D3' => 'D3',
+                                        'D4' => 'D4',
+                                        'Profesi' => 'Profesi',
+                                    ])
+                                    ->default('S1')
+                                    ->required(),
+                                TextInput::make('program_studi')
+                                    ->label('Program Studi')
+                                    ->required()
+                                    ->maxLength(96)
+                                    ->columnSpan(7)
+                                    ->autocapitalize('words')
+                                    ->datalist(getProgramStudiList()),
+                            ])
                             ->label('Program Studi')
                             ->columns(8),
 

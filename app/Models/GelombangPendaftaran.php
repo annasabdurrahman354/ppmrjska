@@ -25,7 +25,7 @@ class GelombangPendaftaran extends Model
         'nomor_gelombang',
         'batas_awal_pendaftaran',
         'batas_akhir_pendaftaran',
-        'rundown',
+        'timeline',
         'link_grup',
     ];
 
@@ -38,7 +38,7 @@ class GelombangPendaftaran extends Model
         'nomor_gelombang' => 'integer',
         'batas_awal_pendaftaran' => 'date',
         'batas_akhir_pendaftaran' => 'date',
-        'rundown' => 'array',
+        'timeline' => 'array',
     ];
 
     public function calonSantri(): HasMany

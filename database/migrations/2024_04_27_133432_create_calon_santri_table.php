@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::disableForeignKeyConstraints();
 
-        Schema::table('calon_santri', function (Blueprint $table) {
+        Schema::create('calon_santri', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->foreignUlid('gelombang_pendaftaran_id')->nullable()->references('id')->on('gelombang_pendaftaran')->cascadeOnUpdate()->nullOnDelete();
             $table->string('nama', 96);
@@ -70,10 +70,8 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
-
         Schema::enableForeignKeyConstraints();
     }
-
 
     /**
      * Reverse the migrations.

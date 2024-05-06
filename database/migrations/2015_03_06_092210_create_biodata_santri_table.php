@@ -45,16 +45,6 @@ return new class extends Migration
             $table->unsignedBigInteger('kelurahan_id');
             $table->foreign('kelurahan_id')->references('id')->on('kelurahan');
 
-            $table->string('alamat');
-            $table->unsignedBigInteger('kelurahan_id');
-            $table->foreign('kelurahan_id')->references('id')->on('kelurahan');
-            $table->unsignedBigInteger('kecamatan_id');
-            $table->foreign('kecamatan_id')->references('id')->on('kecamatan');
-            $table->unsignedSmallInteger('kota_id');
-            $table->foreign('kota_id')->references('id')->on('kota');
-            $table->unsignedTinyInteger('provinsi_id');
-            $table->foreign('provinsi_id')->references('id')->on('provinsi');
-
             $table->string('asal_kelompok', 96);
             $table->string('asal_desa', 96);
             $table->string('asal_daerah', 96);

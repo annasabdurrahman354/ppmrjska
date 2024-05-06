@@ -57,7 +57,6 @@ class UsersTableSeeder extends Seeder
 
         User::factory(10)->create();
         BiodataSantri::factory(10)->create();
-        // Bind superadmin to FilamentShiled
     }
 }
 

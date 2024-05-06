@@ -28,7 +28,7 @@ class BiodataSantriFactory extends Factory
             'user_id' => User::factory(),
             'tahun_pendaftaran' => $this->faker->numberBetween(2020, 2023),
             'nik' => $this->faker->regexify('[0-9]{16}'),
-            'kota_lahir_id' => Kota::factory(),
+            'tempat_lahir_id' => Kota::factory(),
             'tanggal_lahir' => $this->faker->date(),
             'golongan_darah' => $this->faker->randomElement(["a","b","ab","o","belum diketahui"]),
             'ukuran_baju' => $this->faker->randomElement(["s","m","l","xl","xxl","xxxl"]),

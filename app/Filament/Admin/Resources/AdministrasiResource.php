@@ -43,15 +43,15 @@ class AdministrasiResource extends Resource
                                 ->gte('tahun_ajaran_awal'),
                         ])
                         ->label('Tahun Ajaran'),
-        
+
                         DatePicker::make('batas_awal_pembayaran')
                             ->label('Batas Awal Pembayaran')
                             ->required(),
-        
+
                         DatePicker::make('batas_akhir_pembayaran')
                             ->label('Batas Akhir Pembayaran')
                             ->required(),
-        
+
                         TextInput::make('biaya_administrasi')
                             ->label('Biaya Administrasi')
                             ->required()
@@ -61,7 +61,7 @@ class AdministrasiResource extends Resource
                             ->minValue(0)
                             ->prefix('Rp')
                             ->suffix(',00'),
-        
+
                         TextInput::make('biaya_tambahan_santri_baru')
                             ->label('Biaya Tambahan Santri Baru')
                             ->mask(RawJs::make('$money($input)'))
@@ -77,12 +77,12 @@ class AdministrasiResource extends Resource
                         TextInput::make('nama_bank')
                             ->label('Nama Bank')
                             ->required(),
-                        
+
                         TextInput::make('nomor_rekening')
                             ->label('Nomor Rekening')
                             ->type('number')
                             ->required(),
-                            
+
                         TextInput::make('nama_pemilik_rekening')
                             ->label('Nama Pemilik Rekening')
                             ->required()
@@ -96,6 +96,7 @@ class AdministrasiResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->label('ID')
+                    ->visible(isSuperAdmin())
                     ->searchable(),
                 Tables\Columns\TextColumn::make('tahun_ajaran')
                     ->searchable(),

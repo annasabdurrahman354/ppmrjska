@@ -25,7 +25,7 @@ class MateriMunaqosahFactory extends Factory
     public function definition(): array
     {
         return [
-            'kelas' => $this->faker->year(),
+            'kelas' => $this->faker->randomElement(["2021","2022","2023","Takmili"]),
             'semester' => $this->faker->numberBetween(1, 8),
             'tahun_ajaran' => $this->faker->regexify('[A-Za-z0-9]{9}'),
             'jenis_materi' => $this->faker->randomElement([MateriSurat::class, MateriHimpunan::class, MateriHafalan::class]),

@@ -16,10 +16,10 @@ return new class extends Migration
         Schema::create('pendaftaran', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->unsignedInteger('tahun_pendaftaran');
-            $table->json('kontak_panitia')->default([]);
-            $table->json('kontak_pengurus')->default([]);
-            $table->json('berkas_pendaftaran')->default([]);
-            $table->json('indikator_penilaian')->default([]);
+            $table->json('kontak_panitia');
+            $table->json('kontak_pengurus');
+            $table->json('berkas_pendaftaran');
+            $table->json('indikator_penilaian');
             $table->softDeletes();
             $table->timestamps();
         });

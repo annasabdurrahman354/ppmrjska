@@ -66,9 +66,12 @@ class JadwalMunaqosahResource extends Resource
                             ->live(),
                         DateTimePicker::make('batas_awal_pendaftaran')
                             ->label('Batas Mulai Pendaftaran')
+                            ->beforeOrEqual('batas_akhir_pendaftaran')
                             ->required(),
                         DateTimePicker::make('batas_akhir_pendaftaran')
                             ->label('Batas Akhir Pendaftaran')
+                            ->afterOrEqual('batas_awal_pendaftaran')
+                            ->beforeOrEqual('waktu')
                             ->required(),
                     ]),
 
