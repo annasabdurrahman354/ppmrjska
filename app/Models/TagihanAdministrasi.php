@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class TagihanAdministrasi extends Model
@@ -57,5 +58,10 @@ class TagihanAdministrasi extends Model
     public function santri(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function pembayaranAdministrasi(): HasMany
+    {
+        return $this->hasMany(PembayaranAdministrasi::class,'tagihan_administrasi_id');
     }
 }

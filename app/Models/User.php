@@ -10,8 +10,10 @@ use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
 use Filament\Panel;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -96,6 +98,44 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
         // return $this->avatar_url;
     }
 
+    public function biodataSantri(): HasOne
+    {
+        return $this->hasOne(BiodataSantri::class);
+    }
+
+    public function plotKamarAsrama(): HasMany
+    {
+        return $this->hasMany(PlotKamarAsrama::class);
+    }
+
+    protected function plotAsramaTerbaru(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->plotKamarAsrama()->latest()->first()?->kamarAsrama?->asrama?->nama ?? 'Belum Diploting',
+        );
+    }
+
+    protected function plotKamarAsramaTerbaru(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->plotKamarAsrama()->latest()->first()?->kamarAsrama?->nomor_kamar ?? 'Belum Diploting',
+        );
+    }
+
+    protected function tagihanAsramaTerbaru(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->plotKamarAsrama()->latest()->first()?->kamarAsrama?->asrama?->tagihanAsramaTerbaru,
+        );
+    }
+
+    protected function recordTitle(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->nama_panggilan.'('.$this->angkatan_pondok.')',
+        );
+    }
+
     public function getNameAttribute()
     {
         return $this->nama;
@@ -131,11 +171,6 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
         $this->addMediaConversion('thumb')
             ->fit(Fit::Contain, 300, 300)
             ->nonQueued();
-    }
-
-    public function biodataSantri(): HasOne
-    {
-        return $this->hasOne(BiodataSantri::class);
     }
 
     protected static function booted(): void

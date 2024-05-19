@@ -24,12 +24,6 @@ class PlotKamarAsrama extends Model
         'user_id',
     ];
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
-
     public function kamarAsrama(): BelongsTo
     {
         return $this->belongsTo(KamarAsrama::class, 'kamar_asrama_id');

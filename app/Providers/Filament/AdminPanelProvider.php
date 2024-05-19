@@ -2,7 +2,13 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\Auth\Login;
+use App\Filament\Pages\Auth\Login;
+use App\Filament\Resources\JadwalMunaqosahResource;
+use App\Filament\Resources\JurnalKelasResource;
+use App\Filament\Resources\KurikulumResource;
+use App\Filament\Resources\MateriMunaqosahResource;
+use App\Filament\Resources\PendaftaranResource;
+use App\Filament\Resources\UserResource;
 use App\Settings\Admin\PengaturanUmum;
 use Awcodes\FilamentQuickCreate\QuickCreatePlugin;
 use BezhanSalleh\FilamentExceptions\FilamentExceptionsPlugin;
@@ -35,6 +41,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login(Login::class)
             ->font('Inter', provider: SpatieGoogleFontProvider::class)
+            ->viteTheme('resources/css/filament/admin/theme.css')
             ->favicon(asset('storage/sites/favicon.ico'))
             ->brandName(fn (PengaturanUmum $settings) => $settings->brand_name)
             ->brandLogo(asset('storage/sites/logo.png'))
@@ -42,12 +49,11 @@ class AdminPanelProvider extends PanelProvider
             ->colors(fn (PengaturanUmum $settings) => $settings->site_theme)
             ->databaseNotifications()->databaseNotificationsPolling('30s')
             ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
-            ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\\Filament\\Admin\\Resources')
-            ->discoverResources(in: app_path('Filament/Shared/Resources'), for: 'App\\Filament\\Shared\\Resources')
+            ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->resources([
                 config('filament-logger.activity_resource')
             ])
-            ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\\Filament\\Admin\\Pages')
+            ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
                 Pages\Dashboard::class,
             ])
@@ -79,11 +85,12 @@ class AdminPanelProvider extends PanelProvider
                     ->config(['dayGrid', 'timeGrid']),
                 QuickCreatePlugin::make()
                     ->includes([
-                        \App\Filament\Shared\Resources\JurnalKelasResource::class,
-                        \App\Filament\Admin\Resources\MateriMunaqosahResource::class,
-                        \App\Filament\Admin\Resources\JadwalMunaqosahResource::class,
-                        \App\Filament\Admin\Resources\KurikulumResource::class,
-                        \App\Filament\Admin\Resources\UserResource::class,
+                        JurnalKelasResource::class,
+                        MateriMunaqosahResource::class,
+                        JadwalMunaqosahResource::class,
+                        KurikulumResource::class,
+                        PendaftaranResource::class,
+                        UserResource::class,
                     ]),
                 FilamentExceptionsPlugin::make(),
                 FilamentShieldPlugin::make()
@@ -103,8 +110,6 @@ class AdminPanelProvider extends PanelProvider
                     ]),
                 BreezyCore::make()
                     ->myProfile(
-                        shouldRegisterUserMenu: true,
-                        shouldRegisterNavigation: false,
                         navigationGroup: 'Pengaturan',
                         hasAvatars: true,
                         slug: 'profile'

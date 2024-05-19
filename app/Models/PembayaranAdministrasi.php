@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Enums\PembayaranMelalui;
-use App\Enums\StatusPembayaran;
 use App\Enums\StatusVerifikasi;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -24,11 +23,10 @@ class PembayaranAdministrasi extends Model
      */
     protected $fillable = [
         'tagihan_administrasi_id',
-        'tanggal',
+        'tanggal_pembayaran',
         'jumlah_pembayaran',
         'pembayaran_melalui',
         'catatan_bendahara',
-        'status_pembayaran',
         'status_verifikasi',
     ];
 
@@ -39,13 +37,12 @@ class PembayaranAdministrasi extends Model
      */
 
     protected $casts = [
-        'tanggal' => 'date',
+        'tanggal_pembayaran' => 'date',
         'jumlah_pembayaran' => 'integer',
         'pembayaran_melalui' => PembayaranMelalui::class,
-        'status_pembayaran' => StatusPembayaran::class,
         'status_verifikasi' => StatusVerifikasi::class,
     ];
-   
+
 
     public function tagihanAdministrasi(): BelongsTo
     {

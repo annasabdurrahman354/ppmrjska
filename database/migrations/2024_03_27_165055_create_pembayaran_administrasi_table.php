@@ -16,11 +16,10 @@ return new class extends Migration
         Schema::create('pembayaran_administrasi', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->foreignUlid('tagihan_administrasi_id')->nullable()->references('id')->on('tagihan_administrasi')->cascadeOnUpdate()->nullOnDelete();
-            $table->date('tanggal');
+            $table->date('tanggal_pembayaran');
             $table->integer('jumlah_pembayaran');
             $table->string('pembayaran_melalui'); //DMC-Pasus, Bendahara PPM, Transfer Rekening
             $table->string('catatan_bendahara');
-            $table->string('status_pembayaran');
             $table->string('status_verifikasi');
             $table->timestamps();
             $table->softDeletes();

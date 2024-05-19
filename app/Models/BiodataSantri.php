@@ -136,7 +136,7 @@ class BiodataSantri extends Model
     protected function recordTitle(): Attribute
     {
         return Attribute::make(
-            get: fn () => 'Biodata '.$this->user->nama,
+            get: fn () => 'Biodata '.$this->user->nama_panggilan.'('.$this->user->angkatan_pondok.')',
         );
     }
 

@@ -2,10 +2,12 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\Auth\Login;
+use App\Filament\Pages\Auth\Login;
+use App\Filament\Resources\CalonSantriResource;
+use App\Filament\Resources\PendaftaranResource;
+use App\Filament\Resources\PenilaianCalonSantriResource;
 use App\Settings\Admin\PengaturanUmum;
 use Awcodes\FilamentQuickCreate\QuickCreatePlugin;
-use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\FontProviders\SpatieGoogleFontProvider;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -38,12 +40,14 @@ class PPSBPanelProvider extends PanelProvider
             ->colors(fn (PengaturanUmum $settings) => $settings->site_theme)
             ->databaseNotifications()->databaseNotificationsPolling('30s')
             ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
-            ->discoverResources(in: app_path('Filament/PPSB/Resources'), for: 'App\\Filament\\PPSB\\Resources')
-            ->discoverPages(in: app_path('Filament/PPSB/Pages'), for: 'App\\Filament\\PPSB\\Pages')
+            ->resources([
+                PendaftaranResource::class,
+                CalonSantriResource::class,
+                PenilaianCalonSantriResource::class
+            ])
             ->pages([
                 Pages\Dashboard::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/PPSB/Widgets'), for: 'App\\Filament\\PPSB\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
@@ -65,7 +69,7 @@ class PPSBPanelProvider extends PanelProvider
             ->plugins([
                 QuickCreatePlugin::make()
                     ->includes([
-
+                        PendaftaranResource::class
                     ]),
             ])
             ->unsavedChangesAlerts();

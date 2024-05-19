@@ -2,7 +2,11 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\Auth\Login;
+use App\Filament\Pages\Auth\Login;
+use App\Filament\Resources\JadwalMunaqosahResource;
+use App\Filament\Resources\JurnalKelasResource;
+use App\Filament\Resources\MateriMunaqosahResource;
+use App\Filament\Resources\PendaftaranResource;
 use App\Settings\Admin\PengaturanUmum;
 use Awcodes\FilamentQuickCreate\QuickCreatePlugin;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
@@ -39,12 +43,15 @@ class SantriPanelProvider extends PanelProvider
             ->colors(fn (PengaturanUmum $settings) => $settings->site_theme)
             ->databaseNotifications()->databaseNotificationsPolling('30s')
             ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
-            ->discoverResources(in: app_path('Filament/Santri/Resources'), for: 'App\\Filament\\Santri\\Resources')
-            ->discoverPages(in: app_path('Filament/Santri/Pages'), for: 'App\\Filament\\Santri\\Pages')
+            ->resources([
+                JurnalKelasResource::class,
+                MateriMunaqosahResource::class,
+                JadwalMunaqosahResource::class,
+                PendaftaranResource::class,
+            ])
             ->pages([
                 Pages\Dashboard::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Santri/Widgets'), for: 'App\\Filament\\Santri\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
@@ -66,12 +73,10 @@ class SantriPanelProvider extends PanelProvider
             ->plugins([
                 QuickCreatePlugin::make()
                     ->includes([
-                       
+                        JurnalKelasResource::class
                     ]),
                 BreezyCore::make()
                     ->myProfile(
-                        shouldRegisterUserMenu: true,
-                        shouldRegisterNavigation: false,
                         navigationGroup: 'Pengaturan',
                         hasAvatars: true,
                         slug: 'profile'

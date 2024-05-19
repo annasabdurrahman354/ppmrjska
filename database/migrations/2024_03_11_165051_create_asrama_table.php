@@ -18,10 +18,9 @@ return new class extends Migration
             $table->string('nama');
             $table->string('jenis_kelamin');
             $table->tinyInteger('kapasitas_per_kamar');
-            $table->json('biaya_kamar');
-            $table->string('pemilik')->nullable();
+            $table->string('nama_pemilik')->nullable();
             $table->string('kontak_pemilik')->nullable();
-            $table->string('status_kepemilikan')->nullable();
+            $table->string('kepemilikan_gedung')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

@@ -3,7 +3,8 @@
 namespace App\Models;
 
 use App\Enums\JenisKelamin;
-use App\Enums\StatusKepemilikan;
+use App\Enums\KepemilikanGedung;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -25,10 +26,9 @@ class Asrama extends Model
         'nama',
         'jenis_kelamin',
         'kapasitas_per_kamar',
-        'biaya_kamar',
-        'pemilik',
+        'nama_pemilik',
         'kontak_pemilik',
-        'status_kepemilikan',
+        'kepemilikan_gedung',
 
     ];
 
@@ -42,12 +42,24 @@ class Asrama extends Model
         'jenis_kelamin' => JenisKelamin::class,
         'kapasitas_per_kamar' => 'integer',
         'biaya_kamar' => 'array',
-        'status_kepemilikan' => StatusKepemilikan::class,
+        'kepemilikan_gedung' => KepemilikanGedung::class,
     ];
 
 
     public function kamarAsrama(): HasMany
     {
         return $this->hasMany(KamarAsrama::class);
+    }
+
+    public function biayaAsrama(): HasMany
+    {
+        return $this->hasMany(BiayaAsrama::class);
+    }
+
+    protected function tagihanAsramaTerbaru(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->biayaAsrama()->latest()->first()?->biaya_kamar_tahunan,
+        );
     }
 }
