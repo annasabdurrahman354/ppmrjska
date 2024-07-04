@@ -7,13 +7,14 @@ use App\Filament\Resources\JadwalMunaqosahResource\Pages\CreateJadwalMunaqosah;
 use App\Filament\Resources\JadwalMunaqosahResource\Pages\EditJadwalMunaqosah;
 use App\Filament\Resources\JadwalMunaqosahResource\Pages\ListJadwalMunaqosahs;
 use App\Filament\Resources\JadwalMunaqosahResource\Pages\ViewJadwalMunaqosah;
-use App\Filament\Resources\JadwalMunaqosahResource\Widgets\CalendarWidget;
+use App\Filament\Resources\JadwalMunaqosahResource\Widgets\JadwalMunaqosahCalendarWidget;
 use App\Models\JadwalMunaqosah;
 use App\Models\MateriMunaqosah;
 use App\Models\User;
-use Awcodes\Shout\Components\Shout;
+use Awcodes\TableRepeater\Components\TableRepeater;
+use Awcodes\TableRepeater\Header;
+use Carbon\Carbon;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -22,7 +23,6 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
-use Filament\Support\Colors\Color;
 use Filament\Tables;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
@@ -35,9 +35,9 @@ class JadwalMunaqosahResource extends Resource
     protected static ?string $slug = 'jadwal-munaqosah';
     protected static ?string $modelLabel = 'Jadwal Munaqosah';
     protected static ?string $pluralModelLabel = 'Jadwal Munaqosah';
-    protected static ?string $navigationLabel = 'Jadwal Munaqosah';
     protected static ?string $recordTitleAttribute = 'recordTitle';
 
+    protected static ?string $navigationLabel = 'Jadwal Munaqosah';
     protected static ?string $navigationGroup = 'Manajemen Munaqosah';
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
     protected static ?int $navigationSort = 62;
@@ -60,7 +60,9 @@ class JadwalMunaqosahResource extends Resource
                             }),
                         DateTimePicker::make('waktu')
                             ->label('Waktu Munaqosah')
-                            ->required(),
+                            ->required()
+                            ->live()
+                            ->afterStateUpdated(fn (Set $set, $state) => $set('batas_akhir_pendaftaran', Carbon::parse($state)->subDay())),
                         TextInput::make('maksimal_pendaftar')
                             ->label('Maksimal Pendaftar')
                             ->required()
@@ -70,6 +72,7 @@ class JadwalMunaqosahResource extends Resource
                         DateTimePicker::make('batas_awal_pendaftaran')
                             ->label('Batas Mulai Pendaftaran')
                             ->beforeOrEqual('batas_akhir_pendaftaran')
+                            ->default(now())
                             ->required(),
                         DateTimePicker::make('batas_akhir_pendaftaran')
                             ->label('Batas Akhir Pendaftaran')
@@ -80,15 +83,15 @@ class JadwalMunaqosahResource extends Resource
 
                 Section::make('Plot Jadwal Munaqosah')
                     ->schema([
-                        Shout::make('st-empty')
-                            ->content('Belum ada pendaftar!')
-                            ->type('info')
-                            ->color(Color::Yellow)
-                            ->visible(fn(Get $get) => !filled($get('plotJadwalMunaqosah'))),
-                        Repeater::make('plotJadwalMunaqosah')
+                        TableRepeater::make('plotJadwalMunaqosah')
                             ->hiddenLabel()
                             ->relationship('plotJadwalMunaqosah')
                             ->default([])
+                            ->disabled(fn (Get $get) => !filled($get('materi_munaqosah_id')))
+                            ->headers([
+                                Header::make('Santri'),
+                                Header::make('Status Terlaksana')
+                            ])
                             ->schema([
                                 Select::make('user_id')
                                     ->hiddenLabel()
@@ -97,25 +100,22 @@ class JadwalMunaqosahResource extends Resource
                                     ->preload()
                                     ->placeholder('Pilih santri sesuai kelas munaqosah...')
                                     ->getSearchResultsUsing(function (string $search, Get $get): array{
-                                        $materiMunaqosah = MateriMunaqosah::where('id', $get('../../materi_munaqosah_id'));
-                                        $kelas = $materiMunaqosah->kelas;
+                                        $materiMunaqosah = MateriMunaqosah::where('id', $get('../../materi_munaqosah_id'))->first();
+                                        $kelas = $materiMunaqosah->kelas ?? ['a'];
                                         return User::where('kelas', $kelas)
                                             ->where('nama', 'like', "%{$search}%")
                                             ->where('status_pondok', StatusPondok::AKTIF->value)
-                                            ->where('tanggal_lulus_pondok', null)
+                                            ->whereNull('tanggal_lulus_pondok')
                                             ->limit(20)
                                             ->pluck('nama', 'id')
                                             ->toArray();
                                     })
-                                    ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->nama)
-                                    ->columnSpan(4),
+                                    ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->nama),
                                 Toggle::make('status_terlaksana')
                                     ->label('Terlaksana?')
                                     ->default(false)
-                                    ->required()
-                                    ->columnSpan(1),
+                                    ->required(),
                             ])
-                            ->columns(5)
                             ->addable()
                             ->addActionLabel('Tambah Pendaftar +')
                             ->maxItems(fn (Get $get) => $get('maksimal_pendaftar'))
@@ -127,9 +127,16 @@ class JadwalMunaqosahResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn (Builder $query) => $query->withCount([
+                'plotJadwalMunaqosah as total_plotjadwalmunaqosah',
+                'plotJadwalMunaqosah as terlaksana_plotjadwalmunaqosah' => function ($query) {
+                    $query->where('status_terlaksana', true);
+                },
+            ]))
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->label('ID')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('materiMunaqosah.recordTitle')
                     ->label('Materi Munaqosah')
@@ -139,9 +146,15 @@ class JadwalMunaqosahResource extends Resource
                     ->dateTime()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('maksimal_pendaftar')
-                    ->label('Maksimal Pendaftar')
+                    ->label('Maks Pendaftar')
                     ->numeric()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('total_plotjadwalmunaqosah')
+                    ->label('Pendaftar')
+                    ->numeric(),
+                Tables\Columns\TextColumn::make('terlaksana_plotjadwalmunaqosah')
+                    ->label('Terlaksana')
+                    ->numeric(),
                 Tables\Columns\TextColumn::make('batas_awal_pendaftaran')
                     ->label('Batas Mulai Pendaftaran')
                     ->dateTime()
@@ -194,7 +207,7 @@ class JadwalMunaqosahResource extends Resource
     public static function getWidgets(): array
     {
         return [
-            CalendarWidget::class,
+            JadwalMunaqosahCalendarWidget::class,
         ];
     }
 

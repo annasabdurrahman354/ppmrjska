@@ -2,6 +2,33 @@
 
 use App\Models\JurnalKelas;
 use App\Models\MateriSurat;
+use Illuminate\Support\Str;
+
+if(! function_exists('getMediaFilename')) {
+    function getMediaFilename($model, $media){
+        switch($media->collection_name){
+            case 'asrama_foto':
+                return 'asrama_foto' . '_' . Str::slug($model->nama). '_' . $media->id . '.' . $media->extension;
+            case 'lokasi_foto':
+                return 'lokasi_foto' . '_' . Str::slug($model->nama). '_' . $media->id . '.' . $media->extension;
+            case 'universitas_foto':
+                return 'universitas_foto' . '_' . Str::slug($model->nama). '_' . $media->id . '.' . $media->extension;
+            case 'carousel_cover':
+                return 'carousel_cover' . '_' . Str::slug($model->judul). '_' . $media->id . '.' . $media->extension;
+            case 'blog_cover':
+                return 'blog_cover' . '_' . Str::slug($model->judul). '_' . $media->id . '.' . $media->extension;
+            case 'media_cover':
+                return 'media_cover' . '_' . Str::slug($model->judul). '_' . $media->id . '.' . $media->extension;
+            case 'dewan_guru_avatar':
+                return 'dewan_guru_avatar' . '_' . Str::slug($model->nama). '_' . $media->id . '.' . $media->extension;
+            case 'user_avatar':
+                return 'user_avatar' . '_' . Str::slug($model->nama). '_' . $media->id . '.' . $media->extension;
+            default:
+                return Str::slug($media->file_name) . '_' . $media->id . '.' . $media->extension;
+        }
+    }
+}
+
 
 if(!function_exists('isKedisiplinan')) {
     function isKedisiplinan() {

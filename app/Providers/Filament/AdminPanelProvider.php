@@ -39,7 +39,6 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->login(Login::class)
             ->font('Inter', provider: SpatieGoogleFontProvider::class)
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->favicon(asset('storage/sites/favicon.ico'))
@@ -82,7 +81,13 @@ class AdminPanelProvider extends PanelProvider
                     ->editable()
                     ->timezone('Asia/Jakarta')
                     ->locale('id')
-                    ->config(['dayGrid', 'timeGrid']),
+                    ->config(['initialView' => 'dayGridMonth',
+                        'firstDay' => 1,
+                        'headerToolbar' => [
+                            'left' => 'prev,next,today',
+                            'center' => 'title',
+                            'right' => 'dayGridMonth,dayGridWeek,listWeek',
+                        ]]),
                 QuickCreatePlugin::make()
                     ->includes([
                         JurnalKelasResource::class,

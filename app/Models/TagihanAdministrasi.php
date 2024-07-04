@@ -24,10 +24,7 @@ class TagihanAdministrasi extends Model
     protected $fillable = [
         'administrasi_id',
         'user_id',
-        'jumlah_tagihan_administrasi',
-        'jumlah_tagihan_asrama',
-        'jumlah_tagihan_tambahan',
-        'jumlah_tagihan_total',
+        'jumlah_tagihan',
         'status_tagihan'
     ];
 
@@ -38,10 +35,7 @@ class TagihanAdministrasi extends Model
      */
 
     protected $casts = [
-        'jumlah_tagihan_administrasi' => 'integer',
-        'jumlah_tagihan_asrama' => 'integer',
-        'jumlah_tagihan_tambahan' => 'integer',
-        'jumlah_tagihan_total' => 'integer',
+        'jumlah_tagihan' => 'integer',
         'status_tagihan' => StatusTagihan::class,
     ];
 

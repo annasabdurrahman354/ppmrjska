@@ -135,4 +135,39 @@ class JurnalKelas extends Model
             get: fn () => $this->tanggal->format('j F, Y'). ' ('.$this->sesi->getLabel().')',
         );
     }
+
+    protected function hadirCount(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->presensiKelas()->where('status_kehadiran', StatusKehadiran::HADIR)->count(),
+        );
+    }
+
+    protected function telatCount(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->presensiKelas()->where('status_kehadiran', StatusKehadiran::TELAT)->count(),
+        );
+    }
+
+    protected function izinCount(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->presensiKelas()->where('status_kehadiran', StatusKehadiran::IZIN)->count(),
+        );
+    }
+
+    protected function sakitCount(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->presensiKelas()->where('status_kehadiran', StatusKehadiran::SAKIT)->count(),
+        );
+    }
+
+    protected function alpaCount(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->presensiKelas()->where('status_kehadiran', StatusKehadiran::ALPA)->count(),
+        );
+    }
 }

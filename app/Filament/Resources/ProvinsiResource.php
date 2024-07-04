@@ -19,9 +19,9 @@ class ProvinsiResource extends Resource
     protected static ?string $slug = 'provinsi';
     protected static ?string $modelLabel = 'Provinsi';
     protected static ?string $pluralModelLabel = 'Provinsi';
-    protected static ?string $navigationLabel = 'Provinsi';
     protected static ?string $recordTitleAttribute = 'nama';
 
+    protected static ?string $navigationLabel = 'Provinsi';
     protected static ?string $navigationIcon = 'heroicon-o-globe-europe-africa';
     protected static ?string $navigationGroup = 'Manajemen Database';
     protected static ?int $navigationSort = 71;
@@ -40,6 +40,10 @@ class ProvinsiResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label('ID')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->searchable(),
                 TextColumn::make('nama')
                     ->sortable()
                     ->searchable(),

@@ -33,9 +33,9 @@ class PenilaianCalonSantriResource extends Resource
     protected static ?string $slug = 'penilaian-casanru';
     protected static ?string $modelLabel = 'Penilaian Casanru';
     protected static ?string $pluralModelLabel = 'Penilaian Casanru';
-    protected static ?string $navigationLabel = 'Penilaian Casanru';
     protected static ?string $recordTitleAttribute = 'recordTitle';
 
+    protected static ?string $navigationLabel = 'Penilaian Casanru';
     protected static ?string $navigationGroup = 'Manajemen Pendaftaran';
     protected static ?string $navigationIcon = 'heroicon-o-identification';
     protected static ?int $navigationSort = 42;
@@ -62,7 +62,6 @@ class PenilaianCalonSantriResource extends Resource
                     ->label('Penguji')
                     ->options(User::all()->pluck('nama', 'id'))
                     ->default(auth()->id())
-                    ->dehydrated()
                     ->required(),
 
                 TableRepeater::make('nilai_tes')
@@ -86,7 +85,7 @@ class PenilaianCalonSantriResource extends Resource
                     ->collapsible(false)
                     ->columnSpanFull()
                     ->extraActions([
-                        Forms\Components\Actions\Action::make('exportData')
+                        Forms\Components\Actions\Action::make('hitungNilaiAkhir')
                             ->icon('heroicon-m-inbox-arrow-down')
                             ->action(function (Forms\Get $get, Forms\Set $set){
                                 if (!filled($get('nilai_tes')) ){
@@ -96,7 +95,8 @@ class PenilaianCalonSantriResource extends Resource
                                         ->send();
                                 }
                                 else {
-                                    $set('nilai_akhir', '');
+                                    ## TODO HITUNG NILAI AKHIR
+                                    $set('nilai_akhir', 90);
                                 }
                             })
                     ]),
@@ -126,7 +126,11 @@ class PenilaianCalonSantriResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('id')
+                    ->label('ID')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->searchable(),
+
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),

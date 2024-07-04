@@ -103,10 +103,10 @@ class QRCodeCreateJurnalKelas extends Page implements HasForms, HasActions
                                         Select::make('kelas')
                                             ->label('Kelas')
                                             ->multiple()
-                                            ->disabledOn('edit')
-                                            ->disabled(cant('rekap_kelas_lain_jurnal::kelas'))
-                                            ->dehydrated(cant('rekap_kelas_lain_jurnal::kelas'))
+                                            ->required()
                                             ->maxItems(fn () => cant('rekap_kelas_lain_jurnal::kelas') ? 1 : 6)
+                                            ->disabledOn('edit')
+                                            ->disabled(cant('rekap_kelas_lain_jurnal::kelas'))->dehydrated()
                                             ->options(
                                                 User::where('status_pondok', StatusPondok::AKTIF->value)
                                                 ->where('tanggal_lulus_pondok', null)
@@ -145,8 +145,7 @@ class QRCodeCreateJurnalKelas extends Page implements HasForms, HasActions
                                             ->grouped()
                                             ->required()
                                             ->disabledOn('edit')
-                                            ->disabled(isNotSuperAdmin())
-                                            ->dehydrated(isNotSuperAdmin())
+                                            ->disabled(cant('rekap_kelas_lain_jurnal::kelas'))->dehydrated()
                                             ->options(JenisKelamin::class)
                                             ->default(auth()->user()->jenis_kelamin)
                                             ->live()
@@ -172,8 +171,7 @@ class QRCodeCreateJurnalKelas extends Page implements HasForms, HasActions
                                             ->label('Perekap')
                                             ->required()
                                             ->disabledOn('edit')
-                                            ->disabled(isNotSuperAdmin())
-                                            ->dehydrated(isNotSuperAdmin())
+                                            ->disabled(cant('rekap_kelas_lain_jurnal::kelas'))->dehydrated()
                                             ->options(
                                                 User::select('nama', 'id')
                                                     ->distinct()
@@ -264,7 +262,7 @@ class QRCodeCreateJurnalKelas extends Page implements HasForms, HasActions
 
                                         ViewField::make('qr-code')
                                             ->hiddenLabel()
-                                            ->view('forms.components.qr-code-scanner'),
+                                            ->view('filament.fields.qr-code-scanner'),
 
                                         Repeater::make('presensiKelas')
                                             ->hiddenLabel()
@@ -296,8 +294,7 @@ class QRCodeCreateJurnalKelas extends Page implements HasForms, HasActions
                                                     ->required()
                                                     ->distinct()
                                                     ->disabledOn('edit')
-                                                    ->disabled(isNotSuperAdmin())
-                                                    ->dehydrated(isNotSuperAdmin())
+                                                    ->disabled(cant('rekap_kelas_lain_jurnal::kelas'))->dehydrated()
                                                     ->searchable()
                                                     ->preload()
                                                     ->getSearchResultsUsing(fn (string $search, Get $get): array =>

@@ -20,9 +20,9 @@ class KotaResource extends Resource
     protected static ?string $slug = 'kota';
     protected static ?string $modelLabel = 'Kota';
     protected static ?string $pluralModelLabel = 'Kota';
-    protected static ?string $navigationLabel = 'Kota';
     protected static ?string $recordTitleAttribute = 'nama';
 
+    protected static ?string $navigationLabel = 'Kota';
     protected static ?string $navigationGroup = 'Manajemen Database';
     protected static ?string $navigationIcon = 'heroicon-o-globe-europe-africa';
     protected static ?int $navigationSort = 72;
@@ -45,6 +45,10 @@ class KotaResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label('ID')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->searchable(),
                 TextColumn::make('nama')
                     ->searchable()
                     ->sortable(),

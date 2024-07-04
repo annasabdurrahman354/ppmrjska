@@ -22,6 +22,10 @@ return new class extends Migration
             $table->string('nomor_telepon', 16);
             $table->string('email', 96);
             $table->string('nik', 16)->unique();
+
+            //$table->string('berkas_foto')->nullable();
+            //$table->json('berkas_pendaftaran')->nullable();
+
             $table->unsignedSmallInteger('tempat_lahir_id');
             $table->foreign('tempat_lahir_id')->references('id')->on('kota');
             $table->date('tanggal_lahir');

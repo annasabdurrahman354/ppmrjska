@@ -64,10 +64,24 @@ class MateriMunaqosah extends Model
         return $this->hasMany(JadwalMunaqosah::class);
     }
 
+    public function tahunAjaran(): BelongsTo
+    {
+        return $this->belongsTo(TahunAjaran::class, 'tahun_ajaran', 'tahun_ajaran');
+    }
+
     protected function recordTitle(): Attribute
     {
         return Attribute::make(
             get: fn () => 'Materi Munaqosah Kelas '.$this->kelas. ' (Semester '.$this->semester.'): '.$this->jenis_materi->getLabel(),
         );
+    }
+
+    protected static function booted(): void
+    {
+        static::created(function (MateriMunaqosah $record) {
+            TahunAjaran::firstOrCreate(
+                ['tahun_ajaran' =>  $record->tahun_ajaran],
+            );
+        });
     }
 }

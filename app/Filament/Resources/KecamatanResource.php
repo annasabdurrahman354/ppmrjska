@@ -20,9 +20,9 @@ class KecamatanResource extends Resource
     protected static ?string $slug = 'kecamatan';
     protected static ?string $modelLabel = 'Kecamatan';
     protected static ?string $pluralModelLabel = 'Kecamatan';
-    protected static ?string $navigationLabel = 'Kecamatan';
     protected static ?string $recordTitleAttribute = 'nama';
 
+    protected static ?string $navigationLabel = 'Kecamatan';
     protected static ?string $navigationGroup = 'Manajemen Database';
     protected static ?string $navigationIcon = 'heroicon-o-globe-europe-africa';
     protected static ?int $navigationSort = 73;
@@ -45,6 +45,10 @@ class KecamatanResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label('ID')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->searchable(),
                 TextColumn::make('nama')
                     ->sortable()
                     ->searchable(),

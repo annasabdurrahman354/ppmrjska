@@ -6,6 +6,13 @@ use App\Enums\JenisKelamin;
 use App\Enums\StatusKehadiran;
 use App\Enums\StatusPondok;
 use BezhanSalleh\FilamentShield\Traits\HasPanelShield;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Components\TextInput;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
@@ -18,13 +25,15 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
 use Mpyw\ScopedAuth\AuthScopable;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use Spatie\Permission\Traits\HasRoles;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\Builder;
 
 class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, HasMedia, AuthScopable
@@ -94,8 +103,14 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
 
     public function getFilamentAvatarUrl(): ?string
     {
-        return $this->getMedia('avatars')?->first()?->getUrl('thumb') ?? '';
-        // return $this->avatar_url;
+        return $this->getFirstMediaUrl('avatar', 'thumb')
+            ??
+            "https://ui-avatars.com/api/?background=random&size=256&rounded=true&name=".str_replace(" ", "+", $this->nama);
+    }
+
+    public function getAvatarUrl()
+    {
+        return filament()->getUserAvatarUrl($this);
     }
 
     public function biodataSantri(): HasOne
@@ -108,31 +123,54 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
         return $this->hasMany(PlotKamarAsrama::class);
     }
 
-    protected function plotAsramaTerbaru(): Attribute
+    public function plotJadwalMunaqosah(): HasMany
+    {
+        return $this->hasMany(PlotJadwalMunaqosah::class);
+    }
+
+    public function presensiKelas(): HasMany
+    {
+        return $this->hasMany(PresensiKelas::class);
+    }
+
+    public function tagihanAdministrasi(): HasMany
+    {
+        return $this->hasMany(TagihanAdministrasi::class);
+    }
+
+
+    protected function namaAsramaTerbaru(): Attribute
     {
         return Attribute::make(
             get: fn () => $this->plotKamarAsrama()->latest()->first()?->kamarAsrama?->asrama?->nama ?? 'Belum Diploting',
         );
     }
 
-    protected function plotKamarAsramaTerbaru(): Attribute
+    protected function nomorKamarAsramaTerbaru(): Attribute
     {
         return Attribute::make(
             get: fn () => $this->plotKamarAsrama()->latest()->first()?->kamarAsrama?->nomor_kamar ?? 'Belum Diploting',
         );
     }
 
-    protected function tagihanAsramaTerbaru(): Attribute
+    protected function biayaAsramaTahunanTerbaru(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->plotKamarAsrama()->latest()->first()?->kamarAsrama?->asrama?->tagihanAsramaTerbaru,
+            get: fn () => $this->plotKamarAsrama()->latest()->first()?->kamarAsrama?->asrama?->biaya_asrama_tahunan ?? 0,
+        );
+    }
+
+    protected function kepemilikanGedungPlotAsramaTerbaru(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->plotKamarAsrama()->latest()->first()?->kamarAsrama?->asrama?->kepemilikan_gedung,
         );
     }
 
     protected function recordTitle(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->nama_panggilan.'('.$this->angkatan_pondok.')',
+            get: fn () => $this->nama_panggilan.' ('.$this->kelas.')',
         );
     }
 
@@ -169,8 +207,110 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
     public function registerMediaConversions(Media $media = null): void
     {
         $this->addMediaConversion('thumb')
-            ->fit(Fit::Contain, 300, 300)
+            ->fit(Fit::Contain, 256, 256)
             ->nonQueued();
+    }
+
+    public function syncMediaName(){
+        foreach( $this->getMedia('user_avatar') as $media){
+            $media->file_name = getMediaFilename($this, $media);
+            $media->save();
+        }
+    }
+
+    public static function getForm(): array
+    {
+        return [
+            Section::make('Data Umum')
+                ->schema([
+                    SpatieMediaLibraryFileUpload::make('avatar')
+                        ->label('Avatar')
+                        ->avatar()
+                        ->collection('user_avatar')
+                        ->conversion('thumb')
+                        ->moveFiles()
+                        ->image()
+                        ->imageEditor()
+                        ->required()
+                        ->columnSpanFull(),
+                    TextInput::make('nama')
+                        ->label('Nama Lengkap')
+                        ->required()
+                        ->maxLength(96),
+                    TextInput::make('nama_panggilan')
+                        ->label('Nama Panggilan')
+                        ->required()
+                        ->maxLength(36),
+                    Select::make('jenis_kelamin')
+                        ->label('Jenis Kelamin')
+                        ->disabled(fn (string $operation) => auth()->user()->isNotSuperAdmin() && $operation != 'create')
+                        ->required()
+                        ->options(JenisKelamin::class),
+                    TextInput::make('nis')
+                        ->label('Nomor Induk Santri')
+                        ->disabled(fn (string $operation) => auth()->user()->isNotSuperAdmin() && $operation != 'create')
+                        ->numeric()
+                        ->required()
+                        ->length(9),
+                    TextInput::make('nomor_telepon')
+                        ->label('Nomor Telepon')
+                        ->tel()
+                        ->required()
+                        ->maxLength(13),
+                    TextInput::make('email')
+                        ->label('Email')
+                        ->email()
+                        ->required()
+                        ->maxLength(64),
+                    Select::make('roles')
+                        ->label('Role')
+                        ->disabled(fn (string $operation) => auth()->user()->isNotSuperAdmin())
+                        ->relationship(name: 'roles', titleAttribute: 'name', modifyQueryUsing: function (Builder $query) {
+                            return $query->whereNotIn('name', ['filament_user']);
+                        })
+                        ->options(fn () => DB::table('roles')->pluck('name', 'id'))
+                        ->multiple()
+                        ->native(false),
+                    DateTimePicker::make('email_verified_at')
+                        ->label('Email Terverifikasi Pada')
+                        ->disabled(fn (string $operation) => auth()->user()->isNotSuperAdmin()),
+                    TextInput::make('password')
+                        ->password()
+                        ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
+                        ->dehydrated(fn (?string $state): bool => filled($state))
+                        ->required(fn (string $operation): bool => $operation === 'create'),
+                ])
+                ->columns([
+                    'sm' => 1,
+                    'md' => 2,
+                ]),
+
+            Section::make('Data Kesiswaan')
+                ->schema([
+                    TextInput::make('angkatan_pondok')
+                        ->label('Angkatan Pondok')
+                        ->disabled(fn (string $operation) => auth()->user()->isNotSuperAdmin() && $operation != 'create')
+                        ->required()
+                        ->numeric(),
+                    Checkbox::make('is_takmili')
+                        ->label('Apakah santri takmili?')
+                        ->disabled(fn (string $operation) => auth()->user()->isNotSuperAdmin() && $operation != 'create')
+                        ->inline(false),
+                    Select::make('status_pondok')
+                        ->label('Status Pondok')
+                        ->disabled(fn (string $operation) => auth()->user()->isNotSuperAdmin() && $operation != 'create')
+                        ->required()
+                        ->options(StatusPondok::class),
+                    DatePicker::make('tanggal_lulus_pondok')
+                        ->label('Tanggal Lulus Pondok')
+                        ->disabled(fn (string $operation) => auth()->user()->isNotSuperAdmin() && $operation != 'create')
+                    ,
+                ])
+                ->columns([
+                    'sm' => 1,
+                    'md' => 2,
+                ]),
+        ];
     }
 
     protected static function booted(): void

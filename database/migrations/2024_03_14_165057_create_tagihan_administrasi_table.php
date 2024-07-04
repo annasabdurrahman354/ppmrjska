@@ -17,10 +17,7 @@ return new class extends Migration
             $table->ulid('id')->primary();
             $table->foreignUlid('administrasi_id')->nullable()->references('id')->on('administrasi')->cascadeOnUpdate()->nullOnDelete();
             $table->foreignUlid('user_id')->nullable()->references('id')->on('users')->cascadeOnUpdate()->nullOnDelete();
-            $table->integer('jumlah_tagihan_administrasi');
-            $table->integer('jumlah_tagihan_asrama');
-            $table->integer('jumlah_tagihan_tambahan');
-            $table->integer('jumlah_tagihan_total');
+            $table->integer('jumlah_tagihan');
             $table->string('status_tagihan');
             $table->timestamps();
             $table->softDeletes();

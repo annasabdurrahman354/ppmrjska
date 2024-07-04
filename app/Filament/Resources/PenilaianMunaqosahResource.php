@@ -26,9 +26,9 @@ class PenilaianMunaqosahResource extends Resource
     protected static ?string $slug = 'penilaian-munaqosah';
     protected static ?string $modelLabel = 'Penilaian Munaqosah';
     protected static ?string $pluralModelLabel = 'Penilaian Munaqosah';
-    protected static ?string $navigationLabel = 'Penilaian Munaqosah';
     protected static ?string $recordTitleAttribute = 'recordTitle';
 
+    protected static ?string $navigationLabel = 'Penilaian Munaqosah';
     protected static ?string $navigationGroup = 'Manajemen Munaqosah';
     protected static ?string $navigationIcon = 'heroicon-o-presentation-chart-line';
     protected static ?int $navigationSort = 63;
@@ -120,6 +120,7 @@ class PenilaianMunaqosahResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->label('ID')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('user.nama')
                     ->searchable(),

@@ -35,10 +35,10 @@ class KurikulumResource extends Resource
     protected static ?string $slug = 'kurikulum';
     protected static ?string $modelLabel = 'Kurikulum';
     protected static ?string $pluralModelLabel = 'Kurikulum';
-    protected static ?string $navigationLabel = 'Kurikulum';
     protected static ?string $recordTitleAttribute = 'angkatan_pondok';
 
-    protected static ?string $navigationGroup = 'Manajemen Kelas';
+    protected static ?string $navigationLabel = 'Kurikulum';
+    protected static ?string $navigationGroup = 'Manajemen Kurikulum';
     protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
     protected static ?int $navigationSort = 52;
 
@@ -154,6 +154,7 @@ class KurikulumResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->label('ID')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('angkatan_pondok')
                     ->sortable(),

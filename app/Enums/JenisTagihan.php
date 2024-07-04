@@ -9,6 +9,7 @@ enum JenisTagihan : string implements HasLabel, HasColor {
     case SEMESTERAN = 'semesteran';
     case TAHUNAN = 'tahunan';
     case SEKALI = 'sekali';
+
     public function getLabel(): ?string
     {
         return match ($this) {
@@ -19,13 +20,13 @@ enum JenisTagihan : string implements HasLabel, HasColor {
         };
     }
 
-    public function getDeskripsi($value): ?string
+    public static function getDeskripsi($value): ?string
     {
         return match ($value) {
-            self::BULANAN => 'per bulan',
-            self::SEMESTERAN => 'per semester',
-            self::TAHUNAN => 'per tahun',
-            self::SEKALI => '',
+            self::BULANAN => ' per bulan',
+            self::SEMESTERAN => ' per semester',
+            self::TAHUNAN => ' per tahun',
+            default => '',
         };
     }
 
@@ -35,7 +36,7 @@ enum JenisTagihan : string implements HasLabel, HasColor {
             self::BULANAN => 'primary',
             self::SEMESTERAN => 'secondary',
             self::TAHUNAN => 'success',
-            self::SEKALI => 'info',
+            self::SEKALI => 'warning',
         };
     }
 }

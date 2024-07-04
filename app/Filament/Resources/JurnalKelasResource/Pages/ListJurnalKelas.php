@@ -46,6 +46,9 @@ class ListJurnalKelas extends ListRecords
 
         $tabs = [
             null => Tab::make('All'),
+            'Kelas Saya' => Tab::make()->query(fn ($query) => $query->whereHas('presensiKelas', function($q){
+                $q->where('user_id', auth()->id());
+            }))
         ];
         foreach ($semuaKelas as $kelas){
             $tabs[$kelas] = Tab::make()->query(fn ($query) => $query->whereJsonContains('kelas', (string) $kelas));

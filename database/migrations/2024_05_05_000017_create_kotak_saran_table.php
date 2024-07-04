@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::disableForeignKeyConstraints();
 
         Schema::create('kotak_saran', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->id();
             $table->string('pengirim')->nullable();
             $table->string('nomor_telepon')->nullable();
             $table->longText('isi');

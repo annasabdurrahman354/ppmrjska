@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\BiodataSantri;
+use App\Models\Kelurahan;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -55,7 +56,7 @@ class UsersTableSeeder extends Seeder
             'tanggal_lulus_pondok' => null,
         ]);
 
-        User::factory(10)->create();
+        Kelurahan::factory(100)->create();
         BiodataSantri::factory(10)->create();
     }
 }

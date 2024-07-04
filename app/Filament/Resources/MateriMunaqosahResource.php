@@ -7,11 +7,14 @@ use App\Filament\Resources\MateriMunaqosahResource\Pages\CreateMateriMunaqosah;
 use App\Filament\Resources\MateriMunaqosahResource\Pages\EditMateriMunaqosah;
 use App\Filament\Resources\MateriMunaqosahResource\Pages\ListMateriMunaqosahs;
 use App\Filament\Resources\MateriMunaqosahResource\Pages\ViewMateriMunaqosah;
+use App\Models\Asrama;
 use App\Models\MateriHafalan;
 use App\Models\MateriMunaqosah;
 use App\Models\MateriSurat;
 use App\Models\User;
 use Awcodes\Shout\Components\Shout;
+use Awcodes\TableRepeater\Components\TableRepeater;
+use Awcodes\TableRepeater\Header;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
@@ -38,9 +41,9 @@ class MateriMunaqosahResource extends Resource
     protected static ?string $slug = 'materi-munaqosah';
     protected static ?string $modelLabel = 'Materi Munaqosah';
     protected static ?string $pluralModelLabel = 'Materi Munaqosah';
-    protected static ?string $navigationLabel = 'Materi Munaqosah';
     protected static ?string $recordTitleAttribute = 'recordTitle';
 
+    protected static ?string $navigationLabel = 'Materi Munaqosah';
     protected static ?string $navigationGroup = 'Manajemen Munaqosah';
     protected static ?string $navigationIcon = 'heroicon-o-book-open';
     protected static ?int $navigationSort = 61;
@@ -193,13 +196,19 @@ class MateriMunaqosahResource extends Resource
                             ->type('info')
                             ->color(Color::Yellow)
                             ->visible(fn(Get $get) => !filled($get('jadwalMunaqosah'))),
-                        Repeater::make('jadwalMunaqosah')
+                        TableRepeater::make('jadwalMunaqosah')
                             ->hiddenLabel()
                             ->addable()
                             ->addActionLabel('Tambah Jadwal +')
                             ->deletable()
                             ->relationship('jadwalMunaqosah')
-                            ->live()
+                            ->headers([
+                                Header::make('Waktu Munaqosah'),
+                                Header::make('Maksimal Pendaftar'),
+                                Header::make('Batas Awal Pendfataran'),
+                                Header::make('Batas Akhir Pendaftaran'),
+                                Header::make('Pendaftar')
+                            ])
                             ->schema([
                                 DateTimePicker::make('waktu')
                                     ->label('Waktu Munaqosah')
@@ -218,6 +227,28 @@ class MateriMunaqosahResource extends Resource
                                     ->afterOrEqual('batas_awal_pendaftaran')
                                     ->beforeOrEqual('waktu')
                                     ->required(),
+                                TableRepeater::make('plotJadwalMunaqosah')
+                                    ->relationship('plotJadwalMunaqosah')
+                                    ->streamlined()
+                                    ->renderHeader(false)
+                                    ->maxItems(fn (Get $get) => $get('maksimal_pendaftar'))
+                                    ->headers([
+                                        Header::make('Santri'),
+                                    ])
+                                    ->schema([
+                                        Select::make('user_id')
+                                            ->options(fn (Get $get) =>
+                                            User::where('tanggal_lulus_pondok', null)
+                                                ->where('kelas', $get('../../../../kelas'))
+                                                ->get()
+                                                ->pluck('nama', 'id')
+                                                ->toArray()
+                                            )
+                                            ->preload()
+                                            ->searchable()
+                                            ->required(),
+                                    ])
+                                    ->addActionLabel('+ Pendaftar')
                             ])
                     ])
             ]);
@@ -229,6 +260,7 @@ class MateriMunaqosahResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->label('ID')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('kelas')
                     ->label('Kelas')

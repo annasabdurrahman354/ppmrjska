@@ -20,9 +20,9 @@ class KelurahanResource extends Resource
     protected static ?string $slug = 'kelurahan';
     protected static ?string $modelLabel = 'Kelurahan';
     protected static ?string $pluralModelLabel = 'Kelurahan';
-    protected static ?string $navigationLabel = 'Kelurahan';
     protected static ?string $recordTitleAttribute = 'nama';
 
+    protected static ?string $navigationLabel = 'Kelurahan';
     protected static ?string $navigationGroup = 'Manajemen Database';
     protected static ?string $navigationIcon = 'heroicon-o-globe-europe-africa';
     protected static ?int $navigationSort = 74;
@@ -45,6 +45,10 @@ class KelurahanResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label('ID')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->searchable(),
                 TextColumn::make('nama')
                     ->sortable()
                     ->searchable(),

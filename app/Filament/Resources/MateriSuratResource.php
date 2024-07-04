@@ -17,10 +17,10 @@ class MateriSuratResource extends Resource
     protected static ?string $slug = 'materi-surat';
     protected static ?string $modelLabel = 'Materi Surat';
     protected static ?string $pluralModelLabel = 'Materi Surat';
-    protected static ?string $navigationLabel = 'Materi Surat';
     protected static ?string $recordTitleAttribute = 'nama';
 
-    protected static ?string $navigationGroup = 'Manajemen Materi';
+    protected static ?string $navigationLabel = 'Materi Surat';
+    protected static ?string $navigationGroup = 'Manajemen Kurikulum';
     protected static ?string $navigationIcon = 'heroicon-o-book-open';
     protected static ?int $navigationSort = 72;
 
@@ -53,6 +53,10 @@ class MateriSuratResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label('ID')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->searchable(),
                 TextColumn::make('nomor')
                     ->numeric()
                     ->sortable(),

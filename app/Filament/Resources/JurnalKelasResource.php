@@ -9,7 +9,7 @@ use App\Enums\StatusPondok;
 use App\Filament\Resources\JurnalKelasResource\Pages\CreateJurnalKelas;
 use App\Filament\Resources\JurnalKelasResource\Pages\EditJurnalKelas;
 use App\Filament\Resources\JurnalKelasResource\Pages\ListJurnalKelas;
-use App\Filament\Resources\JurnalKelasResource\Pages\ManageJurnalKelasPresensiKelas;
+use App\Filament\Resources\JurnalKelasResource\Pages\ManagePresensiKelas;
 use App\Filament\Resources\JurnalKelasResource\Pages\QRCodeCreateJurnalKelas;
 use App\Filament\Resources\JurnalKelasResource\Pages\ViewJurnalKelas;
 use App\Models\DewanGuru;
@@ -63,7 +63,7 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
 
     protected static ?string $navigationGroup = 'Manajemen Kelas';
     protected static ?string $navigationIcon = 'heroicon-o-pencil-square';
-    protected static ?int $navigationSort = 51;
+    protected static ?int $navigationSort = 54;
 
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
@@ -93,10 +93,10 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                                         Select::make('kelas')
                                             ->label('Kelas')
                                             ->multiple()
-                                            ->disabledOn('edit')
-                                            ->disabled(cant('rekap_kelas_lain_jurnal::kelas'))
-                                            ->dehydrated(cant('rekap_kelas_lain_jurnal::kelas'))
+                                            ->required()
                                             ->maxItems(fn () => cant('rekap_kelas_lain_jurnal::kelas') ? 1 : 6)
+                                            ->disabledOn('edit')
+                                            ->disabled(cant('rekap_kelas_lain_jurnal::kelas'))->dehydrated()
                                             ->options(
                                                 User::where('status_pondok', StatusPondok::AKTIF->value)
                                                 ->where('tanggal_lulus_pondok', null)
@@ -129,14 +129,14 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                                                 $set('presensiKelas', $result);
                                             }),
 
+
                                         ToggleButtons::make('jenis_kelamin')
                                             ->label('Santri')
                                             ->inline()
                                             ->grouped()
                                             ->required()
                                             ->disabledOn('edit')
-                                            ->disabled(isNotSuperAdmin())
-                                            ->dehydrated(isNotSuperAdmin())
+                                            ->disabled(cant('rekap_kelas_lain_jurnal::kelas'))->dehydrated()
                                             ->options(JenisKelamin::class)
                                             ->default(auth()->user()->jenis_kelamin)
                                             ->live()
@@ -162,8 +162,7 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                                             ->label('Perekap')
                                             ->required()
                                             ->disabledOn('edit')
-                                            ->disabled(isNotSuperAdmin())
-                                            ->dehydrated(isNotSuperAdmin())
+                                            ->disabled(cant('rekap_kelas_lain_jurnal::kelas'))->dehydrated()
                                             ->options(
                                                 User::select('nama', 'id')
                                                     ->distinct()
@@ -243,6 +242,7 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                                         Repeater::make('presensiKelas')
                                             ->hiddenLabel()
                                             ->relationship('presensiKelas')
+                                            ->extraAttributes(['class' => 'p-0'])
                                             ->deletable(false)
                                             ->addable(false)
                                             ->live()
@@ -270,8 +270,7 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                                                     ->required()
                                                     ->distinct()
                                                     ->disabledOn('edit')
-                                                    ->disabled(isNotSuperAdmin())
-                                                    ->dehydrated(isNotSuperAdmin())
+                                                    ->disabled(cant('rekap_kelas_lain_jurnal::kelas'))->dehydrated()
                                                     ->searchable()
                                                     ->preload()
                                                     ->getSearchResultsUsing(fn (string $search, Get $get): array =>
@@ -285,7 +284,8 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                                                             ->toArray()
                                                     )
                                                     ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->nama)
-                                                    ->columnSpan(4),
+                                                    ->columnSpan(4)
+                                                    ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
 
                                                 ToggleButtons::make('status_kehadiran')
                                                     ->hiddenLabel()
@@ -452,9 +452,9 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
     {
         return $table
             ->columns([
-                TextColumn::make('id')
+                Tables\Columns\TextColumn::make('id')
                     ->label('ID')
-                    ->visible(isSuperAdmin())
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 TextColumn::make('tanggal')
                     ->label('Tanggal KBM')
@@ -468,7 +468,7 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                     ->label('Kelas')
                     ->searchable(),
                 TextColumn::make('jenis_kelamin')
-                    ->label('Jenis Kelamin')
+                    ->label('Santri')
                     ->badge()
                     ->searchable()
                     ->sortable(),
@@ -483,6 +483,16 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                         'Bukan Kelas' => 'gray',
                     })
                     ->badge(),
+                TextColumn::make('hadirCount')
+                    ->label('Hadir'),
+                TextColumn::make('telatCount')
+                    ->label('Telat'),
+                TextColumn::make('izinCount')
+                    ->label('Izin'),
+                TextColumn::make('sakitCount')
+                    ->label('Sakit'),
+                TextColumn::make('alpaCount')
+                    ->label('Alpa'),
                 TextColumn::make('dewanGuru.nama')
                     ->label('Dewan Guru')
                     ->searchable(),
@@ -1135,7 +1145,7 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
     {
         return $page->generateNavigationItems([
             ViewJurnalKelas::class,
-            ManageJurnalKelasPresensiKelas::class,
+            ManagePresensiKelas::class,
         ]);
     }
 
@@ -1154,7 +1164,7 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
             'create' => CreateJurnalKelas::route('/create'),
             'view' => ViewJurnalKelas::route('/{record}'),
             'edit' => EditJurnalKelas::route('/{record}/edit'),
-            'presensi' => ManageJurnalKelasPresensiKelas::route('/{record}/presensi'),
+            'presensi' => ManagePresensiKelas::route('/{record}/presensi'),
 
         ];
     }

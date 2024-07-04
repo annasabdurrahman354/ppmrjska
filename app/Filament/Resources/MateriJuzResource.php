@@ -16,10 +16,10 @@ class MateriJuzResource extends Resource
     protected static ?string $slug = 'materi-juz';
     protected static ?string $modelLabel = 'Materi Juz';
     protected static ?string $pluralModelLabel = 'Materi Juz';
-    protected static ?string $navigationLabel = 'Materi Juz';
     protected static ?string $recordTitleAttribute = 'nama';
 
-    protected static ?string $navigationGroup = 'Manajemen Materi';
+    protected static ?string $navigationLabel = 'Materi Juz';
+    protected static ?string $navigationGroup = 'Manajemen Kurikulum';
     protected static ?string $navigationIcon = 'heroicon-o-book-open';
     protected static ?int $navigationSort = 71;
 
@@ -43,6 +43,10 @@ class MateriJuzResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label('ID')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->searchable(),
                 TextColumn::make('nama')
                     ->searchable(),
                 TextColumn::make('halaman_awal')

@@ -34,7 +34,6 @@ class SantriPanelProvider extends PanelProvider
         return $panel
             ->id('santri')
             ->path('santri')
-            ->login(Login::class)
             ->font('Inter', provider: SpatieGoogleFontProvider::class)
             ->favicon(asset('storage/sites/favicon.ico'))
             ->brandName(fn (PengaturanUmum $settings) => $settings->brand_name)

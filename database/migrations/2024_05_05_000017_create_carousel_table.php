@@ -11,8 +11,9 @@ return new class extends Migration
         Schema::disableForeignKeyConstraints();
 
         Schema::create('carousel', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->ulid('id')->primary();
             $table->string('judul');
+            //$table->string('berkas_foto');
             $table->string('link_tujuan')->nullable();
             $table->boolean('status_aktif')->default(0)->nullable();
             $table->timestamps();
@@ -24,6 +25,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('kotak_saran');
+        Schema::dropIfExists('carousel');
     }
 };

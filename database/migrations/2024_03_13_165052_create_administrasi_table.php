@@ -15,13 +15,13 @@ return new class extends Migration
 
         Schema::create('administrasi', function (Blueprint $table) {
             $table->ulid('id')->primary();
+            $table->string('jenis_administrasi');
+            $table->string('nama_administrasi');
             $table->string('tahun_ajaran');
             $table->string('jenis_tagihan');
             $table->string('periode_tagihan');
-            $table->json('kelas');
-            $table->integer('biaya_administrasi');
-            $table->integer('biaya_tambahan');
-            $table->string('deskripsi_biaya_tambahan');
+            $table->json('sasaran');
+            $table->integer('nominal_tagihan');
             $table->date('batas_awal_pembayaran');
             $table->date('batas_akhir_pembayaran');
             $table->foreignUlid('rekening_id')->nullable()->references('id')->on('rekening')->cascadeOnUpdate()->nullOnDelete();

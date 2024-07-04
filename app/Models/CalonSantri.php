@@ -13,15 +13,16 @@ use App\Enums\StatusOrangTua;
 use App\Enums\StatusPernikahan;
 use App\Enums\StatusTinggal;
 use App\Enums\UkuranBaju;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class CalonSantri extends Model
+class CalonSantri extends Model implements HasMedia
 {
-    use HasFactory, HasUlids, SoftDeletes;
+    use InteractsWithMedia, HasUlids, SoftDeletes;
 
     protected $table = 'calon_santri';
     /**

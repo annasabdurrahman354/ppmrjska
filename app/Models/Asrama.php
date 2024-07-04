@@ -4,16 +4,19 @@ namespace App\Models;
 
 use App\Enums\JenisKelamin;
 use App\Enums\KepemilikanGedung;
-use Illuminate\Database\Eloquent\Casts\Attribute;
+use App\Enums\PembebananBiayaAsrama;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Image\Enums\Fit;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class Asrama extends Model
+class Asrama extends Model implements HasMedia
 {
-    use HasFactory, HasUlids, SoftDeletes;
+    use InteractsWithMedia, HasUlids, SoftDeletes;
 
     protected $table = 'asrama';
 
@@ -24,12 +27,19 @@ class Asrama extends Model
      */
     protected $fillable = [
         'nama',
-        'jenis_kelamin',
+        'slug',
+        'penghuni',
+        'alamat',
+        'deskripsi',
+        'latitude',
+        'longitude',
         'kapasitas_per_kamar',
-        'nama_pemilik',
-        'kontak_pemilik',
+        'kapasitas_total',
         'kepemilikan_gedung',
-
+        'nama_pemilik',
+        'nomor_telepon_pemilik',
+        'biaya_asrama_tahunan',
+        'pembebanan_biaya_asrama'
     ];
 
     /**
@@ -39,10 +49,11 @@ class Asrama extends Model
      */
 
     protected $casts = [
-        'jenis_kelamin' => JenisKelamin::class,
+        'penghuni' => JenisKelamin::class,
         'kapasitas_per_kamar' => 'integer',
-        'biaya_kamar' => 'array',
         'kepemilikan_gedung' => KepemilikanGedung::class,
+        'biaya_asrama_tahunan' => 'integer',
+        'pembebanan_biaya_asrama' => PembebananBiayaAsrama::class
     ];
 
 
@@ -51,15 +62,17 @@ class Asrama extends Model
         return $this->hasMany(KamarAsrama::class);
     }
 
-    public function biayaAsrama(): HasMany
+    public function registerMediaConversions(\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
     {
-        return $this->hasMany(BiayaAsrama::class);
+        $this->addMediaConversion('thumb')
+            ->fit(Fit::Contain, 270, 180)
+            ->nonQueued();
     }
 
-    protected function tagihanAsramaTerbaru(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->biayaAsrama()->latest()->first()?->biaya_kamar_tahunan,
-        );
+    public function syncMediaName(){
+        foreach( $this->getMedia('asrama_foto') as $media){
+            $media->file_name = getMediaFilename($this, $media);
+            $media->save();
+        }
     }
 }

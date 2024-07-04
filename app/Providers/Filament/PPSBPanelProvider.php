@@ -31,7 +31,6 @@ class PPSBPanelProvider extends PanelProvider
         return $panel
             ->id('ppsb')
             ->path('ppsb')
-            ->login(Login::class)
             ->font('Inter', provider: SpatieGoogleFontProvider::class)
             ->favicon(asset('storage/sites/favicon.ico'))
             ->brandName(fn (PengaturanUmum $settings) => $settings->brand_name)

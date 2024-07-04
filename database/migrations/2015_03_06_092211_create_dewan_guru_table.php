@@ -17,6 +17,7 @@ return new class extends Migration
             $table->ulid('id')->primary();
             $table->string('nama', 96);
             $table->string('nama_panggilan', 64);
+            //$table->string('avatar')->nullable();
             $table->string('nomor_telepon', 16);
             $table->string('email', 96)->nullable()->unique();
             $table->string('alamat')->nullable();

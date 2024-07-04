@@ -19,6 +19,7 @@ return new class extends Migration
             $table->ulid('id')->primary();
             $table->string('nama', 96);
             $table->string('nama_panggilan', 64);
+            //$table->string('avatar')->nullable();
             $table->string('jenis_kelamin');
             $table->string('nis', 9)->unique();
             $table->string('nomor_telepon', 16)->unique();

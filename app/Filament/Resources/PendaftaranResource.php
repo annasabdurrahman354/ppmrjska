@@ -29,9 +29,9 @@ class PendaftaranResource extends Resource
     protected static ?string $slug = 'pendaftaran';
     protected static ?string $modelLabel = 'Pendaftaran';
     protected static ?string $pluralModelLabel = 'Pendaftaran';
-    protected static ?string $navigationLabel = 'Pendaftaran';
     protected static ?string $recordTitleAttribute = 'recordTitle';
 
+    protected static ?string $navigationLabel = 'Pendaftaran';
     protected static ?string $navigationGroup = 'Manajemen Pendaftaran';
     protected static ?string $navigationIcon = 'heroicon-o-identification';
     protected static ?int $navigationSort = 42;
@@ -170,8 +170,15 @@ class PendaftaranResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('tahun_pendaftaran'),
+                Tables\Columns\TextColumn::make('id')
+                    ->label('ID')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('tahun_pendaftaran')
+                    ->label('Tahun Pendaftaran')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('gelombang_pendaftaran_counts')
+                    ->label('Jumlah Gelombang Pendaftaran')
                     ->counts('gelombangPendaftaran'),
             ])
             ->filters([

@@ -18,10 +18,10 @@ class MateriTambahanResource extends Resource
     protected static ?string $slug = 'materi-tambahan';
     protected static ?string $modelLabel = 'Materi Tambahan';
     protected static ?string $pluralModelLabel = 'Materi Tambahan';
-    protected static ?string $navigationLabel = 'Materi Tambahan';
     protected static ?string $recordTitleAttribute = 'nama';
 
-    protected static ?string $navigationGroup = 'Manajemen Materi';
+    protected static ?string $navigationLabel = 'Materi Tambahan';
+    protected static ?string $navigationGroup = 'Manajemen Kurikulum';
     protected static ?string $navigationIcon = 'heroicon-o-book-open';
     protected static ?int $navigationSort = 74;
 
@@ -44,6 +44,10 @@ class MateriTambahanResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label('ID')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->searchable(),
                 TextColumn::make('nama')
                     ->searchable(),
                 TextColumn::make('jumlah_halaman')

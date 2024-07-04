@@ -45,9 +45,9 @@ class CalonSantriResource extends Resource
     protected static ?string $slug = 'calon-santri';
     protected static ?string $modelLabel = 'Calon Santri';
     protected static ?string $pluralModelLabel = 'Calon Santri';
-    protected static ?string $navigationLabel = 'Calon Santri';
     protected static ?string $recordTitleAttribute = 'recordTitle';
 
+    protected static ?string $navigationLabel = 'Calon Santri';
     protected static ?string $navigationGroup = 'Manajemen Pendaftaran';
     protected static ?string $navigationIcon = 'heroicon-o-identification';
     protected static ?int $navigationSort = 42;
@@ -335,9 +335,9 @@ class CalonSantriResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('id')
+                Tables\Columns\TextColumn::make('id')
                     ->label('ID')
-                    ->visible(isSuperAdmin())
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 TextColumn::make('gelombangPendaftaran.pendaftaran.tahun_pendaftaran')
                     ->label('Tahun Pendaftaran')

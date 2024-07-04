@@ -18,7 +18,6 @@ class DatabaseSeeder extends Seeder
             RolesTableSeeder::class,
             UsersTableSeeder::class,
             AllTableSeeder::class,
-            MateriTableSeeder::class
         ]);
         Artisan::call('shield:generate --all');
     }

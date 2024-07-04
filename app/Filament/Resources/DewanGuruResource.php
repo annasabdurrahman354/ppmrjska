@@ -24,9 +24,9 @@ class DewanGuruResource extends Resource
     protected static ?string $slug = 'dewan-guru';
     protected static ?string $modelLabel = 'Dewan Guru';
     protected static ?string $pluralModelLabel = 'Dewan Guru';
-    protected static ?string $navigationLabel = 'Dewan Guru';
     protected static ?string $recordTitleAttribute = 'nama';
 
+    protected static ?string $navigationLabel = 'Dewan Guru';
     protected static ?string $navigationGroup = 'Manajemen Pengguna';
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
     protected static ?int $navigationSort = 43;
@@ -34,42 +34,16 @@ class DewanGuruResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                TextInput::make('nama')
-                    ->label('Nama Lengkap')
-                    ->required()
-                    ->maxLength(96),
-                TextInput::make('nama_panggilan')
-                    ->label('Nama Panggilan')
-                    ->required()
-                    ->maxLength(64),
-                TextInput::make('nomor_telepon')
-                    ->label('Nomor Telepon')
-                    ->tel()
-                    ->required()
-                    ->maxLength(16),
-                TextInput::make('email')
-                    ->label('Email')
-                    ->email()
-                    ->maxLength(96)
-                    ->default(null),
-                TextInput::make('alamat')
-                    ->label('Alamat')
-                    ->maxLength(255)
-                    ->default(null),
-                Toggle::make('status_aktif')
-                    ->label('Status Aktif')
-                    ->required(),
-            ]);
+            ->schema(DewanGuru::getForm());
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                TextColumn::make('id')
+                Tables\Columns\TextColumn::make('id')
                     ->label('ID')
-                    ->visible(isSuperAdmin())
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 TextColumn::make('nama')
                     ->label('Nama Lengkap')

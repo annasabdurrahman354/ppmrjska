@@ -11,12 +11,13 @@ return new class extends Migration
         Schema::disableForeignKeyConstraints();
 
         Schema::create('lokasi', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->ulid('id')->primary();
             $table->string('nama');
             $table->string('slug')->unique();
-            $table->string('deskripsi');
-            $table->string('alamat');
-            $table->string('jenis');
+            $table->string('alamat')->nullable();
+            $table->string('jenis_lokasi');
+            $table->string('deskripsi')->nullable();
+            //$table->json('berkas_foto')->nullable();
             $table->string('latitude')->nullable();
             $table->string('longitude')->nullable();
             $table->timestamps();
