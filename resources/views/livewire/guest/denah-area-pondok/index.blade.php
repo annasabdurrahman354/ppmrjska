@@ -18,9 +18,9 @@
             </div>
 
             <!-- Title -->
-            <div class="mx-auto text-center mt-6">
+            <div class="mx-auto text-center  mt-6">
                 <span class="inline-block py-1 px-3 mb-2 text-xs font-semibold text-green-900 bg-white rounded-full">INFORMASI GEOSPASIAL</span>
-                <h2 class="text-2xl font-bold font-serif italic md:text-4xl md:leading-tight dark:text-white">Perguruan Tinggi Terdekat</h2>
+                <h2 class="text-2xl font-bold font-serif italic md:text-4xl md:leading-tight dark:text-white">Denah Area Pondok</h2>
             </div>
             <!-- End Title -->
 
@@ -39,7 +39,7 @@
             <div class="w-full max-h-full overflow-hidden flex flex-col bg-white border shadow-sm rounded-xl pointer-events-auto dark:bg-neutral-800 dark:border-neutral-700 dark:shadow-neutral-700/70">
                 <div class="flex justify-between items-center py-3 px-4 border-b dark:border-neutral-700">
                     <h3 class="font-bold text-gray-800 dark:text-white">
-                        {{$clickedUniv['nama'] ?? ''}}
+                        {{$clickedLokasi['nama'] ?? ''}}
                     </h3>
                     <button id="close-btn" type="button" class="flex justify-center items-center size-7 text-sm font-semibold rounded-full border border-transparent text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:text-white dark:hover:bg-neutral-700" data-hs-overlay="#hs-univ-modal">
                         <span class="sr-only">Close</span>
@@ -56,14 +56,6 @@
                     </div>
                 </div>
                 <div class="flex justify-end items-center gap-x-2 py-3 px-4 border-t dark:border-neutral-700">
-                    @isset($clickedUniv['link_website'])
-                        <a href="//{{$clickedUniv['link_website']}}" type="button" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 disabled:pointer-events-none">
-                            <svg class="w-4 h-4 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 14v4.833A1.166 1.166 0 0 1 16.833 20H5.167A1.167 1.167 0 0 1 4 18.833V7.167A1.166 1.166 0 0 1 5.167 6h4.618m4.447-2H20v5.768m-7.889 2.121 7.778-7.778"/>
-                            </svg>
-                            Buka Situs Web
-                        </a>
-                    @endisset
                     <button id="close-btn" type="button" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800" data-hs-overlay="#hs-univ-modal">
                         Tutup
                     </button>
@@ -174,10 +166,10 @@
 @endpush
 @script
 <script>
-    let univs = @js($univs);
-    univs.forEach(addUniv);
+    let lokasis = @js($mergedData);
+    lokasis.forEach(addLokasi);
 
-    function addUniv(item) {
+    function addLokasi(item) {
         const svgIcon = L.divIcon({
             html: `<svg xmlns="http://www.w3.org/2000/svg" class="map-icon" fill="green" width="36" height="36" viewBox="0 0 24 24"><path d="M12 0c-4.198 0-8 3.403-8 7.602 0 4.198 3.469 9.21 8 16.398 4.531-7.188 8-12.2 8-16.398 0-4.199-3.801-7.602-8-7.602zm0 11c-1.657 0-3-1.343-3-3s1.343-3 3-3 3 1.343 3 3-1.343 3-3 3z"/></svg>`,
             className: "",
@@ -191,7 +183,7 @@
                 icon: svgIcon,
             }
         ).on('click', function() {
-            @this.set('clickedUniv', item)
+            @this.set('clickedLokasi', item)
             HSOverlay.open('#hs-univ-modal');
         }).bindTooltip(
             item['nama'],

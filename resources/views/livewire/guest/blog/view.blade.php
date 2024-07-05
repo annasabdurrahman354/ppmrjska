@@ -18,7 +18,7 @@
             </div>
 
             <!-- Title -->
-            <div class="mx-auto text-center">
+            <div class="mx-auto text-center mt-6">
                 <span class="inline-block py-1 px-3 mb-2 text-xs font-semibold text-green-900 bg-white rounded-full">INFORMASI MEDIA MASSA</span>
                 <h2 class="text-2xl font-bold font-serif italic md:text-4xl md:leading-tight dark:text-white">Jurnalistik</h2>
             </div>

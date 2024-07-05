@@ -587,7 +587,7 @@
 
                         <div class="flex flex-wrap -mx-4">
                             <div class="hs-accordion-group h-fit w-full lg:w-1/2 px-4 mb-6 lg:mb-0 grid grid-cols-1 gap-3">
-                                <div class="hs-accordion hs-accordion-active:border-gray-200 border border-slate-200 rounded-xl dark:hs-accordion-active:border-neutral-700 dark:bg-neutral-800 dark:border-transparent" id="hs-active-bordered-heading-one">
+                                <div class="transition-all duration-300 hs-accordion hs-accordion-active:bg-white/30 hs-accordion-active:backdrop-blur-sm hs-accordion-active:border-gray-200 border border-slate-200 rounded-xl dark:hs-accordion-active:border-neutral-700 dark:bg-neutral-800 dark:border-transparent" id="hs-active-bordered-heading-one">
                                     <button class="hs-accordion-toggle hs-accordion-active:text-emerald-600 inline-flex justify-between items-center gap-x-3 w-full font-messiri font-bold text-lg text-start text-gray-800 py-4 px-5 hover:text-gray-500 disabled:opacity-50 disabled:pointer-events-none dark:hs-accordion-active:text-emerald-500 dark:text-neutral-200 dark:hover:text-neutral-400 dark:focus:outline-none dark:focus:text-neutral-400" aria-controls="hs-basic-active-bordered-collapse-one">
                                         Seberapa sering KBM dilaksanakan di pondok?
                                         <svg class="hs-accordion-active:hidden block size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -606,7 +606,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="hs-accordion hs-accordion-active:border-gray-200 border border-slate-200 rounded-xl dark:hs-accordion-active:border-neutral-700 dark:bg-neutral-800 dark:border-transparent" id="hs-active-bordered-heading-two">
+                                <div class="transition-all duration-300 hs-accordion hs-accordion-active:bg-white/30 hs-accordion-active:backdrop-blur-sm hs-accordion-active:border-gray-200 border border-slate-200 rounded-xl dark:hs-accordion-active:border-neutral-700 dark:bg-neutral-800 dark:border-transparent" id="hs-active-bordered-heading-two">
                                     <button class="hs-accordion-toggle hs-accordion-active:text-emerald-600 inline-flex justify-between items-center gap-x-3 w-full font-messiri font-bold text-lg text-start text-gray-800 py-4 px-5 hover:text-gray-500 disabled:opacity-50 disabled:pointer-events-none dark:hs-accordion-active:text-emerald-500 dark:text-neutral-200 dark:hover:text-neutral-400 dark:focus:outline-none dark:focus:text-neutral-400" aria-controls="hs-basic-active-bordered-collapse-two">
                                         Apakah santri diperbolehkan untuk membawa barang elektronik?
                                         <svg class="hs-accordion-active:hidden block size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -625,7 +625,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="hs-accordion hs-accordion-active:border-gray-200 border border-slate-200 rounded-xl dark:hs-accordion-active:border-neutral-700 dark:bg-neutral-800 dark:border-transparent" id="hs-active-bordered-heading-three">
+                                <div class="transition-all duration-300 hs-accordion hs-accordion-active:bg-white/30 hs-accordion-active:backdrop-blur-sm hs-accordion-active:border-gray-200 border border-slate-200 rounded-xl dark:hs-accordion-active:border-neutral-700 dark:bg-neutral-800 dark:border-transparent" id="hs-active-bordered-heading-three">
                                     <button class="hs-accordion-toggle hs-accordion-active:text-emerald-600 inline-flex justify-between items-center gap-x-3 w-full font-messiri font-bold text-lg text-start text-gray-800 py-4 px-5 hover:text-gray-500 disabled:opacity-50 disabled:pointer-events-none dark:hs-accordion-active:text-emerald-500 dark:text-neutral-200 dark:hover:text-neutral-400 dark:focus:outline-none dark:focus:text-neutral-400" aria-controls="hs-basic-active-bordered-collapse-three">
                                         Apa saja jenis tes untuk calon santri baru?
                                         <svg class="hs-accordion-active:hidden block size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -644,7 +644,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="hs-accordion hs-accordion-active:border-gray-200 border border-slate-200 rounded-xl dark:hs-accordion-active:border-neutral-700 dark:bg-neutral-800 dark:border-transparent" id="hs-active-bordered-heading-four">
+                                <div class="transition-all duration-300 hs-accordion hs-accordion-active:bg-white/30 hs-accordion-active:backdrop-blur-sm hs-accordion-active:border-gray-200 border border-slate-200 rounded-xl dark:hs-accordion-active:border-neutral-700 dark:bg-neutral-800 dark:border-transparent" id="hs-active-bordered-heading-four">
                                     <button class="hs-accordion-toggle hs-accordion-active:text-emerald-600 inline-flex justify-between items-center gap-x-3 w-full font-messiri font-bold text-lg text-start text-gray-800 py-4 px-5 hover:text-gray-500 disabled:opacity-50 disabled:pointer-events-none dark:hs-accordion-active:text-emerald-500 dark:text-neutral-200 dark:hover:text-neutral-400 dark:focus:outline-none dark:focus:text-neutral-400" aria-controls="hs-basic-active-bordered-collapse-four">
                                         Apakah diperbolehkan membawa hewan peliharaan ke pondok?
                                         <svg class="hs-accordion-active:hidden block size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -665,7 +665,7 @@
                                 </div>
                             </div>
                             <div class="hs-accordion-group h-fit w-full lg:w-1/2 px-4 mb-6 lg:mb-0 grid grid-cols-1 gap-3">
-                                <div class="hs-accordion hs-accordion-active:border-gray-200 border border-slate-200 rounded-xl dark:hs-accordion-active:border-neutral-700 dark:bg-neutral-800 dark:border-transparent" id="hs-active-bordered-heading-one">
+                                <div class="transition-all duration-300 hs-accordion hs-accordion-active:bg-white/30 hs-accordion-active:backdrop-blur-sm hs-accordion-active:border-gray-200 border border-slate-200 rounded-xl dark:hs-accordion-active:border-neutral-700 dark:bg-neutral-800 dark:border-transparent" id="hs-active-bordered-heading-one">
                                     <button class="hs-accordion-toggle hs-accordion-active:text-emerald-600 inline-flex justify-between items-center gap-x-3 w-full font-messiri font-bold text-lg text-start text-gray-800 py-4 px-5 hover:text-gray-500 disabled:opacity-50 disabled:pointer-events-none dark:hs-accordion-active:text-emerald-500 dark:text-neutral-200 dark:hover:text-neutral-400 dark:focus:outline-none dark:focus:text-neutral-400" aria-controls="hs-basic-active-bordered-collapse-one">
                                         Apakah di PPM hanya ada kegiatan penunjang lain?
                                         <svg class="hs-accordion-active:hidden block size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -684,7 +684,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="hs-accordion hs-accordion-active:border-gray-200 border border-slate-200 rounded-xl dark:hs-accordion-active:border-neutral-700 dark:bg-neutral-800 dark:border-transparent" id="hs-active-bordered-heading-two">
+                                <div class="transition-all duration-300 hs-accordion hs-accordion-active:bg-white/30 hs-accordion-active:backdrop-blur-sm hs-accordion-active:border-gray-200 border border-slate-200 rounded-xl dark:hs-accordion-active:border-neutral-700 dark:bg-neutral-800 dark:border-transparent" id="hs-active-bordered-heading-two">
                                     <button class="hs-accordion-toggle hs-accordion-active:text-emerald-600 inline-flex justify-between items-center gap-x-3 w-full font-messiri font-bold text-lg text-start text-gray-800 py-4 px-5 hover:text-gray-500 disabled:opacity-50 disabled:pointer-events-none dark:hs-accordion-active:text-emerald-500 dark:text-neutral-200 dark:hover:text-neutral-400 dark:focus:outline-none dark:focus:text-neutral-400" aria-controls="hs-basic-active-bordered-collapse-two">
                                         Berapa kuota penerimaan santri baru per tahunnya?
                                         <svg class="hs-accordion-active:hidden block size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -703,7 +703,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="hs-accordion hs-accordion-active:border-gray-200 border border-slate-200 rounded-xl dark:hs-accordion-active:border-neutral-700 dark:bg-neutral-800 dark:border-transparent" id="hs-active-bordered-heading-three">
+                                <div class="transition-all duration-300 hs-accordion hs-accordion-active:bg-white/30 hs-accordion-active:backdrop-blur-sm hs-accordion-active:border-gray-200 border border-slate-200 rounded-xl dark:hs-accordion-active:border-neutral-700 dark:bg-neutral-800 dark:border-transparent" id="hs-active-bordered-heading-three">
                                     <button class="hs-accordion-toggle hs-accordion-active:text-emerald-600 inline-flex justify-between items-center gap-x-3 w-full font-messiri font-bold text-lg text-start text-gray-800 py-4 px-5 hover:text-gray-500 disabled:opacity-50 disabled:pointer-events-none dark:hs-accordion-active:text-emerald-500 dark:text-neutral-200 dark:hover:text-neutral-400 dark:focus:outline-none dark:focus:text-neutral-400" aria-controls="hs-basic-active-bordered-collapse-three">
                                         Berapa tarif biaya untuk mendaftar di PPM?
                                         <svg class="hs-accordion-active:hidden block size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -722,7 +722,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="hs-accordion hs-accordion-active:border-gray-200 border border-slate-200 rounded-xl dark:hs-accordion-active:border-neutral-700 dark:bg-neutral-800 dark:border-transparent" id="hs-active-bordered-heading-four">
+                                <div class="transition-all duration-300 hs-accordion hs-accordion-active:bg-white/30 hs-accordion-active:backdrop-blur-sm hs-accordion-active:border-gray-200 border border-slate-200 rounded-xl dark:hs-accordion-active:border-neutral-700 dark:bg-neutral-800 dark:border-transparent" id="hs-active-bordered-heading-four">
                                     <button class="hs-accordion-toggle hs-accordion-active:text-emerald-600 inline-flex justify-between items-center gap-x-3 w-full font-messiri font-bold text-lg text-start text-gray-800 py-4 px-5 hover:text-gray-500 disabled:opacity-50 disabled:pointer-events-none dark:hs-accordion-active:text-emerald-500 dark:text-neutral-200 dark:hover:text-neutral-400 dark:focus:outline-none dark:focus:text-neutral-400" aria-controls="hs-basic-active-bordered-collapse-four">
                                         Berapa jumlah penghuni setiap kamar?
                                         <svg class="hs-accordion-active:hidden block size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

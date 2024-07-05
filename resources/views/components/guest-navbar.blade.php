@@ -1,5 +1,5 @@
 <!-- Header -->
-<header class="flex flex-wrap md:justify-start md:flex-nowrap z-50 w-full text-sm py-3 md:py-0">
+<header class="flex flex-wrap md:justify-start md:flex-nowrap z-50 w-full text-sm py-3">
     <nav class="max-w-[85rem] w-full mx-auto px-4 md:px-6 lg:px-8" aria-label="Global">
         <div class="relative lg:flex lg:items-center lg:justify-between">
             <div class="flex items-center justify-between">
@@ -23,7 +23,7 @@
             </div>
 
             <div id="navbar-collapse-basic-content" class="hidden overflow-hidden transition-all duration-300 basis-full grow lg:block">
-                <div data-hs-scrollspy="#scrollspy" class="[--scrollspy-offset:220] md:[--scrollspy-offset:70] flex flex-col gap-x-0 mt-5 divide-y divide-dashed divide-gray-200 md:flex-row md:items-center md:justify-end md:gap-x-7 md:mt-0 md:ps-7 md:divide-y-0 md:divide-solid dark:divide-neutral-700">
+                <div class="flex flex-col gap-x-0 mt-5 divide-y divide-dashed divide-gray-200 md:flex-row md:items-center md:justify-end md:gap-x-7 md:mt-0 md:ps-7 md:divide-y-0 md:divide-solid dark:divide-neutral-700">
                     <p class="font-medium text-gray-600 hover:text-gray-500 dark:text-neutral-400 dark:hover:text-neutral-500 my-3 md:my-6 group relative w-max">
                         <a href="{{route('guest.blog.index')}}" aria-current="page">Blog</a>
                         <span class="absolute -bottom-1 left-1/2 w-0 transition-all h-0.5 bg-lime-600 group-hover:w-3/6"></span>
@@ -36,7 +36,7 @@
                         <span class="absolute -bottom-1 right-1/2 w-0 transition-all h-0.5 bg-lime-600 group-hover:w-3/6"></span>
                     </p>
 
-                    <div data-hs-scrollspy-group class="hs-dropdown [--strategy:static] sm:[--strategy:fixed] [--adaptive:none] sm:[--trigger:hover] w-fit mb-3 md:my-6">
+                    <div class="hs-dropdown [--strategy:static] sm:[--strategy:fixed] [--adaptive:none] sm:[--trigger:hover] w-fit mb-3 md:my-6">
                         <button type="button"
                             id="hs-dropdown-default"
                             class="flex items-center w-full font-medium text-gray-600 hover:text-gray-500 dark:text-neutral-400 dark:hover:text-neutral-500" >
@@ -71,7 +71,7 @@
                         </div>
                     </div>
 
-                    <div data-hs-scrollspy-group class="hs-dropdown [--strategy:static] sm:[--strategy:fixed] [--adaptive:none] sm:[--trigger:hover] w-fit mb-3 md:my-6">
+                    <div class="hs-dropdown [--strategy:static] sm:[--strategy:fixed] [--adaptive:none] sm:[--trigger:hover] w-fit mb-3 md:my-6">
                         <button type="button"
                             id="hs-dropdown-default"
                             class="flex  items-center w-full font-medium text-gray-600 hover:text-gray-500 dark:text-neutral-400 dark:hover:text-neutral-500">
@@ -103,7 +103,7 @@
                         </div>
                     </div>
 
-                    <div data-hs-scrollspy-group class="hs-dropdown [--strategy:static] sm:[--strategy:fixed] [--adaptive:none] sm:[--trigger:hover] w-fit mb-3 md:my-6">
+                    <div class="hs-dropdown [--strategy:static] sm:[--strategy:fixed] [--adaptive:none] sm:[--trigger:hover] w-fit mb-3 md:my-6">
                         <button
                             type="button"
                             id="hs-dropdown-default"
@@ -127,10 +127,10 @@
                         </button>
 
                         <div class="hs-dropdown-menu hidden z-10 bg-white transition-opacity duration-300 opacity-0 hs-dropdown-open:transition-none hs-dropdown-open:duration-0 sm:hs-dropdown-open:transition-[opacity,margin] sm:hs-dropdown-open:duration-[150ms] sm:transition-[opacity,margin] sm:duration-[150ms] hs-dropdown-open:opacity-100 sm:w-48 sm:shadow-md rounded-lg py-2 sm:px-2 dark:bg-neutral-800 sm:dark:border dark:border-neutral-700 dark:divide-neutral-700 before:absolute top-full sm:border before:-top-5 before:start-0 before:w-full before:h-5">
-                            <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-700 hover:bg-green-100 focus:ring-2 focus:ring-green-500 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300" href="#">
-                                Denah Lokasi Pondok
+                            <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-700 hover:bg-green-100 focus:ring-2 focus:ring-green-500 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300" href="{{route('guest.denah-area-pondok.index')}}">
+                                Denah Area Pondok
                             </a>
-                            <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-700 hover:bg-green-100 focus:ring-2 focus:ring-green-500 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300" href="#">
+                            <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-700 hover:bg-green-100 focus:ring-2 focus:ring-green-500 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300" href="{{route('guest.perguruan-tinggi-terdekat.index')}}">
                                 Perguruan Tinggi Terdekat
                             </a>
                         </div>

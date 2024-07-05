@@ -1,7 +1,7 @@
 <div>
     <!-- Hero -->
-    <div class="flex justify-center items-center lg:h-screen w-full relative bg-gradient-to-bl from-green-100 via-transparent dark:from-green-950 dark:via-transparent">
-        <div class="max-w-[85rem] px-4 sm:px-6 lg:px-8 mx-auto py-6">
+    <div class="relative flex justify-center items-center h-screen w-full bg-gradient-to-bl from-green-100 via-transparent dark:from-green-950 dark:via-transparent">
+        <div class="max-w-[85rem] px-4 sm:px-6 lg:px-8 mx-auto py-6 z-50">
             <!-- Grid -->
             <div class="grid items-center md:grid-cols-2 gap-8 lg:gap-16">
                 <div>
@@ -23,7 +23,7 @@
                     </div>
 
                     <!-- Blockquote -->
-                    <blockquote class="hidden md:block relative max-w-sm">
+                    <blockquote class="hidden md:block relative max-w-md pl-3">
                         <svg
                             class="absolute top-0 start-0 transform -translate-x-6 -translate-y-8 size-16 text-gray-200 dark:text-neutral-800"
                             width="16"
@@ -54,7 +54,7 @@
                     <form wire:submit.prevent="login">
                         <div class="lg:max-w-lg lg:mx-auto lg:me-0 ms-auto">
                             <!-- Card -->
-                            <div class="p-4 sm:p-7 flex flex-col bg-white rounded-2xl shadow-lg dark:bg-neutral-900">
+                            <div class="p-4 sm:p-7 flex flex-col bg-white/30 md:bg-white backdrop-blur rounded-2xl shadow-lg dark:bg-neutral-900">
                                 <div class="text-center">
                                     <h1 class="block text-2xl font-messiri font-bold text-gray-800 dark:text-white ">Selamat Datang</h1>
                                 </div>
@@ -154,6 +154,7 @@
             <!-- End Grid -->
         </div>
         <!-- End Clients Section -->
+        <img src="{{asset('index/Menara PPM.png')}}" class="absolute opacity-90 bottom-0 left-0 h-full" alt="Menara PPM">
     </div>
     <!-- End Hero -->
 </div>

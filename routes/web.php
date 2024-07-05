@@ -22,6 +22,7 @@ Route::group(['as' => 'guest.'], function () {
     Route::get('/media', \App\Livewire\Guest\Media\Index::class)->name('media.index');
     Route::get('/blog', \App\Livewire\Guest\Blog\Index::class)->name('blog.index');
     Route::get('/blog/{slug}', \App\Livewire\Guest\Blog\View::class)->name('blog.view');
+    Route::get('/denah-area-pondok', \App\Livewire\Guest\DenahAreaPondok\Index::class)->name('denah-area-pondok.index');
     Route::get('/perguruan-tinggi-terdekat', \App\Livewire\Guest\PerguruanTinggiTerdekat\Index::class)->name('perguruan-tinggi-terdekat.index');
     Route::get('/kontak-kami', \App\Livewire\Guest\Kontak\Index::class)->name('kontak.index');
 

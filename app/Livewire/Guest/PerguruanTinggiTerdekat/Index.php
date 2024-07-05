@@ -20,7 +20,7 @@ class Index extends Component
     {
         $this->univs = Universitas::query();
         if ($this->search != ''){
-            $this->univs->where('nama', $this->search);
+            $this->univs = $this->univs->where('nama', $this->search);
         }
         $this->univs = $this->univs->get();
 

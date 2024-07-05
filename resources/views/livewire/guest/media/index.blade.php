@@ -18,13 +18,13 @@
             </div>
 
             <!-- Title -->
-            <div class="mx-auto text-center">
+            <div class="mx-auto text-center mt-6">
                 <span class="inline-block py-1 px-3 mb-2 text-xs font-semibold text-green-900 bg-white rounded-full">PRNALA DARI LUAR</span>
                 <h2 class="text-2xl font-bold font-serif italic md:text-4xl md:leading-tight dark:text-white">Media</h2>
             </div>
             <!-- End Title -->
 
-            <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-12 mx-auto">
+            <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-12 mx-auto min-h-screen">
                 <div class="flex flex-col md:flex-row w-full gap-8">
                     <aside class="md:w-1/3 lg:w-1/4">
                         <div class="bg-white bg-opacity-80 shadow rounded-xl p-4 sm:p-7 dark:bg-neutral-900">
