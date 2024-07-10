@@ -2,6 +2,7 @@
 import preset from './vendor/filament/support/tailwind.config.preset'
 const defaultTheme = require('tailwindcss/defaultTheme');
 export default {
+  darkMode: 'selector',
   presets: [preset],
   content: [
     "./resources/**/*.blade.php",

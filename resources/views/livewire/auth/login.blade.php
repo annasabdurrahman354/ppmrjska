@@ -54,7 +54,7 @@
                     <form wire:submit.prevent="login">
                         <div class="lg:max-w-lg lg:mx-auto lg:me-0 ms-auto">
                             <!-- Card -->
-                            <div class="p-4 sm:p-7 flex flex-col bg-white/30 md:bg-white backdrop-blur rounded-2xl shadow-lg dark:bg-neutral-900">
+                            <div class="p-4 sm:p-7 flex flex-col bg-white/30 md:bg-white backdrop-blur rounded-2xl shadow-lg dark:backdrop-blur-md dark:bg-white/10">
                                 <div class="text-center">
                                     <h1 class="block text-2xl font-messiri font-bold text-gray-800 dark:text-white ">Selamat Datang</h1>
                                 </div>
@@ -75,7 +75,7 @@
                                             />
                                             <label
                                                 for="hs-hero-signup-form-floating-input-email"
-                                                class="absolute top-0 start-0 p-4 h-full text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] dark:text-white peer-disabled:opacity-50 peer-disabled:pointer-events-none peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 dark:peer-focus:text-neutral-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500 dark:peer-[:not(:placeholder-shown)]:text-neutral-500 dark:text-neutral-500"
+                                                class="absolute top-0 start-0 p-4 h-full text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-disabled:opacity-50 peer-disabled:pointer-events-none peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 dark:peer-focus:text-neutral-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500 dark:peer-[:not(:placeholder-shown)]:text-neutral-500 dark:text-neutral-500"
                                             >
                                                 Email
                                             </label>
@@ -102,7 +102,7 @@
                                             />
                                             <label
                                                 for="hs-hero-signup-form-floating-input-current-password"
-                                                class="absolute top-0 start-0 p-4 h-full text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] dark:text-white peer-disabled:opacity-50 peer-disabled:pointer-events-none peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 dark:peer-focus:text-neutral-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500 dark:peer-[:not(:placeholder-shown)]:text-neutral-500 dark:text-neutral-500"
+                                                class="absolute top-0 start-0 p-4 h-full text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-disabled:opacity-50 peer-disabled:pointer-events-none peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 dark:peer-focus:text-neutral-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500 dark:peer-[:not(:placeholder-shown)]:text-neutral-500 dark:text-neutral-500"
                                             >
                                                 Kata Sandi
                                             </label>
@@ -119,9 +119,9 @@
                                 <!-- End Grid -->
                                 <div class="my-3 flex items-center border-b border-gray-200 dark:border-neutral-700"></div>
 
-                                <p class="mt-2 text-sm text-gray-600 dark:text-neutral-400">
+                                <p class="mt-2 text-sm text-gray-600 dark:text-white">
                                     Lupa kata sandi?
-                                    <a class="text-blue-600 decoration-2 hover:underline font-medium dark:text-blue-500" href="#">
+                                    <a class="text-green-600  decoration-2 hover:underline font-medium dark:text-green-300" href="#">
                                         Perbarui disini!
                                     </a>
                                 </p>
@@ -154,7 +154,7 @@
             <!-- End Grid -->
         </div>
         <!-- End Clients Section -->
-        <img src="{{asset('index/Menara PPM.png')}}" class="absolute opacity-90 bottom-0 left-0 h-full" alt="Menara PPM">
+        <img src="{{asset('index/Menara PPM.png')}}" class="absolute opacity-90 dark:grayscale dark:opacity-10 dark:brightness-50 bottom-0 left-0 h-full" alt="Menara PPM">
     </div>
     <!-- End Hero -->
 </div>

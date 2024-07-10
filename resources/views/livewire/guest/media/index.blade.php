@@ -24,10 +24,10 @@
             </div>
             <!-- End Title -->
 
-            <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-12 mx-auto min-h-screen">
+            <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-12 mx-auto h-full md:h-screen">
                 <div class="flex flex-col md:flex-row w-full gap-8">
                     <aside class="md:w-1/3 lg:w-1/4">
-                        <div class="bg-white bg-opacity-80 shadow rounded-xl p-4 sm:p-7 dark:bg-neutral-900">
+                        <div class="bg-white bg-opacity-80 shadow rounded-xl p-4 sm:p-7 dark:backdrop-blur-md dark:bg-white/10">
 
                             <!-- Section -->
                             <div class="py-6 first:pt-0 last:pb-0 border-t first:border-transparent border-gray-200 dark:border-neutral-700 dark:first:border-transparent">
@@ -116,7 +116,9 @@
                                 </div>
                                 <!-- End Card -->
                             @empty
-                                Belum ada daftar media!
+                                <div class="p-4 w-full dark:text-white">
+                                    Tidak ada postingan media!
+                                </div>
                             @endforelse
 
                             <div class="mt-4">

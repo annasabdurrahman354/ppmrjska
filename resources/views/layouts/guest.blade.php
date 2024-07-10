@@ -12,7 +12,7 @@
         <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400..700&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Cookie&display=swap" rel="stylesheet">
 
-        <title>{{ config('app.name') }}</title>
+        <title>{{ $pengaturan_umum->brand_name }}</title>
 
         @vite('resources/css/app.css')
         @vite('resources/js/app.js')

@@ -3,6 +3,8 @@
 namespace App\Filament\Pages\Setting;
 
 use App\Settings\Admin\PengaturanUmum;
+use Awcodes\TableRepeater\Components\TableRepeater;
+use Awcodes\TableRepeater\Header;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
@@ -98,6 +100,51 @@ class ManageGeneral extends SettingsPage
                                 ->acceptedFileTypes(['image/x-icon', 'image/vnd.microsoft.icon'])
                                 ->required(),
                         ])->columns(4),
+                    ]),
+                Section::make('Informasi Pondok')
+                    ->label('Informasi Pondok')
+                    ->description('Mengelola kontak informasi pondok.')
+                    ->icon('fluentui-phone-24-o')
+                    ->schema([
+                        TextInput::make('site_alamat')
+                            ->label('Alamat Pondok')
+                            ->required(),
+                        TextInput::make('site_email')
+                            ->label('Email Pondok')
+                            ->email()
+                            ->required(),
+                        TableRepeater::make('site_narahubung')
+                            ->label('Narahubung')
+                            ->headers([
+                                Header::make('Nama'),
+                                Header::make('Nomor Telepon'),
+                            ])
+                            ->schema([
+                                TextInput::make('nama')
+                                    ->label('Nama')
+                                    ->required(),
+                                TextInput::make('nomor_telepon')
+                                    ->label('Nomor Telepon')
+                                    ->tel()
+                                    ->required(),
+                            ])
+                            ->columns(2),
+                        TableRepeater::make('site_penerima_tamu')
+                            ->label('Penerima Tamu')
+                            ->headers([
+                                Header::make('Nama'),
+                                Header::make('Nomor Telepon'),
+                            ])
+                            ->schema([
+                                TextInput::make('nama')
+                                    ->label('Nama')
+                                    ->required(),
+                                TextInput::make('nomor_telepon')
+                                    ->label('Nomor Telepon')
+                                    ->tel()
+                                    ->required(),
+                            ])
+                            ->columns(2)
                     ]),
                 Section::make('Theme')
                     ->label(fn () => __('page.general_settings.sections.theme.title'))

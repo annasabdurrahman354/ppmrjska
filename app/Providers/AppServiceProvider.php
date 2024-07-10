@@ -2,11 +2,12 @@
 
 namespace App\Providers;
 
+use App\Settings\Admin\PengaturanUmum;
 use BezhanSalleh\PanelSwitch\PanelSwitch;
 use Carbon\Carbon;
-use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -32,7 +33,7 @@ class AppServiceProvider extends ServiceProvider
            // $panelSwitch->canSwitchPanels(fn (): bool => auth()->user()?->can('switch_panels'));
             $panelSwitch->renderHook('panels::global-search.after');
         });
-        
+
         Table::configureUsing(function (Table $table): void {
             $table
                 ->emptyStateHeading(__('panel.empty'))
@@ -40,7 +41,9 @@ class AppServiceProvider extends ServiceProvider
                 ->defaultPaginationPageOption(10)
                 ->paginated([10, 25, 50, 100])
                 ->defaultSort('created_at', 'desc');
-        });      
+        });
+
+        View::share('pengaturan_umum', app(PengaturanUmum::class));
 
         FilamentAsset::register([
             //Js::make('html5-qrcode', 'https://unpkg.com/html5-qrcode')->loadedOnRequest(),

@@ -36,7 +36,7 @@
                                         Pendaftaran
                                         <svg class="flex-shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
                                     </a>
-                                    <a class="py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800" href="#">
+                                    <a href="{{route('guest.kontak.index')}}" class="py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800">
                                         Hubungi
                                     </a>
                                 </div>
@@ -258,8 +258,8 @@
             <!-- End Title -->
 
             <div wire:ignore class="swiper mySwiper w-3/4 h-fit relative">
-                <div class="absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-white to-transparent z-10"></div>
-                <div class="absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-white to-transparent z-10"></div>
+                <div class="absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-white dark:from-neutral-900 to-transparent z-10"></div>
+                <div class="absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-white dark:from-neutral-900 to-transparent z-10"></div>
                 <div class="swiper-wrapper">
                     @forelse($dewan_gurus as $dewan_guru)
                         <div class="swiper-slide flex flex-col items-center justify-center text-center rounded-lg">
@@ -507,42 +507,22 @@
             <!-- End Title -->
             <!-- Testimonials -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Card -->
-                    <div class="flex flex-col bg-white border border-gray-200 shadow-sm rounded-xl dark:bg-neutral-900 dark:border-neutral-700">
-                        <div class="flex-auto p-4 md:p-6">
-                            <img class="size-12 rounded-full" src="{{asset('index/Ketua PPM_thumb.jpg')}}" alt="Ketua PPM Roudlotul Jannah Surakarta">
-
-                            <p class="mt-3 sm:mt-6 text-base text-gray-800 md:text-xl dark:text-white"><em>
-                                    " I'm absolutely floored by the level of care and attention to detail the team at HS have put into this theme and for one can guarantee that I will be a return customer. "
-                                </em></p>
-                        </div>
-
-                        <div class="p-4 rounded-b-xl md:px-6">
-                            <h3 class="text-sm font-semibold text-gray-800 sm:text-base dark:text-neutral-200">
-                                Pak Eko Prasetyo
-                            </h3>
-                            <p class="text-sm text-gray-500 dark:text-neutral-500">
-                                Santri Angkatan 2011
-                            </p>
-                        </div>
-                    </div>
-                    <!-- End Card -->
                 <!-- Card -->
                 <div class="flex flex-col bg-white border border-gray-200 shadow-sm rounded-xl dark:bg-neutral-900 dark:border-neutral-700">
                     <div class="flex-auto p-4 md:p-6">
-                        <img class="size-12 rounded-full" src="{{asset('index/Ketua PPM_thumb.jpg')}}" alt="Ketua PPM Roudlotul Jannah Surakarta">
+                        <img class="size-12 rounded-full" src="{{asset('index/dummy_person.png')}}" alt="Ketua PPM Roudlotul Jannah Surakarta">
 
-                        <p class="mt-3 sm:mt-6 text-base text-gray-800 md:text-xl dark:text-white"><em>
-                                " I'm absolutely floored by the level of care and attention to detail the team at HS have put into this theme and for one can guarantee that I will be a return customer. "
+                        <p class="mt-3 sm:mt-6 text-base text-gray-800 dark:text-white"><em>
+                                PPM telah memberikan dampak positif yang luar biasa, saya belajar memperbaiki akhlakku, memperdalam ilmu keduniaan dan agama. Dengan ilmu yang saya peroleh, saya merasa lebih siap dan bermanfaat bagi diri saya sendiri, keluarga, serta sesama.
                             </em></p>
                     </div>
 
                     <div class="p-4 rounded-b-xl md:px-6">
                         <h3 class="text-sm font-semibold text-gray-800 sm:text-base dark:text-neutral-200">
-                            Pak Eko Prasetyo
+                            Ust. Bayu Aji P, A.md.T
                         </h3>
                         <p class="text-sm text-gray-500 dark:text-neutral-500">
-                            Santri Angkatan 2011
+                            Alumni 2020
                         </p>
                     </div>
                 </div>
@@ -550,19 +530,38 @@
                 <!-- Card -->
                 <div class="flex flex-col bg-white border border-gray-200 shadow-sm rounded-xl dark:bg-neutral-900 dark:border-neutral-700">
                     <div class="flex-auto p-4 md:p-6">
-                        <img class="size-12 rounded-full" src="{{asset('index/Ketua PPM_thumb.jpg')}}" alt="Ketua PPM Roudlotul Jannah Surakarta">
+                        <img class="size-12 rounded-full" src="{{asset('index/dummy_person.png')}}" alt="Ketua PPM Roudlotul Jannah Surakarta">
 
-                        <p class="mt-3 sm:mt-6 text-base text-gray-800 md:text-xl dark:text-white"><em>
-                                " I'm absolutely floored by the level of care and attention to detail the team at HS have put into this theme and for one can guarantee that I will be a return customer. "
+                        <p class="mt-3 sm:mt-6 text-base text-gray-800 dark:text-white"><em>
+                                Selama menimba ilmu di PPM, Alhamdulillah saya banyak memperoleh hal-hal seperti ilmu agama, tata krama, unggah-ungguh, rasa sakdermo, kerja keras, pengalaman hidup, dan masih banyak lagi. Guru-guru kami tidak hanya memberikan bekal ilmu agama, tetapi juga semangat, dukungan, dan nasehat agar kami bisa menyelesaikan tanggung jawab kami, yaitu mondok dan kuliah.
                             </em></p>
                     </div>
 
                     <div class="p-4 rounded-b-xl md:px-6">
                         <h3 class="text-sm font-semibold text-gray-800 sm:text-base dark:text-neutral-200">
-                            Pak Eko Prasetyo
+                            Ust. Choiruddin Yasir, S.Pd
                         </h3>
                         <p class="text-sm text-gray-500 dark:text-neutral-500">
-                            Santri Angkatan 2011
+                            Alumni 2021
+                        </p>
+                    </div>
+                </div>
+                <!-- End Card -->
+                <!-- Card -->
+                <div class="flex flex-col bg-white border border-gray-200 shadow-sm rounded-xl dark:bg-neutral-900 dark:border-neutral-700">
+                    <div class="flex-auto p-4 md:p-6">
+                        <img class="size-12 rounded-full" src="{{asset('index/dummy_person.png')}}" alt="Ketua PPM Roudlotul Jannah Surakarta">
+
+                        <p class="mt-3 sm:mt-6 text-base text-gray-800 dark:text-white"><em>
+                                Lingkungan dan pergaulan di PPM sangat baik, karena membantu saya untuk menjaga diri dari pergaulan bebas selama masa kuliah. Selain itu, PPM memiliki kurikulum yang sangat terstruktur dan baik, sehingga menambah bekal ilmu saya, terutama dalam ilmu agama.                            </em></p>
+                    </div>
+
+                    <div class="p-4 rounded-b-xl md:px-6">
+                        <h3 class="text-sm font-semibold text-gray-800 sm:text-base dark:text-neutral-200">
+                            Ust. Arfin Khoirul I, A.md
+                        </h3>
+                        <p class="text-sm text-gray-500 dark:text-neutral-500">
+                            Alumni 2021
                         </p>
                     </div>
                 </div>
@@ -579,7 +578,7 @@
                     <div class="max-w-7xl mx-auto">
                         <div class="text-center mb-16">
                             <span class="inline-block py-1 px-3 mb-4 text-xs font-semibold text-green-900 bg-lime-50 rounded-full">FREQUENTLY ASKED QUESTION</span>
-                            <h1 class="font-heading text-5xl xs:text-6xl md:text-7xl font-bold font-messiri">
+                            <h1 class="font-heading text-5xl xs:text-6xl md:text-7xl font-bold font-messiri dark:text-white">
                                 <span data-config-id="auto-txt-2-2">Anda bertanya? </span>
                                 <span class="font-serif italic">Kami jawab</span>
                             </h1>
