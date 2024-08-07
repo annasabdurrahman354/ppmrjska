@@ -39,131 +39,8 @@ class PendaftaranResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                TextInput::make('tahun_pendaftaran')
-                    ->label('Tahun Pendaftaran')
-                    ->integer()
-                    ->minValue(2015),
-                TableRepeater::make('kontak_panitia')
-                    ->label('Kontak Panitia')
-                    ->addActionLabel('+ Tambah Kontak Panitia')
-                    ->headers([
-                        Header::make('Nama Panitia'),
-                        Header::make('Nomor Telepon'),
-                        Header::make('Jenis Kelamin'),
-                    ])
-                    ->schema([
-                        TextInput::make('nama')
-                            ->label('Nama Panitia')
-                            ->required(),
-                        TextInput::make('nomor_telepon')
-                            ->label('Nomor Telepon')
-                            ->tel()
-                            ->required(),
-                        Select::make('jenis_kelamin')
-                            ->label('Jenis Kelamin')
-                            ->options(JenisKelamin::class)
-                            ->required(),
-                    ])
-                    ->minItems(1)
-                    ->addable()
-                    ->deletable()
-                    ->reorderable()
-                    ->columnSpanFull(),
-
-                TableRepeater::make('kontak_pengurus')
-                    ->label('Kontak Pengurus')
-                    ->addActionLabel('+ Tambah Kontak Pengurus')
-                    ->headers([
-                        Header::make('Nama Panitia'),
-                        Header::make('Nomor Telepon'),
-                        Header::make('Jenis Kelamin'),
-                    ])
-                    ->schema([
-                        TextInput::make('nama')
-                            ->label('Nama Panitia')
-                            ->required(),
-                        TextInput::make('nomor_telepon')
-                            ->label('Nomor Telepon')
-                            ->tel()
-                            ->required(),
-                        Select::make('jenis_kelamin')
-                            ->label('Jenis Kelamin')
-                            ->options(JenisKelamin::class)
-                            ->required(),
-                    ])
-                    ->addable()
-                    ->deletable()
-                    ->reorderable()
-                    ->columnSpanFull(),
-
-                TableRepeater::make('indikator_penilaian')
-                    ->label('Indikator Penilaian')
-                    ->addActionLabel('+ Tambah Indikator Penilaian')
-                    ->headers([
-                        Header::make('Indikator'),
-                    ])
-                    ->schema([
-                        TextInput::make('indikator')
-                            ->label('Indikator')
-                            ->helperText('Contoh: Tes Bacaan, Tes Pegon')
-                            ->required(),
-                    ])
-                    ->minItems(1)
-                    ->addable()
-                    ->deletable()
-                    ->reorderable()
-                    ->columnSpanFull(),
-
-                TagsInput::make('berkas_pendaftaran')
-                    ->label('Berkas Pendaftaran')
-                    ->helperText('Contoh: Foto Kartu Keluarga, Foto KTP'),
-
-                Repeater::make('gelombangPendaftaran')
-                    ->relationship('gelombangPendaftaran')
-                    ->label('Gelombang Pendaftaran')
-                    ->addActionLabel('+ Tambah Gelombang Pendaftaran')
-                    ->schema([
-                            TextInput::make('nomor_gelombang')
-                                ->integer()
-                                ->required(),
-                            TextInput::make('link_grup')
-                                ->label('Link Grup')
-                                ->url()
-                                ->required(),
-                            DateTimePicker::make('batas_awal_pendaftaran')
-                                ->label('Batas Mulai Pendaftaran')
-                                ->beforeOrEqual('batas_akhir_pendaftaran')
-                                ->required(),
-                            DateTimePicker::make('batas_akhir_pendaftaran')
-                                ->label('Batas Akhir Pendaftaran')
-                                ->afterOrEqual('batas_awal_pendaftaran')
-                                ->required(),
-                            TableRepeater::make('timeline')
-                                ->label('Timeline')
-                                ->addActionLabel('+ Tambah Timeline')
-                                ->headers([
-                                    Header::make('Rundown'),
-                                    Header::make('Tanggal'),
-                                ])
-                                ->schema([
-                                    Select::make('rundown')
-                                        ->label('Rundown')
-                                        ->placeholder('Cth: Mulai Pendaftaran, Daftar Ulang, Osanru')
-                                        ->required(),
-                                    DatePicker::make('tanggal')
-                                        ->label('Tanggal')
-                                        ->required()
-                                ])
-                                ->minItems(1)
-                                ->addable()
-                                ->deletable()
-                                ->reorderable()
-                                ->columnSpanFull(),
-
-                    ])
-                    ->columns(2)
-            ])->columns(1);
+            ->schema(Pendaftaran::getForm())
+            ->columns(1);
     }
 
     public static function table(Table $table): Table
@@ -180,6 +57,14 @@ class PendaftaranResource extends Resource
                 Tables\Columns\TextColumn::make('gelombang_pendaftaran_counts')
                     ->label('Jumlah Gelombang Pendaftaran')
                     ->counts('gelombangPendaftaran'),
+                Tables\Columns\TextColumn::make('berkas_pendaftaran')
+                    ->label('Berkas Pendaftaran')
+                    ->badge()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('indikator_penilaian')
+                    ->label('Indikator Penilaian')
+                    ->badge()
+                    ->searchable(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
@@ -187,14 +72,18 @@ class PendaftaranResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->requiresConfirmation(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->requiresConfirmation(),
+                    Tables\Actions\RestoreBulkAction::make()
+                        ->requiresConfirmation(),
                 ]),
-            ]);
+            ])
+            ->selectCurrentPageOnly();
     }
 
     public static function getRelations(): array

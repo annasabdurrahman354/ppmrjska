@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Enums\JenisKelamin;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -27,6 +29,7 @@ class DewanGuru extends Model implements HasMedia
     protected $fillable = [
         'nama',
         'nama_panggilan',
+        'jenis_kelamin',
         'nomor_telepon',
         'email',
         'alamat',
@@ -40,6 +43,7 @@ class DewanGuru extends Model implements HasMedia
      */
     protected $casts = [
         'status_aktif' => 'boolean',
+        'jenis_kelamin' => JenisKelamin::class
     ];
 
 
@@ -74,12 +78,16 @@ class DewanGuru extends Model implements HasMedia
                         ->columnSpanFull(),
                     TextInput::make('nama')
                         ->label('Nama Lengkap')
-                        ->required()
-                        ->maxLength(96),
+                        ->required(),
                     TextInput::make('nama_panggilan')
                         ->label('Nama Panggilan')
                         ->required()
                         ->maxLength(64),
+                    Select::make('jenis_kelamin')
+                        ->label('Jenis Kelamin')
+                        ->options(JenisKelamin::class)
+                        ->disabled(fn (string $operation) => auth()->user()->isNotSuperAdmin() && $operation != 'create')
+                        ->required(),
                     TextInput::make('nomor_telepon')
                         ->label('Nomor Telepon')
                         ->tel()
@@ -88,11 +96,9 @@ class DewanGuru extends Model implements HasMedia
                     TextInput::make('email')
                         ->label('Email')
                         ->email()
-                        ->maxLength(96)
                         ->default(null),
                     TextInput::make('alamat')
                         ->label('Alamat')
-                        ->maxLength(255)
                         ->default(null),
                     Toggle::make('status_aktif')
                         ->label('Status Aktif')
@@ -101,5 +107,11 @@ class DewanGuru extends Model implements HasMedia
 
         ];
     }
-
+    protected static function booted(): void
+    {
+        parent::boot();
+        static::softDeleted(function ($record) {
+            JurnalKelas::where('dewan_guru_type', $this::class)->where('dewan_guru_id', $record->id)->update(['dewan_guru_type' => null, 'dewan_guru_id' => null]);
+        });
+    }
 }

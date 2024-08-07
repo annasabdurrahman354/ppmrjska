@@ -3,7 +3,10 @@
 namespace Database\Seeders;
 
 use App\Models\BiodataSantri;
+use App\Models\Kecamatan;
 use App\Models\Kelurahan;
+use App\Models\Kota;
+use App\Models\Provinsi;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -37,27 +40,21 @@ class UsersTableSeeder extends Seeder
         Artisan::call('shield:super-admin', ['--user' => $sid]);
         User::find($sid)->update(['kelas' => config('filament-shield.super_admin.name')]);
 
-        $sid = Str::ulid();
-        DB::table('users')->insert([
-            'id' => $sid,
-            'email' => 'annasabd@ppmrjska.web.id',
-            'email_verified_at' => now(),
-            'password' => Hash::make('password'),
-            'created_at' => now(),
-            'updated_at' => now(),
-            'nama' => 'Annas Abdurrahman',
-            'nama_panggilan' => "Annas",
-            'jenis_kelamin' => "laki-laki",
-            'nis' => "09283",
-            'nomor_telepon' => "012131121212",
-            'kelas' => '2023',
-            'angkatan_pondok' => 2023,
-            'status_pondok' => "aktif",
-            'tanggal_lulus_pondok' => null,
-        ]);
-
-        Kelurahan::factory(100)->create();
-        BiodataSantri::factory(10)->create();
+        BiodataSantri::factory(2)->create()->each(function ($biodata) {
+            $biodata->user->assignRole('santri');
+            Artisan::call('shield:super-admin', ['--user' => $biodata->user->id]);
+        });
+        BiodataSantri::factory(50)->create()->each(function ($biodata) {
+            $biodata->user->assignRole('santri');
+        });
+        BiodataSantri::factory(6)->create()->each(function ($biodata) {
+            $biodata->user->assignRole('santri');
+            $biodata->user->assignRole('dmcp_keilmuan');
+        });
+        BiodataSantri::factory(12)->create()->each(function ($biodata) {
+            $biodata->user->assignRole('santri');
+            $biodata->user->assignRole('ketua_kelas');
+        });
     }
 }
 

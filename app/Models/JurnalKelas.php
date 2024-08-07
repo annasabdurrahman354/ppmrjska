@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class JurnalKelas extends Model
 {
-    use HasFactory, HasUlids, SoftDeletes;
+    use HasFactory, HasUlids;
 
     protected $table = 'jurnal_kelas';
 
@@ -69,13 +69,13 @@ class JurnalKelas extends Model
         return Attribute::make(
             get: function (){
                 if ($this->presensikelas()->where('user_id', auth()->user()->id)->exists()){
-                    return match ($this->presensikelas()->where('user_id', auth()->user()->id)->first()->status_kehadiran) {
-                            'hadir' => 'Hadir',
-                            'telat' => 'Telat',
-                            'izin' => 'Izin',
-                            'sakit' => 'Sakit',
-                            'alpa' => 'Alpa',
-                            'bukan_kelas' => 'Bukan Kelas'
+                    return match ($this->presensikelas()->where('user_id', auth()->user()->id)->first()->status_kehadiran->value) {
+                        'hadir' => 'Hadir',
+                        'telat' => 'Telat',
+                        'izin' => 'Izin',
+                        'sakit' => 'Sakit',
+                        'alpa' => 'Alpa',
+                        'Bukan Kelas' => 'Bukan Kelas',
                     };
                 }
                 else{

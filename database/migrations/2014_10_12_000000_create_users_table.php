@@ -17,17 +17,17 @@ return new class extends Migration
 
         Schema::create('users', function (Blueprint $table) {
             $table->ulid('id')->primary();
-            $table->string('nama', 96);
+            $table->string('nama');
             $table->string('nama_panggilan', 64);
-            //$table->string('avatar')->nullable();
             $table->string('jenis_kelamin');
             $table->string('nis', 9)->unique();
             $table->string('nomor_telepon', 16)->unique();
-            $table->string('email', 96)->unique();
+            $table->string('email')->unique();
             $table->string('kelas');
             $table->unsignedInteger('angkatan_pondok');
             $table->string('status_pondok');
             $table->date('tanggal_lulus_pondok')->nullable();
+            $table->string('alasan_keluar_pondok')->nullable();
             $table->string('password');
             $table->timestamp('email_verified_at')->nullable();
             $table->timestamps();

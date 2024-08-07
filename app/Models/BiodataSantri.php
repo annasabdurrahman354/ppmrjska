@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\BahasaMakna;
 use App\Enums\GolonganDarah;
+use App\Enums\HubunganWali;
 use App\Enums\JenisKelamin;
 use App\Enums\Kewarganegaraan;
 use App\Enums\MulaiMengaji;
@@ -83,6 +84,11 @@ class BiodataSantri extends Model
         'nomor_telepon_ibu',
         'pekerjaan_ibu',
         'dapukan_ibu',
+        'nama_wali',
+        'nomor_telepon_wali',
+        'pekerjaan_wali',
+        'dapukan_wali',
+        'hubungan_wali',
     ];
 
     /**
@@ -111,6 +117,7 @@ class BiodataSantri extends Model
         'status_orangtua' => StatusOrangTua::class,
         'anak_nomor' => 'integer',
         'jumlah_saudara' => 'integer',
+        'hubungan_wali' => HubunganWali::class
     ];
 
     public function user(): BelongsTo
@@ -160,40 +167,26 @@ class BiodataSantri extends Model
         return [
             Section::make('Biodata Santri')
                 ->schema([
-                    Select::make('user_id')
-                        ->label('Pemilik Biodata')
-                        ->required()
-                        ->unique(ignoreRecord: true)
-                        ->disabled(fn (string $operation) => auth()->user()->isNotSuperAdmin() && $operation != 'create')
-                        ->options(fn ($record) =>
-                            DB::table('users')
-                                ->whereNotIn('id',
-                                    DB::table('biodata_santri')
-                                        ->select('user_id')
-                                        ->where('user_id', '!=',  $record->user_id ?? '')
-                                        ->get()
-                                        ->pluck('user_id'))
-                                ->get()
-                                ->pluck('nama', 'id')
-                            )
-                        ->searchable(),
                     TextInput::make('tahun_pendaftaran')
                         ->label('Tahun Pendaftaran')
-                        ->disabled(fn (string $operation) => auth()->user()->isNotSuperAdmin() && $operation != 'create')
+                        ->disabled(fn (string $operation) => cant('ubah_data_kesiswaan_user') && $operation != 'create')
                         ->required()
                         ->numeric(),
                     TextInput::make('nik')
                         ->label('Nomor Induk Kewarganegaraan')
+                        ->disabled(fn (string $operation) => cant('ubah_data_kesiswaan_user') && $operation != 'create')
                         ->required()
                         ->type('number')
                         ->maxLength(16),
                     Select::make('tempat_lahir_id')
                         ->label('Tempat Lahir')
-                        ->required()
                         ->searchable()
-                        ->options(fn (Get $get) => Kota::pluck('nama', 'id')),
+                        ->options(fn (Get $get) => Kota::pluck('nama', 'id'))
+                        ->disabled(fn (string $operation) => cant('ubah_data_kesiswaan_user') && $operation != 'create')
+                        ->required(),
                     DatePicker::make('tanggal_lahir')
                         ->label('Tanggal Lahir')
+                        ->disabled(fn (string $operation) => cant('ubah_data_kesiswaan_user') && $operation != 'create')
                         ->required(),
                     Select::make('kewarganegaraan')
                         ->label('Kewarganegaraan')
@@ -235,7 +228,6 @@ class BiodataSantri extends Model
                         TextInput::make('program_studi')
                             ->label('Program Studi')
                             ->required()
-                            ->maxLength(96)
                             ->columnSpan(7)
                             ->autocapitalize('words')
                             ->datalist(getProgramStudiList()),
@@ -246,7 +238,6 @@ class BiodataSantri extends Model
                     TextInput::make('universitas')
                         ->label('Universitas')
                         ->required()
-                        ->maxLength(96)
                         ->autocapitalize('words')
                         ->datalist(getUniversitasList()),
 
@@ -254,7 +245,7 @@ class BiodataSantri extends Model
                         ->label('Angkatan Kuliah')
                         ->required()
                         ->numeric()
-                        ->minValue(2015),
+                        ->minValue(2011),
 
                     Select::make('status_kuliah')
                         ->label('Status Kuliah')
@@ -285,7 +276,7 @@ class BiodataSantri extends Model
                         ->searchable()
                         ->options(Provinsi::all()->pluck('nama', 'id'))
                         ->live()
-                        ->afterStateUpdated(function (Set $set, $state) {
+                        ->afterStateUpdated(function (Set $set) {
                             $set('kota_id', null);
                         }),
                     Select::make('kota_id')
@@ -295,7 +286,7 @@ class BiodataSantri extends Model
                         ->options(fn (Get $get) => Kota::where('provinsi_id', $get('provinsi_id'))->pluck('nama', 'id'))
                         ->hidden(fn (Get $get) => $get('provinsi_id') == null)
                         ->live()
-                        ->afterStateUpdated(function (Set $set, $state) {
+                        ->afterStateUpdated(function (Set $set) {
                             $set('kecamatan_id', null);
                         }),
                     Select::make('kecamatan_id')
@@ -305,7 +296,7 @@ class BiodataSantri extends Model
                         ->options(fn (Get $get) => Kecamatan::where('kota_id', $get('kota_id'))->pluck('nama', 'id'))
                         ->hidden(fn (Get $get) => $get('kota_id') == null)
                         ->live()
-                        ->afterStateUpdated(function (Set $set, $state) {
+                        ->afterStateUpdated(function (Set $set) {
                             $set('kelurahan_id', null);
                         }),
                     Select::make('kelurahan_id')
@@ -352,7 +343,6 @@ class BiodataSantri extends Model
                     'md' => 3,
                 ]),
 
-            // Family Section
             Section::make('Keluarga')
                 ->schema([
                     Select::make('status_pernikahan')
@@ -381,43 +371,47 @@ class BiodataSantri extends Model
                     'md' => 2,
                 ]),
 
-            // Parent Section
-            Section::make('Orang Tua')
+            Section::make('Orang Tua/Wali')
                 ->schema([
                     TextInput::make('nama_ayah')
                         ->label('Nama Ayah')
-                        ->required()
-                        ->maxLength(96),
+                        ->disabled(fn (string $operation) => cant('ubah_data_kesiswaan_user') && $operation != 'create')
+                        ->required(),
                     TextInput::make('nomor_telepon_ayah')
                         ->label('Nomor Telepon Ayah')
                         ->tel()
-                        ->required()
-                        ->maxLength(13),
+                        ->maxLength(16),
                     TextInput::make('pekerjaan_ayah')
-                        ->label('Pekerjaan Ayah')
-                        ->required()
-                        ->maxLength(96),
+                        ->label('Pekerjaan Ayah'),
                     TextInput::make('dapukan_ayah')
-                        ->label('Dapukan Ayah')
-                        ->required()
-                        ->maxLength(96),
+                        ->label('Dapukan Ayah'),
+
                     TextInput::make('nama_ibu')
                         ->label('Nama Ibu')
-                        ->required()
-                        ->maxLength(96),
+                        ->disabled(fn (string $operation) => cant('ubah_data_kesiswaan_user') && $operation != 'create')
+                        ->required(),
                     TextInput::make('nomor_telepon_ibu')
                         ->label('Nomor Telepon Ibu')
                         ->tel()
-                        ->required()
-                        ->maxLength(13),
+                        ->maxLength(16),
                     TextInput::make('pekerjaan_ibu')
-                        ->label('Pekerjaan Ibu')
-                        ->required()
-                        ->maxLength(96),
+                        ->label('Pekerjaan Ibu'),
                     TextInput::make('dapukan_ibu')
-                        ->label('Dapukan Ibu')
-                        ->required()
-                        ->maxLength(96),
+                        ->label('Dapukan Ibu'),
+
+                    TextInput::make('nama_wali')
+                        ->label('Nama Wali'),
+                    TextInput::make('nomor_telepon_wali')
+                        ->label('Nomor Telepon Wali')
+                        ->tel()
+                        ->maxLength(16),
+                    TextInput::make('pekerjaan_wali')
+                        ->label('Pekerjaan Wali'),
+                    TextInput::make('dapukan_wali')
+                        ->label('Dapukan Wali'),
+                    Select::make('hubungan_wali')
+                        ->label('Hubungan Wali')
+                        ->options(HubunganWali::class),
                 ])
                 ->columns([
                     'sm' => 1,

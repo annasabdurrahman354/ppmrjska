@@ -22,7 +22,6 @@ return new class extends Migration
             $table->unsignedSmallInteger('halaman_awal');
             $table->unsignedSmallInteger('halaman_akhir');
             $table->timestamps();
-            $table->softDeletes();
         });
 
         Schema::enableForeignKeyConstraints();

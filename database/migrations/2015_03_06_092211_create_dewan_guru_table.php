@@ -15,11 +15,11 @@ return new class extends Migration
 
         Schema::create('dewan_guru', function (Blueprint $table) {
             $table->ulid('id')->primary();
-            $table->string('nama', 96);
+            $table->string('nama');
             $table->string('nama_panggilan', 64);
-            //$table->string('avatar')->nullable();
+            $table->string('jenis_kelamin');
             $table->string('nomor_telepon', 16);
-            $table->string('email', 96)->nullable()->unique();
+            $table->string('email')->nullable()->unique();
             $table->string('alamat')->nullable();
             $table->boolean('status_aktif');
             $table->timestamps();

@@ -14,9 +14,8 @@ return new class extends Migration
             $table->id();
             $table->string('pengirim')->nullable();
             $table->string('nomor_telepon')->nullable();
-            $table->longText('isi');
+            $table->text('isi');
             $table->timestamps();
-            $table->softDeletes();
         });
 
         Schema::enableForeignKeyConstraints();

@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string('jenjang_kelas');
             $table->unsignedTinyInteger('semester');
             $table->timestamps();
-            $table->softDeletes();
         });
 
         Schema::enableForeignKeyConstraints();

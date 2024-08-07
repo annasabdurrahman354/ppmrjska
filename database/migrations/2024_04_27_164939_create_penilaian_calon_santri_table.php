@@ -16,15 +16,14 @@ return new class extends Migration
 
         Schema::create('penilaian_calon_santri', function (Blueprint $table) {
             $table->ulid('id')->primary();
-            $table->foreignUlid('calon_santri_id')->nullable()->references('id')->on('calon_santri')->cascadeOnUpdate()->nullOnDelete();
+            $table->foreignUlid('calon_santri_id')->references('id')->on('calon_santri')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignUlid('penguji_id')->nullable()->references('id')->on('users')->cascadeOnUpdate()->nullOnDelete();
             $table->json('nilai_tes');
-            $table->float('nilai_akhir')->nullable();
-            $table->text('catatan_penguji')->nullable();
-            $table->tinyInteger('rekomendasi_penguji')->nullable();
+            $table->float('nilai_akhir');
+            $table->text('catatan_penguji');
+            $table->tinyInteger('rekomendasi_penguji');
             $table->string('status_penerimaan');
             $table->timestamps();
-            $table->softDeletes();
         });
 
         Schema::enableForeignKeyConstraints();

@@ -20,8 +20,8 @@ return new class extends Migration
             $table->json('kontak_pengurus');
             $table->json('berkas_pendaftaran');
             $table->json('indikator_penilaian');
-            $table->softDeletes();
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::enableForeignKeyConstraints();

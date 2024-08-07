@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Askedio\SoftCascade\Traits\SoftCascadeTrait;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,6 +14,9 @@ use Illuminate\Database\Eloquent\Model;
 class GelombangPendaftaran extends Model
 {
     use HasFactory, HasUlids, SoftDeletes;
+    use SoftCascadeTrait;
+
+    protected $softCascade = ['calonSantri'];
 
     protected $table = 'gelombang_pendaftaran';
     /**

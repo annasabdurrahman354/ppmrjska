@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -37,5 +39,18 @@ class Kecamatan extends Model
     public function semuaKelurahan(): HasMany
     {
         return $this->hasMany(Kelurahan::class);
+    }
+
+    public static function getForm()
+    {
+        return [
+            Select::make('kota_id')
+                ->relationship('kota', 'nama')
+                ->searchable()
+                ->required(),
+            TextInput::make('nama')
+                ->required()
+                ->maxLength(48),
+        ];
     }
 }

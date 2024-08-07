@@ -17,7 +17,6 @@ return new class extends Migration
             $table->tinyIncrements('id');
             $table->string('nama', 96);
             $table->timestamps();
-            $table->softDeletes();
         });
 
         Schema::enableForeignKeyConstraints();

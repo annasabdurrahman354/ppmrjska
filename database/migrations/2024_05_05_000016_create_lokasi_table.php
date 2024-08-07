@@ -17,11 +17,9 @@ return new class extends Migration
             $table->string('alamat')->nullable();
             $table->string('jenis_lokasi');
             $table->string('deskripsi')->nullable();
-            //$table->json('berkas_foto')->nullable();
             $table->string('latitude')->nullable();
             $table->string('longitude')->nullable();
             $table->timestamps();
-            $table->softDeletes();
         });
 
         Schema::enableForeignKeyConstraints();

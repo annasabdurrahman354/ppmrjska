@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\JenisKelamin;
 use App\Enums\StatusKehadiran;
 use App\Enums\StatusPondok;
+use Askedio\SoftCascade\Traits\SoftCascadeTrait;
 use BezhanSalleh\FilamentShield\Traits\HasPanelShield;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
@@ -13,6 +14,7 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Get;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
@@ -42,6 +44,9 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
     use HasPanelShield;
     use HasFactory, HasRoles, HasUlids, SoftDeletes;
     use InteractsWithMedia, HasApiTokens, Notifiable;
+    use SoftCascadeTrait;
+
+    protected $softCascade = ['biodataSantri'];
 
     /**
      * The attributes that are mass assignable.
@@ -59,6 +64,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
         'angkatan_pondok',
         'status_pondok',
         'tanggal_lulus_pondok',
+        'alasan_keluar_pondok',
         'password',
         'email_verified_at',
     ];
@@ -235,20 +241,21 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
                         ->columnSpanFull(),
                     TextInput::make('nama')
                         ->label('Nama Lengkap')
-                        ->required()
-                        ->maxLength(96),
+                        ->disabled(fn (string $operation) => cant('ubah_data_kesiswaan_user') && $operation != 'create')
+                        ->required(),
                     TextInput::make('nama_panggilan')
                         ->label('Nama Panggilan')
+                        ->disabled(fn (string $operation) => cant('ubah_data_kesiswaan_user') && $operation != 'create')
                         ->required()
-                        ->maxLength(36),
+                        ->maxLength(64),
                     Select::make('jenis_kelamin')
                         ->label('Jenis Kelamin')
-                        ->disabled(fn (string $operation) => auth()->user()->isNotSuperAdmin() && $operation != 'create')
-                        ->required()
-                        ->options(JenisKelamin::class),
+                        ->options(JenisKelamin::class)
+                        ->disabled(fn (string $operation) => cant('ubah_data_kesiswaan_user') && $operation != 'create')
+                        ->required(),
                     TextInput::make('nis')
                         ->label('Nomor Induk Santri')
-                        ->disabled(fn (string $operation) => auth()->user()->isNotSuperAdmin() && $operation != 'create')
+                        ->disabled(fn (string $operation) => cant('ubah_data_kesiswaan_user') && $operation != 'create')
                         ->numeric()
                         ->required()
                         ->length(9),
@@ -256,15 +263,14 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
                         ->label('Nomor Telepon')
                         ->tel()
                         ->required()
-                        ->maxLength(13),
+                        ->maxLength(16),
                     TextInput::make('email')
                         ->label('Email')
                         ->email()
-                        ->required()
-                        ->maxLength(64),
+                        ->required(),
                     Select::make('roles')
                         ->label('Role')
-                        ->disabled(fn (string $operation) => auth()->user()->isNotSuperAdmin())
+                        ->disabled(fn (string $operation) => cant('ubah_data_kesiswaan_user') && $operation != 'create')
                         ->relationship(name: 'roles', titleAttribute: 'name', modifyQueryUsing: function (Builder $query) {
                             return $query->whereNotIn('name', ['filament_user']);
                         })
@@ -278,6 +284,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
                         ->password()
                         ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
                         ->dehydrated(fn (?string $state): bool => filled($state))
+                        ->disabled(fn (string $operation) => auth()->user()->isNotSuperAdmin())
                         ->required(fn (string $operation): bool => $operation === 'create'),
                 ])
                 ->columns([
@@ -289,22 +296,29 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
                 ->schema([
                     TextInput::make('angkatan_pondok')
                         ->label('Angkatan Pondok')
-                        ->disabled(fn (string $operation) => auth()->user()->isNotSuperAdmin() && $operation != 'create')
+                        ->numeric()
                         ->required()
-                        ->numeric(),
+                        ->disabled(fn (string $operation) => cant('ubah_data_kesiswaan_user') && $operation != 'create'),
                     Checkbox::make('is_takmili')
                         ->label('Apakah santri takmili?')
-                        ->disabled(fn (string $operation) => auth()->user()->isNotSuperAdmin() && $operation != 'create')
-                        ->inline(false),
+                        ->inline(false)
+                        ->required()
+                        ->disabled(fn (string $operation) => cant('ubah_data_kesiswaan_user') && $operation != 'create'),
                     Select::make('status_pondok')
                         ->label('Status Pondok')
-                        ->disabled(fn (string $operation) => auth()->user()->isNotSuperAdmin() && $operation != 'create')
+                        ->options(StatusPondok::class)
                         ->required()
-                        ->options(StatusPondok::class),
+                        ->disabled(fn (string $operation) => cant('ubah_data_kesiswaan_user') && $operation != 'create'),
                     DatePicker::make('tanggal_lulus_pondok')
                         ->label('Tanggal Lulus Pondok')
-                        ->disabled(fn (string $operation) => auth()->user()->isNotSuperAdmin() && $operation != 'create')
-                    ,
+                        ->visible(fn(Get $get) => $get('status_pondok') === StatusPondok::LULUS->value)
+                        ->required(fn(Get $get) => $get('status_pondok') === StatusPondok::LULUS->value)
+                        ->disabled(fn (string $operation) => cant('ubah_data_kesiswaan_user') && $operation != 'create'),
+                    TextInput::make('alasan_keluar_pondok')
+                        ->label('Alasan Keluar Pondok')
+                        ->visible(fn(Get $get) => $get('status_pondok') === StatusPondok::KELUAR->value)
+                        ->required(fn(Get $get) => $get('status_pondok') === StatusPondok::KELUAR->value)
+                        ->disabled(fn (string $operation) => cant('ubah_data_kesiswaan_user') && $operation != 'create'),
                 ])
                 ->columns([
                     'sm' => 1,
@@ -317,6 +331,10 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
     {
         static::addGlobalScope('notSuperAdmin', function (Builder $builder) {
             $builder->where('kelas', '!=', config('filament-shield.super_admin.name'));
+        });
+
+        static::softDeleted(function ($record) {
+            JurnalKelas::where('dewan_guru_type', $this::class)->where('dewan_guru_id', $record->id)->update(['dewan_guru_type' => null, 'dewan_guru_id' => null]);
         });
     }
 

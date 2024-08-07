@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Pages\Auth\Login;
+use App\Filament\Pages\Profile;
 use App\Filament\Resources\JadwalMunaqosahResource;
 use App\Filament\Resources\JurnalKelasResource;
 use App\Filament\Resources\KurikulumResource;
@@ -48,6 +49,7 @@ class AdminPanelProvider extends PanelProvider
             ->colors(fn (PengaturanUmum $settings) => $settings->site_theme)
             ->databaseNotifications()->databaseNotificationsPolling('30s')
             ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
+            ->unsavedChangesAlerts()
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->resources([
                 config('filament-logger.activity_resource')
@@ -119,10 +121,7 @@ class AdminPanelProvider extends PanelProvider
                         hasAvatars: true,
                         slug: 'profile'
                     )
-                    //->myProfileComponents([
-                    //    'personal_info' => Profile::class,
-                    //]),
-            ])
-            ->unsavedChangesAlerts();
+                    ->customMyProfilePage(Profile::class),
+            ]);
     }
 }

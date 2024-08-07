@@ -71,6 +71,7 @@ class JadwalMunaqosahCalendarWidget extends FullCalendarWidget
     {
         return [
             CreateAction::make()
+                ->visible(can('create_jadwal::munaqosah'))
                 ->mountUsing(
                     function (Form $form, array $arguments) {
                         $form->fill([
@@ -91,6 +92,7 @@ class JadwalMunaqosahCalendarWidget extends FullCalendarWidget
     {
         return [
             EditAction::make()
+                ->visible(can('update_jadwal::munaqosah'))
                 ->mountUsing(
                     function (JadwalMunaqosah $record, Form $form, array $arguments) {
                         $form->fill([
@@ -106,6 +108,7 @@ class JadwalMunaqosahCalendarWidget extends FullCalendarWidget
                 ->slideOver()
                 ->closeModalByClickingAway(false),
             DeleteAction::make()
+                ->visible(can('delete_jadwal::munaqosah') || can('delete_any_jadwal::munaqosah'))
                 ->requiresConfirmation()
                 ->modalHeading('Hapus Jadwal Munaqosah')
                 ->modalDescription('Apakah Anda yakin untuk menghapus?')

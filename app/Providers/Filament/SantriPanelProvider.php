@@ -2,11 +2,21 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\Pages\Auth\Login;
+use App\Filament\Pages\FormulirPresensi\FormulirPresensi;
+use App\Filament\Pages\KetercapaianMateri\KetercapaianMateri;
+use App\Filament\Pages\Munaqosah\Munaqosah;
+use App\Filament\Pages\Profile;
+use App\Filament\Pages\RekapKehadiran\RekapKehadiran;
 use App\Filament\Resources\JadwalMunaqosahResource;
 use App\Filament\Resources\JurnalKelasResource;
+use App\Filament\Resources\KurikulumResource;
+use App\Filament\Resources\MateriHafalanResource;
+use App\Filament\Resources\MateriHimpunanResource;
+use App\Filament\Resources\MateriJuzResource;
 use App\Filament\Resources\MateriMunaqosahResource;
-use App\Filament\Resources\PendaftaranResource;
+use App\Filament\Resources\MateriSuratResource;
+use App\Filament\Resources\MateriTambahanResource;
+use App\Filament\Resources\PenilaianMunaqosahResource;
 use App\Settings\Admin\PengaturanUmum;
 use Awcodes\FilamentQuickCreate\QuickCreatePlugin;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
@@ -26,6 +36,7 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Jeffgreco13\FilamentBreezy\BreezyCore;
+use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 
 class SantriPanelProvider extends PanelProvider
 {
@@ -42,14 +53,26 @@ class SantriPanelProvider extends PanelProvider
             ->colors(fn (PengaturanUmum $settings) => $settings->site_theme)
             ->databaseNotifications()->databaseNotificationsPolling('30s')
             ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
+            ->unsavedChangesAlerts()
             ->resources([
                 JurnalKelasResource::class,
                 MateriMunaqosahResource::class,
                 JadwalMunaqosahResource::class,
-                PendaftaranResource::class,
+                PenilaianMunaqosahResource::class,
+                PenilaianMunaqosahResource::class,
+                MateriHafalanResource::class,
+                MateriHimpunanResource::class,
+                MateriSuratResource::class,
+                MateriJuzResource::class,
+                MateriTambahanResource::class,
+                KurikulumResource::class
             ])
             ->pages([
                 Pages\Dashboard::class,
+                FormulirPresensi::class,
+                KetercapaianMateri::class,
+                RekapKehadiran::class,
+                Munaqosah::class,
             ])
             ->widgets([
                 Widgets\AccountWidget::class,
@@ -70,6 +93,18 @@ class SantriPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->plugins([
+                FilamentFullCalendarPlugin::make()
+                    ->selectable()
+                    ->editable()
+                    ->timezone('Asia/Jakarta')
+                    ->locale('id')
+                    ->config(['initialView' => 'dayGridMonth',
+                        'firstDay' => 1,
+                        'headerToolbar' => [
+                            'left' => 'prev,next,today',
+                            'center' => 'title',
+                            'right' => 'dayGridMonth,dayGridWeek,listWeek',
+                        ]]),
                 QuickCreatePlugin::make()
                     ->includes([
                         JurnalKelasResource::class
@@ -79,10 +114,8 @@ class SantriPanelProvider extends PanelProvider
                         navigationGroup: 'Pengaturan',
                         hasAvatars: true,
                         slug: 'profile'
-                    ),
-                    //->myProfileComponents([
-                    //    'personal_info' => Profile::class,
-                    //]),
+                    )
+                    ->customMyProfilePage(Profile::class),
                 FilamentShieldPlugin::make()
                     ->gridColumns([
                         'default' => 2,
@@ -98,7 +131,6 @@ class SantriPanelProvider extends PanelProvider
                         'default' => 1,
                         'sm' => 2,
                     ]),
-            ])
-            ->unsavedChangesAlerts();
+            ]);
     }
 }

@@ -25,7 +25,7 @@ class PeranResource extends Resource
 
     protected static ?string $navigationLabel = 'Peran';
     protected static ?string $navigationGroup = 'Manajemen Pengguna';
-    protected static ?string $navigationIcon = 'heroicon-o-user-group';
+    protected static ?string $navigationIcon = 'heroicon-o-briefcase';
     protected static ?int $navigationSort = 43;
 
     public static function getModel(): string
@@ -60,10 +60,6 @@ class PeranResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')
-                    ->label('ID')
-                    ->toggleable(isToggledHiddenByDefault: true)
-                    ->searchable(),
                 TextColumn::make('name')
                     ->label('Nama Peran')
                     ->searchable()

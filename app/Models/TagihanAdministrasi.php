@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\StatusTagihan;
+use Askedio\SoftCascade\Traits\SoftCascadeTrait;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -13,6 +14,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class TagihanAdministrasi extends Model
 {
     use HasFactory, HasUlids, SoftDeletes;
+    use SoftCascadeTrait;
+
+    protected $softCascade = ['pembayaranAdministrasi'];
 
     protected $table = 'tagihan_administrasi';
 
@@ -57,5 +61,11 @@ class TagihanAdministrasi extends Model
     public function pembayaranAdministrasi(): HasMany
     {
         return $this->hasMany(PembayaranAdministrasi::class,'tagihan_administrasi_id');
+    }
+
+    public static function getForm()
+    {
+        return [
+        ];
     }
 }

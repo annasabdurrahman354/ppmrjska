@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\MateriJuzResource\Pages\ManageMateriJuzs;
 use App\Models\MateriJuz;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -26,17 +27,7 @@ class MateriJuzResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                TextInput::make('nama')
-                    ->required()
-                    ->maxLength(6),
-                TextInput::make('halaman_awal')
-                    ->required()
-                    ->numeric(),
-                TextInput::make('halaman_akhir')
-                    ->required()
-                    ->numeric(),
-            ]);
+            ->schema(MateriJuz::getForm());
     }
 
     public static function table(Table $table): Table
@@ -74,19 +65,22 @@ class MateriJuzResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->requiresConfirmation(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->requiresConfirmation(),
                 ]),
-            ]);
+            ])
+            ->selectCurrentPageOnly();
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => \App\Filament\Resources\MateriJuzResource\Pages\ManageMateriJuzs::route('/'),
+            'index' => ManageMateriJuzs::route('/'),
         ];
     }
 }

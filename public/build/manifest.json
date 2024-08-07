@@ -1,11 +1,15 @@
 {
+  "public/font/Diwany-Thuluth-Regular.ttf": {
+    "file": "assets/Diwany-Thuluth-Regular-ByyG-T7h.ttf",
+    "src": "public/font/Diwany-Thuluth-Regular.ttf"
+  },
   "resources/css/app.css": {
-    "file": "assets/app-BURRL_6H.css",
+    "file": "assets/app-D1yz_DxS.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/css/filament/admin/theme.css": {
-    "file": "assets/theme-BDV1YKb9.css",
+    "file": "assets/theme-BtTESWMy.css",
     "src": "resources/css/filament/admin/theme.css",
     "isEntry": true
   },

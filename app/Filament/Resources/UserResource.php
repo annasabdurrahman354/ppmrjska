@@ -2,24 +2,35 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\StatusPondok;
+use App\Filament\Imports\SantriImporter;
 use App\Filament\Resources\UserResource\Pages\CreateUser;
 use App\Filament\Resources\UserResource\Pages\EditUser;
 use App\Filament\Resources\UserResource\Pages\ListUsers;
 use App\Models\BiodataSantri;
 use App\Models\User;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\ImportAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
 
-class UserResource extends Resource
+class UserResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = User::class;
     protected static ?string $slug = 'santri';
@@ -92,11 +103,12 @@ class UserResource extends Resource
                     ->label('Nama Panggilan')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('roles.name')
-                    ->label('Peran')
-                    ->formatStateUsing(fn ($state): string => Str::headline($state))
-                    ->colors(['info'])
-                    ->badge()
+                TextColumn::make('angkatan_pondok')
+                    ->label('Angkatan Pondok')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('kelas')
+                    ->label('Kelas')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('jenis_kelamin')
@@ -116,12 +128,11 @@ class UserResource extends Resource
                     ->label('Email')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('angkatan_pondok')
-                    ->label('Angkatan Pondok')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('kelas')
-                    ->label('Kelas')
+                TextColumn::make('roles.name')
+                    ->label('Peran')
+                    ->formatStateUsing(fn ($state): string => Str::headline($state))
+                    ->colors(['info'])
+                    ->badge()
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('status_pondok')
@@ -132,10 +143,232 @@ class UserResource extends Resource
                 TextColumn::make('tanggal_lulus_pondok')
                     ->label('Tanggal Lulus Pondok')
                     ->date()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('alasan_keluar_pondok')
+                    ->label('Alasan Keluar Pondok')
+                    ->limit(50)
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('nik')
+                    ->label('Nomor Induk Kewarganegaraan')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('tempatLahir.nama')
+                    ->label('Tempat Lahir')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('tanggal_lahir')
+                    ->label('Tanggal Lahir')
+                    ->date()
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                ToggleColumn::make('status_mubaligh')
+                    ->label('Status Mubaligh')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('kewarganegaraan')
+                    ->label('Kewarganegaraan')
+                    ->badge()
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('golongan_darah')
+                    ->label('Golongan Darah')
+                    ->badge()
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('ukuran_baju')
+                    ->label('Ukuran Baju')
+                    ->badge()
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                TextColumn::make('pendidikan_terakhir')
+                    ->label('Pendidikan Terkahir')
+                    ->badge()
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('program_studi')
+                    ->label('Program Studi')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('universitas')
+                    ->label('Universitas')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('angkatan_kuliah')
+                    ->label('Angkatan Kuliah')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('status_kuliah')
+                    ->label('Status Perkuliahan')
+                    ->badge()
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('tanggal_lulus_kuliah')
+                    ->label('Tanggal Lulus Kuliah')
+                    ->date()
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                TextColumn::make('alamat')
+                    ->label('Alamat Lengkap')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('provinsi.nama')
+                    ->label('Alamat Provinsi')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('kota.nama')
+                    ->label('Alamat Kota')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('kecamatan.nama')
+                    ->label('Alamat Kecamatan')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('kelurahan.nama')
+                    ->label('Alamat Kelurahan')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                TextColumn::make('asal_kelompok')
+                    ->label('Asal Kelompok')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('asal_desa')
+                    ->label('Asal Desa')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('asal_daerah')
+                    ->label('Asal Daerah')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('mulai_mengaji')
+                    ->label('Mengaji Sejak')
+                    ->badge()
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('bahasa_makna')
+                    ->label('Bahasa Untuk Makna')
+                    ->badge()
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                TextColumn::make('status_pernikahan')
+                    ->label('Status Pernikahan')
+                    ->badge()
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('status_tinggal')
+                    ->label('Tempat Tinggal')
+                    ->badge()
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('status_orangtua')
+                    ->label('Kondisi Orang Tua')
+                    ->badge()
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('jumlah_saudara')
+                    ->label('Jumlah Saudara')
+                    ->numeric()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('anak_nomor')
+                    ->label('Anak Ke-')
+                    ->numeric()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                TextColumn::make('nama_ayah')
+                    ->label('Nama Ayah')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('nomor_telepon_ayah')
+                    ->label('Nomor Telepon Ayah')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('pekerjaan_ayah')
+                    ->label('Pekerjaan Ayah')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('dapukan_ayah')
+                    ->label('Dapukan Ayah')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('nama_ibu')
+                    ->label('Nama Ibu')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('nomor_telepon_ibu')
+                    ->label('Nomor Telepon Ibu')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('pekerjaan_ibu')
+                    ->label('Pekerjaan Ibu')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('dapukan_ibu')
+                    ->label('Dapukan Ibu')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('nama_wali')
+                    ->label('Nama Wali')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('nomor_telepon_wali')
+                    ->label('Nomor Telepon Wali')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('pekerjaan_wali')
+                    ->label('Pekerjaan Wali')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('dapukan_wali')
+                    ->label('Dapukan Wali')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('email_verified_at')
                     ->dateTime()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -150,19 +383,100 @@ class UserResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
+                Tables\Filters\TrashedFilter::make()
+                    ->hidden(),
+                SelectFilter::make('angkatan_pondok')
+                    ->label('Angkatan Pondok')
+                    ->multiple()
+                    ->options(User::where('tanggal_lulus_pondok', null)
+                        ->orderBy('angkatan_pondok')
+                        ->select('angkatan_pondok')
+                        ->distinct()
+                        ->get()
+                        ->pluck('angkatan_pondok', 'angkatan_pondok')
+                    )
+            ], layout: Tables\Enums\FiltersLayout::AboveContent)
+            ->filtersFormColumns(2)
+            ->headerActions([
+                ImportAction::make()
+                    ->importer(SantriImporter::class)
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
+                Tables\Actions\Action::make('ubahStatusPondok')
+                    ->label('Ubah Status Pondok')
+                    ->visible(can('ubah_data_kesiswaan_user'))
+                    ->fillForm(fn (User $record): array => [
+                        'status_pondok' => $record->status_pondok,
+                        'tanggal_lulus_pondok' => $record->tanggal_lulus_pondok,
+                        'alasan_keluar_pondok' => $record->alasan_keluar_pondok,
+                    ])
+                    ->form([
+                        Select::make('status_pondok')
+                            ->label('Status Pondok')
+                            ->options(StatusPondok::class)
+                            ->required()
+                            ->live(),
+                        DatePicker::make('tanggal_lulus_pondok')
+                            ->label('Tanggal Lulus Pondok')
+                            ->visible(fn(Get $get) => $get('status_pondok') == StatusPondok::LULUS)
+                            ->required(fn(Get $get) => $get('status_pondok') == StatusPondok::LULUS),
+                        TextInput::make('alasan_keluar_pondok')
+                            ->label('Alasan Keluar Pondok')
+                            ->visible(fn(Get $get) => $get('status_pondok') == StatusPondok::KELUAR)
+                            ->required(fn(Get $get) => $get('status_pondok') == StatusPondok::KELUAR),
+                    ])
+                    ->action(function (array $data, User $record): void {
+                        $record->status_pondok = $data['status_pondok'];
+                        if ($data['status_pondok'] == StatusPondok::LULUS) {
+                            $record->tanggal_lulus_pondok = $data['tanggal_lulus_pondok'];
+                        }
+                        if ($data['status_pondok'] == StatusPondok::KELUAR) {
+                            $record->alasan_keluar_pondok = $data['alasan_keluar_pondok'];
+                        }
+                        $record->save();
+                    }),
+                Tables\Actions\Action::make('ubahKelas')
+                    ->label('Ubah Angkatan')
+                    ->visible(can('ubah_data_kesiswaan_user'))
+                    ->fillForm(fn (User $record): array => [
+                        'angkatan_pondok' => $record->angkatan_pondok,
+                        'is_takmili' => $record->kelas === 'Takmili',
+                    ])
+                    ->form([
+                        TextInput::make('angkatan_pondok')
+                            ->label('Angkatan Pondok')
+                            ->required()
+                            ->numeric(),
+                        Checkbox::make('is_takmili')
+                            ->label('Apakah santri takmili?')
+                            ->inline(false),
+                    ])
+                    ->action(function (array $data, User $record): void {
+                        $record->angkatan_pondok = $data['angkatan_pondok'];
+                        if ($data['is_takmili'] === true) {
+                            $record->kelas = "Takmili";
+                        }
+                        else {
+                            $record->kelas = $data['angkatan_pondok'];
+                        }
+                        $record->save();
+                    }),
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-                Tables\Actions\RestoreAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->requiresConfirmation(),
+                Tables\Actions\RestoreAction::make()
+                    ->requiresConfirmation(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->requiresConfirmation(),
+                    Tables\Actions\RestoreBulkAction::make()
+                        ->requiresConfirmation(),
                 ]),
-            ]);
+            ])
+            ->selectCurrentPageOnly();
     }
 
     public static function getRelations(): array
@@ -187,5 +501,24 @@ class UserResource extends Resource
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);
+    }
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'restore',
+            'restore_any',
+            'replicate',
+            'reorder',
+            'delete',
+            'delete_any',
+            'force_delete',
+            'force_delete_any',
+            'ubah_data_kesiswaan',
+        ];
     }
 }

@@ -16,9 +16,10 @@ return new class extends Migration
         Schema::create('plot_kamar_asrama', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->string('tahun_ajaran');
-            $table->foreignUlid('kamar_asrama_id')->nullable()->references('id')->on('kamar_asrama')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->foreignUlid('user_id')->nullable()->references('id')->on('users')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignUlid('kamar_asrama_id')->references('id')->on('kamar_asrama')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignUlid('user_id')->references('id')->on('users')->cascadeOnUpdate()->cascadeOnDelete();
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::enableForeignKeyConstraints();

@@ -30,15 +30,7 @@ class KotaResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Select::make('provinsi_id')
-                    ->relationship('provinsi', 'nama')
-                    ->searchable()
-                    ->required(),
-                TextInput::make('nama')
-                    ->required()
-                    ->maxLength(48),
-            ]);
+            ->schema(Kota::getForm());
     }
 
     public static function table(Table $table): Table
@@ -69,12 +61,16 @@ class KotaResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->requiresConfirmation(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->requiresConfirmation(),
                 ]),
-            ]);
+            ])
+            ->selectCurrentPageOnly();
     }
 
     public static function getRelations(): array

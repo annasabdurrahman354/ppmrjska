@@ -20,7 +20,6 @@ return new class extends Migration
             $table->json('nilai_materi')->nullable();
             $table->json('nilai_hafalan')->nullable();
             $table->timestamps();
-            $table->softDeletes();
         });
 
         Schema::enableForeignKeyConstraints();

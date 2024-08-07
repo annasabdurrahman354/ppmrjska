@@ -15,9 +15,9 @@ return new class extends Migration
 
         Schema::create('kota', function (Blueprint $table) {
             $table->smallIncrements('id');
-            $table->string('nama', 64);
-            $table->unsignedTinyInteger('provinsi_id');
-            $table->foreign('provinsi_id')->references('id')->on('provinsi');
+            $table->string('nama');
+            $table->unsignedTinyInteger('provinsi_id')->nullable();
+            $table->foreign('provinsi_id')->references('id')->on('provinsi')->nullOnDelete();
             $table->timestamps();
         });
 

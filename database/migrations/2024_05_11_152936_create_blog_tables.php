@@ -22,12 +22,12 @@ return new class () extends Migration {
         Schema::create('blog', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->string('judul');
-            $table->string('slug');
-            $table->string('deskripsi')->nullable();
-            //$table->string('berkas_foto');
+            $table->string('slug')->unique();
+            $table->text('deskripsi');
             $table->longText('konten');
-            $table->foreignId('kategori_id')->nullable()->references('id')->on('kategori')->cascadeOnDelete();
-            $table->foreignUlid('penulis_id')->nullable()->references('id')->on('users')->cascadeOnDelete();
+            $table->foreignId('kategori_id')->nullable()->references('id')->on('kategori')->nullOnDelete();
+            $table->foreignUlid('penulis_id')->nullable()->references('id')->on('users')->nullOnDelete();
+            $table->boolean('highlight');
             $table->string('seo_judul')->nullable();
             $table->text('seo_deskripsi')->nullable();
             $table->json('seo_keyword')->nullable();
@@ -54,8 +54,8 @@ return new class () extends Migration {
      */
     public function down()
     {
-        Schema::dropIfExists('kategori');
-        Schema::dropIfExists('blog');
         Schema::dropIfExists('komentar_blog');
+        Schema::dropIfExists('blog');
+        Schema::dropIfExists('kategori');
     }
 };

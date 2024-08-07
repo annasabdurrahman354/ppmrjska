@@ -63,7 +63,7 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
 
     protected static ?string $navigationGroup = 'Manajemen Kelas';
     protected static ?string $navigationIcon = 'heroicon-o-pencil-square';
-    protected static ?int $navigationSort = 54;
+    protected static ?int $navigationSort = 51;
 
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
@@ -475,11 +475,11 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                 TextColumn::make('statusKehadiranSaya')
                     ->label('Kehadiran')
                     ->color(fn (string $state): string => match ($state) {
-                        'hadir' => 'success',
-                        'telat' => 'primary',
-                        'izin' => 'warning',
-                        'sakit' => 'secondary',
-                        'alpa' => 'danger',
+                        'Hadir' => 'success',
+                        'Telat' => 'primary',
+                        'Izin' => 'warning',
+                        'Sakit' => 'secondary',
+                        'Alpa' => 'danger',
                         'Bukan Kelas' => 'gray',
                     })
                     ->badge(),
@@ -531,13 +531,8 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('deleted_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
                 Filter::make('created_at')
                     ->form([
                         DatePicker::make('created_from')
@@ -621,6 +616,11 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                     ->visible(function (JurnalKelas $record){
                         return auth()->user()->cekPerekap($record) || isKedisiplinan() || isKeilmuan() || isSuperAdmin();
                     }),
+                Tables\Actions\DeleteAction::make()
+                    ->visible(function (JurnalKelas $record){
+                        return auth()->user()->cekPerekap($record) || isKedisiplinan() || isKeilmuan() || isSuperAdmin();
+                    })
+                    ->requiresConfirmation(),
                 Action::make('updateMateriRekaman')
                     ->label('Ubah Materi & Rekaman')
                     ->visible(can('ubah_materi_rekaman_jurnal::kelas'))
@@ -1127,15 +1127,15 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                             ]),
                         );
                     })
+                    ->requiresConfirmation()
                     ->deselectRecordsAfterCompletion(),
 
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
-                        ->visible(isSuperAdmin()),
-                    Tables\Actions\ForceDeleteBulkAction::make()
-                        ->visible(isSuperAdmin()),
-                    Tables\Actions\RestoreBulkAction::make()
-                        ->visible(isSuperAdmin()),
+                        ->requiresConfirmation()
+                        ->visible(function (){
+                            return isKedisiplinan() || isKeilmuan() || isSuperAdmin();
+                        })
                 ]),
             ])
             ->selectCurrentPageOnly();
@@ -1165,7 +1165,6 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
             'view' => ViewJurnalKelas::route('/{record}'),
             'edit' => EditJurnalKelas::route('/{record}/edit'),
             'presensi' => ManagePresensiKelas::route('/{record}/presensi'),
-
         ];
     }
 

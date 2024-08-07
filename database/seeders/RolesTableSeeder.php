@@ -32,14 +32,23 @@ class RolesTableSeeder extends Seeder
             ]
         );
 
-        DB::table('roles')->insert(
-            [
-                'name' => 'dmcp_kedisiplinan',
-                'guard_name' => 'web',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
-        );
+        //DB::table('roles')->insert(
+        //    [
+        //        'name' => 'dmcp_kedisiplinan',
+        //       'guard_name' => 'web',
+        //        'created_at' => now(),
+        //        'updated_at' => now(),
+        //    ]
+        //);
+
+        //DB::table('roles')->insert(
+        //    [
+        //        'name' => 'dmcp_sekretaris',
+        //        'guard_name' => 'web',
+        //        'created_at' => now(),
+        //        'updated_at' => now(),
+        //    ]
+        //);
 
         DB::table('roles')->insert(
             [

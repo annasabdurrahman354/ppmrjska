@@ -16,11 +16,9 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->string('alamat')->nullable();
             $table->string('link_website')->nullable();
-            //$table->json('berkas_foto')->nullable();
             $table->string('latitude')->nullable();
             $table->string('longitude')->nullable();
             $table->timestamps();
-            $table->softDeletes();
         });
 
         Schema::enableForeignKeyConstraints();

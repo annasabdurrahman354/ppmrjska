@@ -30,7 +30,7 @@ class ListUsers extends ListRecords
             'Teman Kelas' => Tab::make()->query(fn ($query) => $query->where('kelas', '=', $user->kelas)->where('tanggal_lulus_pondok', '=', null)),
         ];
 
-        if ($user->isSuperAdmin()) {
+        if (can('view_any_users')) {
             $tabs['Ketua Kelas'] = Tab::make()->query(fn ($query) => $query->with('roles')->whereRelation('roles', 'name', '=', 'ketua_kelas'));
             $tabs['DMC Pasus'] = Tab::make()->query(fn ($query) => $query->whereHas('roles', function ($query) {
                 $query->where('name', 'like', 'dmcp%');

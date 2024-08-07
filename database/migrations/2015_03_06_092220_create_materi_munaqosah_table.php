@@ -26,7 +26,6 @@ return new class extends Migration
             $table->json('indikator_hafalan')->nullable();
             $table->foreignUlid('dewan_guru_id')->nullable()->references('id')->on('dewan_guru')->cascadeOnUpdate()->nullOnDelete();
             $table->timestamps();
-            $table->softDeletes();
         });
 
         Schema::enableForeignKeyConstraints();

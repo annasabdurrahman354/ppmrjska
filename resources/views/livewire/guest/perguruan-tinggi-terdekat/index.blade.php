@@ -1,39 +1,40 @@
+@section('title')
+    Perguruan Tinggi Terdekat
+@stop
+
 <div>
     <!-- ========== MAIN CONTENT ========== -->
-    <main id="content">
-        <div class="overflow-hidden">
-            <x-guest-navbar></x-guest-navbar>
-            <div class="relative">
-                <!-- Gradients -->
-                <div aria-hidden="true" class="flex -z-[1] absolute -top-48 start-0">
-                    <div class="bg-lime-200 opacity-30 blur-3xl w-[1036px] h-[600px] dark:bg-lime-900 dark:opacity-20"></div>
-                    <div class="bg-gray-200 opacity-90 blur-3xl w-[577px] h-[300px] transform translate-y-32 dark:bg-neutral-800/60"></div>
-                </div>
-                <!-- End Gradients -->
-
-                <div class="absolute top-1/2 start-1/2 -z-[1] transform -translate-y-1/2 -translate-x-1/2 w-[340px] h-[340px] border border-dashed border-green-200 rounded-full dark:border-green-900/60"></div>
-                <div class="absolute top-1/2 start-1/2 -z-[1] transform -translate-y-1/2 -translate-x-1/2 w-[575px] h-[575px] border border-dashed border-green-200 rounded-full opacity-80 dark:border-green-900/60"></div>
-                <div class="absolute top-1/2 start-1/2 -z-[1] transform -translate-y-1/2 -translate-x-1/2 w-[840px] h-[840px] border border-dashed border-green-200 rounded-full opacity-60 dark:border-green-900/60"></div>
-                <div class="absolute top-1/2 start-1/2 -z-[1] transform -translate-y-1/2 -translate-x-1/2 w-[1080px] h-[1080px] border border-dashed border-green-200 rounded-full opacity-40 dark:border-green-900/60"></div>
+    <main id="content" class="overflow-hidden">
+        <x-guest-navbar></x-guest-navbar>
+        <div class="relative">
+            <!-- Gradients -->
+            <div aria-hidden="true" class="flex -z-[1] absolute -top-48 start-0">
+                <div class="bg-lime-200 opacity-30 blur-3xl w-[1036px] h-[600px] dark:bg-lime-900 dark:opacity-20"></div>
+                <div class="bg-gray-200 opacity-90 blur-3xl w-[577px] h-[300px] transform translate-y-32 dark:bg-neutral-800/60"></div>
             </div>
+            <!-- End Gradients -->
 
-            <!-- Title -->
-            <div class="mx-auto text-center mt-6">
-                <span class="inline-block py-1 px-3 mb-2 text-xs font-semibold text-green-900 bg-white rounded-full">INFORMASI GEOSPASIAL</span>
-                <h2 class="text-2xl font-bold font-serif italic md:text-4xl md:leading-tight dark:text-white">Perguruan Tinggi Terdekat</h2>
-            </div>
-            <!-- End Title -->
+            <div class="absolute top-1/2 start-1/2 -z-[1] transform -translate-y-1/2 -translate-x-1/2 w-[340px] h-[340px] border border-dashed border-green-200 rounded-full dark:border-green-900/60"></div>
+            <div class="absolute top-1/2 start-1/2 -z-[1] transform -translate-y-1/2 -translate-x-1/2 w-[575px] h-[575px] border border-dashed border-green-200 rounded-full opacity-80 dark:border-green-900/60"></div>
+            <div class="absolute top-1/2 start-1/2 -z-[1] transform -translate-y-1/2 -translate-x-1/2 w-[840px] h-[840px] border border-dashed border-green-200 rounded-full opacity-60 dark:border-green-900/60"></div>
+            <div class="absolute top-1/2 start-1/2 -z-[1] transform -translate-y-1/2 -translate-x-1/2 w-[1080px] h-[1080px] border border-dashed border-green-200 rounded-full opacity-40 dark:border-green-900/60"></div>
+        </div>
 
-            <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-12 mx-auto h-full md:h-screen flex items-center">
-                <!-- Map section -->
-                <div class="w-full h-screen bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-                    <div id="map" class="z-[9] w-full min-h-screen rounded-md shadow-md" wire:ignore></div>
-                </div>
+        <!-- Title -->
+        <div class="mx-auto text-center mt-6">
+            <span class="inline-block py-1 px-3 mb-2 text-xs font-semibold text-green-900 bg-white rounded-full">INFORMASI GEOSPASIAL</span>
+            <h2 class="text-2xl font-bold font-serif italic md:text-4xl md:leading-tight dark:text-white">Perguruan Tinggi Terdekat</h2>
+        </div>
+        <!-- End Title -->
+
+        <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-12 mx-auto h-full md:h-screen flex items-center">
+            <!-- Map section -->
+            <div class="w-full h-screen bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+                <div id="map" class="z-[9] w-full min-h-screen rounded-md shadow-md" wire:ignore></div>
             </div>
         </div>
+        <x-guest-footer></x-guest-footer>
     </main>
-
-    <x-guest-footer></x-guest-footer>
     <div wire:ignore.self id="hs-univ-modal" class="hs-overlay hidden size-full fixed top-0 start-0 z-[80] overflow-x-hidden overflow-y-auto pointer-events-none">
         <div class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto h-[calc(100%-3.5rem)] min-h-[calc(100%-3.5rem)] flex items-center">
             <div class="w-full max-h-full overflow-hidden flex flex-col bg-white border shadow-sm rounded-xl pointer-events-auto dark:bg-neutral-800 dark:border-neutral-700 dark:shadow-neutral-700/70">

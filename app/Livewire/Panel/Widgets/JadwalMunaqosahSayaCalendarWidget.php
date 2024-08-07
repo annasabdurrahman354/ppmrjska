@@ -9,6 +9,7 @@ use App\Models\PlotJadwalMunaqosah;
 use App\Models\User;
 use Awcodes\TableRepeater\Components\TableRepeater;
 use Awcodes\TableRepeater\Header;
+use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Section;
@@ -137,80 +138,6 @@ class JadwalMunaqosahSayaCalendarWidget extends FullCalendarWidget
 
     public function getFormSchema(): array
     {
-        return [
-            Section::make('Detail Munaqosah')
-                ->columns(2)
-                ->schema([
-                    Select::make('materi_munaqosah_id')
-                        ->label('Materi Munaqosah')
-                        ->options(MateriMunaqosah::all()->pluck('recordTitle', 'id'))
-                        ->searchable()
-                        ->columnSpanFull()
-                        ->required()
-                        ->live()
-                        ->afterStateUpdated(function(Set $set) {
-                            $set('plotJadwalMunaqosah', []);
-                        }),
-                    DateTimePicker::make('waktu')
-                        ->label('Waktu Munaqosah')
-                        ->required(),
-
-                    DateTimePicker::make('batas_awal_pendaftaran')
-                        ->label('Batas Mulai Pendaftaran')
-                        ->required(),
-                    DateTimePicker::make('batas_akhir_pendaftaran')
-                        ->label('Batas Akhir Pendaftaran')
-                        ->required(),
-
-                    TextInput::make('maksimal_pendaftar')
-                        ->label('Maksimal Pendaftar')
-                        ->default(8)
-                        ->required()
-                        ->numeric()
-                        ->minValue(fn (Get $get) => count($get('plotJadwalMunaqosah')))
-                        ->live(),
-                ]),
-
-            Section::make('Plot Jadwal Munaqosah')
-                ->schema([
-                    TableRepeater::make('plotJadwalMunaqosah')
-                        ->hiddenLabel()
-                        ->relationship('plotJadwalMunaqosah')
-                        ->default([])
-                        ->disabled(fn (Get $get) => !filled($get('materi_munaqosah_id')))
-                        ->headers([
-                            Header::make('Santri'),
-                            Header::make('Status Terlaksana')
-                        ])
-                        ->schema([
-                            Select::make('user_id')
-                                ->hiddenLabel()
-                                ->required()
-                                ->searchable()
-                                ->preload()
-                                ->placeholder('Pilih santri sesuai kelas munaqosah...')
-                                ->getSearchResultsUsing(function (string $search, Get $get): array{
-                                    $materiMunaqosah = MateriMunaqosah::where('id', $get('../../materi_munaqosah_id'))->first();
-                                    $kelas = $materiMunaqosah->kelas ?? ['a'];
-                                    return User::where('kelas', $kelas)
-                                        ->where('nama', 'like', "%{$search}%")
-                                        ->where('status_pondok', StatusPondok::AKTIF->value)
-                                        ->whereNull('tanggal_lulus_pondok')
-                                        ->limit(20)
-                                        ->pluck('nama', 'id')
-                                        ->toArray();
-                                })
-                                ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->nama),
-                            Toggle::make('status_terlaksana')
-                                ->label('Terlaksana?')
-                                ->default(false)
-                                ->required(),
-                        ])
-                        ->addable()
-                        ->addActionLabel('Tambah Pendaftar +')
-                        ->maxItems(fn (Get $get) => $get('maksimal_pendaftar'))
-                        ->live()
-                ])
-        ];
+        return JadwalMunaqosah::getForm();
     }
 }

@@ -17,9 +17,10 @@ return new class extends Migration
             $table->tinyIncrements('id');
             $table->string('nama', 96);
             $table->unsignedSmallInteger('jumlah_halaman')->nullable();
+            $table->unsignedSmallInteger('halaman_awal')->nullable();
+            $table->unsignedSmallInteger('halaman_akhir')->nullable();
             $table->text('link_materi')->nullable();
             $table->timestamps();
-            $table->softDeletes();
         });
 
         Schema::enableForeignKeyConstraints();

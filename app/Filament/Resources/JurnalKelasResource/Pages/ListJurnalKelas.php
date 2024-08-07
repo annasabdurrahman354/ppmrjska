@@ -37,22 +37,30 @@ class ListJurnalKelas extends ListRecords
     public function getTabs(): array
     {
         $semuaKelas = User::where('tanggal_lulus_pondok', null)
-                            ->where('status_pondok', StatusPondok::AKTIF->value)
-                            ->orderBy('kelas')
-                            ->select('kelas')
-                            ->distinct()
-                            ->get()
-                            ->pluck('kelas');
+            ->whereNotIn('status_pondok', [StatusPondok::LULUS, StatusPondok::KELUAR, StatusPondok::NONAKTIF])
+            ->orderBy('kelas')
+            ->select('kelas')
+            ->distinct()
+            ->get()
+            ->pluck('kelas');
+        $alumni = User::where('tanggal_lulus_pondok', null)
+            ->whereIn('status_pondok', [StatusPondok::LULUS, StatusPondok::KELUAR, StatusPondok::NONAKTIF])
+            ->orderBy('kelas')
+            ->select('kelas')
+            ->distinct()
+            ->get()
+            ->pluck('kelas');
 
         $tabs = [
             null => Tab::make('All'),
             'Kelas Saya' => Tab::make()->query(fn ($query) => $query->whereHas('presensiKelas', function($q){
                 $q->where('user_id', auth()->id());
-            }))
+            })),
         ];
         foreach ($semuaKelas as $kelas){
             $tabs[$kelas] = Tab::make()->query(fn ($query) => $query->whereJsonContains('kelas', (string) $kelas));
         }
+        $tabs['Alumni'] = Tab::make()->query(fn ($query) => $query->whereJsonContains('kelas', $alumni));
         return $tabs;
     }
 

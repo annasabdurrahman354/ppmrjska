@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('provinsi', function (Blueprint $table) {
             $table->tinyIncrements('id');
-            $table->string('nama', 64);
+            $table->string('nama');
             $table->timestamps();
         });
     }

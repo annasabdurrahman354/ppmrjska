@@ -6,6 +6,7 @@ use App\Enums\JenisAdministrasi;
 use App\Enums\JenisTagihan;
 use App\Enums\PeriodeTagihan;
 use App\Enums\StatusTagihan;
+use Askedio\SoftCascade\Traits\SoftCascadeTrait;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -18,6 +19,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Administrasi extends Model
 {
     use HasFactory, HasUlids, SoftDeletes;
+    use SoftCascadeTrait;
+
+    protected $softCascade = ['tagihanAdministrasi'];
 
     protected $table = 'administrasi';
 
@@ -115,6 +119,7 @@ class Administrasi extends Model
 
     protected static function booted(): void
     {
+        parent::boot();
         static::created(function (Administrasi $record) {
             TahunAjaran::firstOrCreate(
                 ['tahun_ajaran' =>  $record->tahun_ajaran],

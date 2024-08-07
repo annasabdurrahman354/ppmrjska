@@ -1,139 +1,138 @@
+@section('title')
+    Media
+@stop
+
 <div>
     <!-- ========== MAIN CONTENT ========== -->
-    <main id="content">
-        <div class="overflow-hidden">
-            <x-guest-navbar></x-guest-navbar>
-            <div class="relative">
-                <!-- Gradients -->
-                <div aria-hidden="true" class="flex -z-[1] absolute -top-48 start-0">
-                    <div class="bg-lime-200 opacity-30 blur-3xl w-[1036px] h-[600px] dark:bg-lime-900 dark:opacity-20"></div>
-                    <div class="bg-gray-200 opacity-90 blur-3xl w-[577px] h-[300px] transform translate-y-32 dark:bg-neutral-800/60"></div>
-                </div>
-                <!-- End Gradients -->
-
-                <div class="absolute top-1/2 start-1/2 -z-[1] transform -translate-y-1/2 -translate-x-1/2 w-[340px] h-[340px] border border-dashed border-green-200 rounded-full dark:border-green-900/60"></div>
-                <div class="absolute top-1/2 start-1/2 -z-[1] transform -translate-y-1/2 -translate-x-1/2 w-[575px] h-[575px] border border-dashed border-green-200 rounded-full opacity-80 dark:border-green-900/60"></div>
-                <div class="absolute top-1/2 start-1/2 -z-[1] transform -translate-y-1/2 -translate-x-1/2 w-[840px] h-[840px] border border-dashed border-green-200 rounded-full opacity-60 dark:border-green-900/60"></div>
-                <div class="absolute top-1/2 start-1/2 -z-[1] transform -translate-y-1/2 -translate-x-1/2 w-[1080px] h-[1080px] border border-dashed border-green-200 rounded-full opacity-40 dark:border-green-900/60"></div>
+    <main id="content" class="overflow-hidden">
+        <x-guest-navbar></x-guest-navbar>
+        <div class="relative">
+            <!-- Gradients -->
+            <div aria-hidden="true" class="flex -z-[1] absolute -top-48 start-0">
+                <div class="bg-lime-200 opacity-30 blur-3xl w-[1036px] h-[600px] dark:bg-lime-900 dark:opacity-20"></div>
+                <div class="bg-gray-200 opacity-90 blur-3xl w-[577px] h-[300px] transform translate-y-32 dark:bg-neutral-800/60"></div>
             </div>
+            <!-- End Gradients -->
 
-            <!-- Title -->
-            <div class="mx-auto text-center mt-6">
-                <span class="inline-block py-1 px-3 mb-2 text-xs font-semibold text-green-900 bg-white rounded-full">PRNALA DARI LUAR</span>
-                <h2 class="text-2xl font-bold font-serif italic md:text-4xl md:leading-tight dark:text-white">Media</h2>
-            </div>
-            <!-- End Title -->
+            <div class="absolute top-1/2 start-1/2 -z-[1] transform -translate-y-1/2 -translate-x-1/2 w-[340px] h-[340px] border border-dashed border-green-200 rounded-full dark:border-green-900/60"></div>
+            <div class="absolute top-1/2 start-1/2 -z-[1] transform -translate-y-1/2 -translate-x-1/2 w-[575px] h-[575px] border border-dashed border-green-200 rounded-full opacity-80 dark:border-green-900/60"></div>
+            <div class="absolute top-1/2 start-1/2 -z-[1] transform -translate-y-1/2 -translate-x-1/2 w-[840px] h-[840px] border border-dashed border-green-200 rounded-full opacity-60 dark:border-green-900/60"></div>
+            <div class="absolute top-1/2 start-1/2 -z-[1] transform -translate-y-1/2 -translate-x-1/2 w-[1080px] h-[1080px] border border-dashed border-green-200 rounded-full opacity-40 dark:border-green-900/60"></div>
+        </div>
 
-            <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-12 mx-auto h-full md:h-screen">
-                <div class="flex flex-col md:flex-row w-full gap-8">
-                    <aside class="md:w-1/3 lg:w-1/4">
-                        <div class="bg-white bg-opacity-80 shadow rounded-xl p-4 sm:p-7 dark:backdrop-blur-md dark:bg-white/10">
+        <!-- Title -->
+        <div class="mx-auto text-center mt-6">
+            <span class="inline-block py-1 px-3 mb-2 text-xs font-semibold text-green-900 bg-white rounded-full">PRNALA DARI LUAR</span>
+            <h2 class="text-2xl font-bold font-serif italic md:text-4xl md:leading-tight dark:text-white">Media</h2>
+        </div>
+        <!-- End Title -->
 
-                            <!-- Section -->
-                            <div class="py-6 first:pt-0 last:pb-0 border-t first:border-transparent border-gray-200 dark:border-neutral-700 dark:first:border-transparent">
-                                <h3 class="md:text-lg font-messiri font-semibold text-gray-800 dark:text-neutral-200">
-                                    Cari Media
-                                </h3>
-                                <div class="mt-4 space-y-3 relative">
-                                    <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-                                        </svg>
-                                    </div>
-                                    <input wire:model.blur="search" id="search" type="text" class="block w-full p-4 ps-10 py-2 px-3 border-gray-200 shadow-sm text-sm rounded-lg focus:border-green-500 focus:ring-green-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600" placeholder="Judul media...">
+        <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-12 mx-auto h-full md:h-screen">
+            <div class="flex flex-col md:flex-row w-full gap-8">
+                <aside class="md:w-1/3 lg:w-1/4">
+                    <div class="bg-white border shadow-sm rounded-xl dark:bg-neutral-800 dark:border-neutral-700 p-4 sm:p-7">
+
+                        <!-- Section -->
+                        <div class="py-6 first:pt-0 last:pb-0 border-t first:border-transparent border-gray-200 dark:border-neutral-700 dark:first:border-transparent">
+                            <h5 class="md:text-lg font-messiri font-semibold text-gray-800 dark:text-neutral-200">
+                                Cari Media
+                            </h5>
+                            <div class="mt-4 space-y-3 relative">
+                                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                                    </svg>
                                 </div>
-                            </div>
-                            <!-- End Section -->
-
-                            <!-- Section -->
-                            <div class="py-6 first:pt-0 last:pb-0 border-t first:border-transparent border-gray-200 dark:border-neutral-700 dark:first:border-transparent">
-                                <h3 class="md:text-lg font-messiri font-semibold text-gray-800 dark:text-neutral-200">
-                                    Kategori Media
-                                </h3>
-
-                                <div class="mt-2 space-y-3">
-                                    <select wire:model.live="kategori_id" class="py-3 px-4 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600">
-                                        <option selected="">Pilih kategori artikel...</option>
-                                        @foreach($kategoris as $kategori)
-                                            <option value="{{$kategori['id']}}">{{$kategori['nama']}}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <!-- End Section -->
-
-                            <div class="mt-5 flex justify-end gap-x-2">
-                                <button wire:click="setFilter" type="button" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800">
-                                    Reset
-                                </button>
-                                <a href="{{route('guest.media.index')}}" type="button" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 disabled:pointer-events-none">
-                                    Refresh
-                                </a>
+                                <input wire:model.blur="search" id="search" type="text" class="block w-full p-4 ps-10 py-2 px-3 border-gray-200 shadow-sm text-sm rounded-lg focus:border-green-500 focus:ring-green-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600" placeholder="Judul media...">
                             </div>
                         </div>
-                    </aside>
+                        <!-- End Section -->
 
-                    <main class="flex-1">
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full">
-                            @forelse($medias as $media)
-                                <!-- Card -->
-                                <div id="media-button" wire:click="setClickedMedia(@js($media))" class="group shadow bg-white hover:bg-gray-50 rounded-xl p-2.5 transition-all dark:hover:bg-white/10 hover:cursor-pointer" data-hs-overlay="#hs-media-modal">
-                                    <div class="relative aspect-w-16 aspect-h-10">
-                                        <img class="w-full object-cover rounded-xl" src="{{$media->getFirstMediaUrl('media_cover')}}" alt="{{$media->judul}}">
-                                        <div class="absolute z-10 h-full w-full flex items-center justify-center">
-                                            <div class="flex items-center w-full">
-                                                @if($media->sumber === \App\Enums\SumberMedia::HALAMAN_WEB->value)
-                                                    <svg class="w-1/4 mx-auto my-auto text-slate-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                                                        <path class="opacity-75" fill="currentColor" fill-rule="evenodd" d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418" clip-rule="evenodd"/>
-                                                    </svg>
-                                                @elseif($media->sumber === \App\Enums\SumberMedia::PORTAL_BERITA->value)
-                                                    <svg class="w-1/4 mx-auto my-auto text-slate-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                                                        <path class="opacity-75" fill="currentColor" fill-rule="evenodd" d="M5 3a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11.5c.07 0 .14-.007.207-.021.095.014.193.021.293.021h2a2 2 0 0 0 2-2V7a1 1 0 0 0-1-1h-1a1 1 0 1 0 0 2v11h-2V5a2 2 0 0 0-2-2H5Zm7 4a1 1 0 0 1 1-1h.5a1 1 0 1 1 0 2H13a1 1 0 0 1-1-1Zm0 3a1 1 0 0 1 1-1h.5a1 1 0 1 1 0 2H13a1 1 0 0 1-1-1Zm-6 4a1 1 0 0 1 1-1h6a1 1 0 1 1 0 2H7a1 1 0 0 1-1-1Zm0 3a1 1 0 0 1 1-1h6a1 1 0 1 1 0 2H7a1 1 0 0 1-1-1ZM7 6a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1H7Zm1 3V8h1v1H8Z" clip-rule="evenodd"/>
-                                                    </svg>
-                                                @elseif($media->sumber === \App\Enums\SumberMedia::INSTAGRAM->value)
-                                                    <svg class="w-1/4 mx-auto my-auto text-slate-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"fill="currentColor" viewBox="0 0 24 24">
-                                                        <path class="opacity-75" fill="currentColor" fill-rule="evenodd" d="M3 8a5 5 0 0 1 5-5h8a5 5 0 0 1 5 5v8a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5V8Zm5-3a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V8a3 3 0 0 0-3-3H8Zm7.597 2.214a1 1 0 0 1 1-1h.01a1 1 0 1 1 0 2h-.01a1 1 0 0 1-1-1ZM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm-5 3a5 5 0 1 1 10 0 5 5 0 0 1-10 0Z" clip-rule="evenodd"/>
-                                                    </svg>
-                                                @elseif($media->sumber === \App\Enums\SumberMedia::TIKTOK->value)
-                                                    <svg class="w-1/4 mt-7 mx-auto my-auto text-green-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                                                        <path class="opacity-50" fill="currentColor" clip-rule="evenodd" fill-rule="evenodd" d="M9 0h1.98c.144.715.54 1.617 1.235 2.512C12.895 3.389 13.797 4 15 4v2c-1.753 0-3.07-.814-4-1.829V11a5 5 0 1 1-5-5v2a3 3 0 1 0 3 3z"/>
-                                                    </svg>
-                                                @elseif($media->sumber === \App\Enums\SumberMedia::YOUTUBE->value)
-                                                    <svg class="w-1/4 mx-auto my-auto text-slate-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                                                        <path class="opacity-75" fill="currentColor" fill-rule="evenodd" d="M21.7 8.037a4.26 4.26 0 0 0-.789-1.964 2.84 2.84 0 0 0-1.984-.839c-2.767-.2-6.926-.2-6.926-.2s-4.157 0-6.928.2a2.836 2.836 0 0 0-1.983.839 4.225 4.225 0 0 0-.79 1.965 30.146 30.146 0 0 0-.2 3.206v1.5a30.12 30.12 0 0 0 .2 3.206c.094.712.364 1.39.784 1.972.604.536 1.38.837 2.187.848 1.583.151 6.731.2 6.731.2s4.161 0 6.928-.2a2.844 2.844 0 0 0 1.985-.84 4.27 4.27 0 0 0 .787-1.965 30.12 30.12 0 0 0 .2-3.206v-1.516a30.672 30.672 0 0 0-.202-3.206Zm-11.692 6.554v-5.62l5.4 2.819-5.4 2.801Z" clip-rule="evenodd"/>
-                                                    </svg>
-                                                @endif
-                                            </div>
+                        <!-- Section -->
+                        <div class="py-6 first:pt-0 last:pb-0 border-t first:border-transparent border-gray-200 dark:border-neutral-700 dark:first:border-transparent">
+                            <h5 class="md:text-lg font-messiri font-semibold text-gray-800 dark:text-neutral-200">
+                                Kategori Media
+                            </h5>
+
+                            <div class="mt-2 space-y-3">
+                                <select wire:model.live="kategori_id" class="py-3 px-4 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-green-500 focus:ring-green-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600">
+                                    <option selected="">Pilih kategori artikel...</option>
+                                    @foreach($kategoris as $kategori)
+                                        <option value="{{$kategori['id']}}">{{$kategori['nama']}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <!-- End Section -->
+
+                        <div class="mt-5 flex justify-end gap-x-2">
+                            <button wire:click="setFilter" type="button" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800">
+                                Reset
+                            </button>
+                            <a href="{{route('guest.media.index')}}" type="button" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 disabled:pointer-events-none">
+                                Refresh
+                            </a>
+                        </div>
+                    </div>
+                </aside>
+
+                <main class="flex-1">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full">
+                        @forelse($medias as $media)
+                            <!-- Card -->
+                            <div id="media-button" wire:click="setClickedMedia(@js($media))" class="group shadow bg-white hover:bg-gray-50 rounded-xl p-2.5 transition-all dark:hover:bg-white/10 hover:cursor-pointer" data-hs-overlay="#hs-media-modal">
+                                <div class="relative aspect-w-16 aspect-h-10">
+                                    <img class="w-full object-cover rounded-xl" src="{{$media->getFirstMediaUrl('media_cover')}}" alt="{{$media->judul}}">
+                                    <div class="absolute z-10 h-full w-full flex items-center justify-center">
+                                        <div class="flex items-center w-full">
+                                            @if($media->sumber === \App\Enums\SumberMedia::HALAMAN_WEB->value)
+                                                <svg class="w-1/4 mx-auto my-auto text-slate-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path class="opacity-75" fill="currentColor" fill-rule="evenodd" d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418" clip-rule="evenodd"/>
+                                                </svg>
+                                            @elseif($media->sumber === \App\Enums\SumberMedia::PORTAL_BERITA->value)
+                                                <svg class="w-1/4 mx-auto my-auto text-slate-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path class="opacity-75" fill="currentColor" fill-rule="evenodd" d="M5 3a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11.5c.07 0 .14-.007.207-.021.095.014.193.021.293.021h2a2 2 0 0 0 2-2V7a1 1 0 0 0-1-1h-1a1 1 0 1 0 0 2v11h-2V5a2 2 0 0 0-2-2H5Zm7 4a1 1 0 0 1 1-1h.5a1 1 0 1 1 0 2H13a1 1 0 0 1-1-1Zm0 3a1 1 0 0 1 1-1h.5a1 1 0 1 1 0 2H13a1 1 0 0 1-1-1Zm-6 4a1 1 0 0 1 1-1h6a1 1 0 1 1 0 2H7a1 1 0 0 1-1-1Zm0 3a1 1 0 0 1 1-1h6a1 1 0 1 1 0 2H7a1 1 0 0 1-1-1ZM7 6a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1H7Zm1 3V8h1v1H8Z" clip-rule="evenodd"/>
+                                                </svg>
+                                            @elseif($media->sumber === \App\Enums\SumberMedia::INSTAGRAM->value)
+                                                <svg class="w-1/4 mx-auto my-auto text-slate-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"fill="currentColor" viewBox="0 0 24 24">
+                                                    <path class="opacity-75" fill="currentColor" fill-rule="evenodd" d="M3 8a5 5 0 0 1 5-5h8a5 5 0 0 1 5 5v8a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5V8Zm5-3a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V8a3 3 0 0 0-3-3H8Zm7.597 2.214a1 1 0 0 1 1-1h.01a1 1 0 1 1 0 2h-.01a1 1 0 0 1-1-1ZM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm-5 3a5 5 0 1 1 10 0 5 5 0 0 1-10 0Z" clip-rule="evenodd"/>
+                                                </svg>
+                                            @elseif($media->sumber === \App\Enums\SumberMedia::TIKTOK->value)
+                                                <svg class="w-1/4 mt-7 mx-auto my-auto text-green-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path class="opacity-50" fill="currentColor" clip-rule="evenodd" fill-rule="evenodd" d="M9 0h1.98c.144.715.54 1.617 1.235 2.512C12.895 3.389 13.797 4 15 4v2c-1.753 0-3.07-.814-4-1.829V11a5 5 0 1 1-5-5v2a3 3 0 1 0 3 3z"/>
+                                                </svg>
+                                            @elseif($media->sumber === \App\Enums\SumberMedia::YOUTUBE->value)
+                                                <svg class="w-1/4 mx-auto my-auto text-slate-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path class="opacity-75" fill="currentColor" fill-rule="evenodd" d="M21.7 8.037a4.26 4.26 0 0 0-.789-1.964 2.84 2.84 0 0 0-1.984-.839c-2.767-.2-6.926-.2-6.926-.2s-4.157 0-6.928.2a2.836 2.836 0 0 0-1.983.839 4.225 4.225 0 0 0-.79 1.965 30.146 30.146 0 0 0-.2 3.206v1.5a30.12 30.12 0 0 0 .2 3.206c.094.712.364 1.39.784 1.972.604.536 1.38.837 2.187.848 1.583.151 6.731.2 6.731.2s4.161 0 6.928-.2a2.844 2.844 0 0 0 1.985-.84 4.27 4.27 0 0 0 .787-1.965 30.12 30.12 0 0 0 .2-3.206v-1.516a30.672 30.672 0 0 0-.202-3.206Zm-11.692 6.554v-5.62l5.4 2.819-5.4 2.801Z" clip-rule="evenodd"/>
+                                                </svg>
+                                            @endif
                                         </div>
                                     </div>
-                                    <h3 class="line-clamp-2 mt-2 text-lg text-start font-semibold font-messiri  text-green-600 group-hover:text-green-500 dark:text-neutral-300 dark:group-hover:text-white">
-                                        {{$media->judul}}
-                                    </h3>
-                                    <p class="mt-1 inline-flex items-center gap-x-1 text-sm font-medium text-gray-600 dark:text-neutral-200">
-                                        Lihat
-                                        <svg class="flex-shrink-0 size-4 transition ease-in-out group-hover:translate-x-1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-                                    </p>
                                 </div>
-                                <!-- End Card -->
-                            @empty
-                                <div class="p-4 w-full dark:text-white">
-                                    Tidak ada postingan media!
-                                </div>
-                            @endforelse
-
-                            <div class="mt-4">
-                                {{ $medias->links() }}
+                                <h3 class="line-clamp-2 mt-2 text-lg text-start font-semibold font-messiri  text-green-600 group-hover:text-green-500 dark:text-neutral-300 dark:group-hover:text-white">
+                                    {{$media->judul}}
+                                </h3>
+                                <p class="mt-1 inline-flex items-center gap-x-1 text-sm font-medium text-gray-600 dark:text-neutral-200">
+                                    Lihat
+                                    <svg class="flex-shrink-0 size-4 transition ease-in-out group-hover:translate-x-1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                                </p>
                             </div>
+                            <!-- End Card -->
+                        @empty
+                            <div class="p-4 w-full dark:text-white">
+                                Tidak ada postingan media!
+                            </div>
+                        @endforelse
+
+                        <div class="mt-4">
+                            {{ $medias->links() }}
                         </div>
-                    </main>
-                </div>
+                    </div>
+                </main>
             </div>
-
         </div>
+        <x-guest-footer></x-guest-footer>
     </main>
-
-    <x-guest-footer></x-guest-footer>
-
     <div wire:ignore.self id="hs-media-modal" class="hs-overlay hidden size-full fixed top-0 start-0 z-[80] overflow-x-hidden overflow-y-auto pointer-events-none">
         <div wire:ignore.self class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto h-[calc(100%-3.5rem)] min-h-[calc(100%-3.5rem)] flex items-center">
             <div wire:ignore.self class="w-full max-h-full overflow-hidden flex flex-col bg-white border shadow-sm rounded-xl pointer-events-auto dark:bg-neutral-800 dark:border-neutral-700 dark:shadow-neutral-700/70">

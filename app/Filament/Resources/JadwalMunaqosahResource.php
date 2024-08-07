@@ -6,10 +6,12 @@ use App\Enums\StatusPondok;
 use App\Filament\Resources\JadwalMunaqosahResource\Pages\CreateJadwalMunaqosah;
 use App\Filament\Resources\JadwalMunaqosahResource\Pages\EditJadwalMunaqosah;
 use App\Filament\Resources\JadwalMunaqosahResource\Pages\ListJadwalMunaqosahs;
+use App\Filament\Resources\JadwalMunaqosahResource\Pages\ManageJadwalMunaqosahPlotJadwalMunaqosah;
 use App\Filament\Resources\JadwalMunaqosahResource\Pages\ViewJadwalMunaqosah;
 use App\Filament\Resources\JadwalMunaqosahResource\Widgets\JadwalMunaqosahCalendarWidget;
 use App\Models\JadwalMunaqosah;
 use App\Models\MateriMunaqosah;
+use App\Models\PlotJadwalMunaqosah;
 use App\Models\User;
 use Awcodes\TableRepeater\Components\TableRepeater;
 use Awcodes\TableRepeater\Header;
@@ -22,6 +24,8 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Notifications\Notification;
+use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Grouping\Group;
@@ -45,83 +49,7 @@ class JadwalMunaqosahResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Section::make('Detail Munaqosah')
-                    ->schema([
-                        Select::make('materi_munaqosah_id')
-                            ->label('Materi Munaqosah')
-                            ->options(MateriMunaqosah::all()->pluck('recordTitle', 'id'))
-                            ->searchable()
-                            ->columnSpanFull()
-                            ->required()
-                            ->live()
-                            ->afterStateUpdated(function(Set $set) {
-                                $set('plotJadwalMunaqosah', []);
-                            }),
-                        DateTimePicker::make('waktu')
-                            ->label('Waktu Munaqosah')
-                            ->required()
-                            ->live()
-                            ->afterStateUpdated(fn (Set $set, $state) => $set('batas_akhir_pendaftaran', Carbon::parse($state)->subDay())),
-                        TextInput::make('maksimal_pendaftar')
-                            ->label('Maksimal Pendaftar')
-                            ->required()
-                            ->numeric()
-                            ->minValue(fn (Get $get) => count($get('plotJadwalMunaqosah')))
-                            ->live(),
-                        DateTimePicker::make('batas_awal_pendaftaran')
-                            ->label('Batas Mulai Pendaftaran')
-                            ->beforeOrEqual('batas_akhir_pendaftaran')
-                            ->default(now())
-                            ->required(),
-                        DateTimePicker::make('batas_akhir_pendaftaran')
-                            ->label('Batas Akhir Pendaftaran')
-                            ->afterOrEqual('batas_awal_pendaftaran')
-                            ->beforeOrEqual('waktu')
-                            ->required(),
-                    ]),
-
-                Section::make('Plot Jadwal Munaqosah')
-                    ->schema([
-                        TableRepeater::make('plotJadwalMunaqosah')
-                            ->hiddenLabel()
-                            ->relationship('plotJadwalMunaqosah')
-                            ->default([])
-                            ->disabled(fn (Get $get) => !filled($get('materi_munaqosah_id')))
-                            ->headers([
-                                Header::make('Santri'),
-                                Header::make('Status Terlaksana')
-                            ])
-                            ->schema([
-                                Select::make('user_id')
-                                    ->hiddenLabel()
-                                    ->required()
-                                    ->searchable()
-                                    ->preload()
-                                    ->placeholder('Pilih santri sesuai kelas munaqosah...')
-                                    ->getSearchResultsUsing(function (string $search, Get $get): array{
-                                        $materiMunaqosah = MateriMunaqosah::where('id', $get('../../materi_munaqosah_id'))->first();
-                                        $kelas = $materiMunaqosah->kelas ?? ['a'];
-                                        return User::where('kelas', $kelas)
-                                            ->where('nama', 'like', "%{$search}%")
-                                            ->where('status_pondok', StatusPondok::AKTIF->value)
-                                            ->whereNull('tanggal_lulus_pondok')
-                                            ->limit(20)
-                                            ->pluck('nama', 'id')
-                                            ->toArray();
-                                    })
-                                    ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->nama),
-                                Toggle::make('status_terlaksana')
-                                    ->label('Terlaksana?')
-                                    ->default(false)
-                                    ->required(),
-                            ])
-                            ->addable()
-                            ->addActionLabel('Tambah Pendaftar +')
-                            ->maxItems(fn (Get $get) => $get('maksimal_pendaftar'))
-                            ->live()
-                    ])
-            ]);
+            ->schema(JadwalMunaqosah::getForm());
     }
 
     public static function table(Table $table): Table
@@ -171,10 +99,6 @@ class JadwalMunaqosahResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('deleted_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->groups([
                 Group::make('materiMunaqosah.kelas')
@@ -182,25 +106,57 @@ class JadwalMunaqosahResource extends Resource
                     ->groupQueryUsing(fn (Builder $query) => $query->groupBy('materiMunaqosah.kelas')),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
+
             ])
             ->actions([
+                Tables\Actions\Action::make('ambil_jadwal')
+                    ->label('Ambil Jadwal')
+                    ->visible(function (JadwalMunaqosah $record) {
+                        $user = auth()->user();
+                        $hasPlot = PlotJadwalMunaqosah::where('user_id', $user->id)
+                            ->exists();
+                        $isRegistrationOpen = $record->batas_akhir_pendaftaran >= now();
+                        return !$hasPlot && $isRegistrationOpen;
+                    })
+                    ->action(
+                        function (JadwalMunaqosah $record) {
+                            PlotJadwalMunaqosah::create([
+                                'jadwal_munaqosah_id' => $record->id,
+                                'user_id' => auth()->user()->id,
+                                'status_terlaksana' => false,
+                            ]);
+                            Notification::make('ambil_jadwal')
+                                ->title('Jadwal munaqosah sukses diambil!')
+                                ->success()
+                                ->send();
+                        }
+                    ),
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->requiresConfirmation(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->requiresConfirmation(),
                 ]),
-            ]);
+            ])
+            ->selectCurrentPageOnly();
+    }
+
+    public static function getRecordSubNavigation(Page $page): array
+    {
+        return $page->generateNavigationItems([
+            ViewJadwalMunaqosah::class,
+            ManageJadwalMunaqosahPlotJadwalMunaqosah::class,
+        ]);
     }
 
     public static function getRelations(): array
     {
         return [
-            //
+
         ];
     }
 
@@ -218,14 +174,12 @@ class JadwalMunaqosahResource extends Resource
             'create' => CreateJadwalMunaqosah::route('/create'),
             'view' => ViewJadwalMunaqosah::route('/{record}'),
             'edit' => EditJadwalMunaqosah::route('/{record}/edit'),
+            'plot' => ManageJadwalMunaqosahPlotJadwalMunaqosah::route('/{record}/plot'),
         ];
     }
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]);
+        return parent::getEloquentQuery();
     }
 }

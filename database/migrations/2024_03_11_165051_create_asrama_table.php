@@ -20,7 +20,6 @@ return new class extends Migration
             $table->string('penghuni');
             $table->string('alamat')->nullable();
             $table->string('deskripsi')->nullable();
-            //$table->json('berkas_foto')->nullable();
             $table->string('latitude')->nullable();
             $table->string('longitude')->nullable();
             $table->tinyInteger('kapasitas_per_kamar');

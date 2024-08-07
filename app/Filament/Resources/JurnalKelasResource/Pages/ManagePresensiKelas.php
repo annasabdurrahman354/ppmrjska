@@ -56,9 +56,8 @@ class ManagePresensiKelas extends ManageRelatedRecords
                     ->preload()
                     ->getSearchResultsUsing(fn (string $search, ManageRelatedRecords $livewire): array =>
                         User::where('nama', 'like', "%{$search}%")
-                            //->whereIn('kelas', $livewire->getOwnerRecord()->kelas)
                             ->where('jenis_kelamin', $livewire->getOwnerRecord()->jenis_kelamin)
-                            ->where('status_pondok', StatusPondok::AKTIF->value)
+                            ->whereNotIn('status_pondok', [StatusPondok::LULUS, StatusPondok::KELUAR, StatusPondok::NONAKTIF])
                             ->whereNull('tanggal_lulus_pondok')
                             ->whereDoesntHave('presensiKelas', function ($query) use ($livewire) {
                                 $query->where('jurnal_kelas_id', $livewire->getOwnerRecord()->id);

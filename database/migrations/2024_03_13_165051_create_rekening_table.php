@@ -16,8 +16,8 @@ return new class extends Migration
         Schema::create('rekening', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->string('nomor_rekening');
-            $table->string('nama_bank');
             $table->string('nama_pemilik_rekening');
+            $table->string('nama_bank');
             $table->string('kepemilikan_rekening');
             $table->timestamps();
             $table->softDeletes();

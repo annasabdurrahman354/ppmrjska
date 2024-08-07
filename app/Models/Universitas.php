@@ -2,10 +2,15 @@
 
 namespace App\Models;
 
+use Dotswan\MapPicker\Fields\Map;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -13,7 +18,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Universitas extends Model implements HasMedia
 {
-    use InteractsWithMedia, HasUlids, SoftDeletes;
+    use InteractsWithMedia, HasUlids;
 
     protected $table = 'universitas';
 
@@ -50,5 +55,86 @@ class Universitas extends Model implements HasMedia
             $media->file_name = getMediaFilename($this, $media);
             $media->save();
         }
+    }
+
+    public static function getForm()
+    {
+        return [
+            TextInput::make('nama')
+                ->label('Nama Universitas')
+                ->required()
+                ->maxLength(255)
+                ->live(onBlur: true)
+                ->afterStateUpdated(function (Get $get, Set $set, ?string $old, ?string $state) {
+                    if (($get('slug') ?? '') !== Str::slug($old)) {
+                        return;
+                    }
+
+                    $set('slug', Str::slug($state));
+                }),
+            TextInput::make('slug')
+                ->label('Slug')
+                ->required()
+                ->maxLength(255),
+            TextInput::make('alamat')
+                ->label('Alamat')
+                ->required(),
+            TextInput::make('link_website')
+                ->label('Link Website')
+                ->required()
+                ->url(),
+           SpatieMediaLibraryFileUpload::make('foto')
+                ->label('Foto')
+                ->collection('universitas_foto')
+                ->conversion('thumb')
+                ->moveFiles()
+                ->image()
+                ->imageEditor()
+                ->imageResizeMode('cover')
+                ->imageCropAspectRatio('3:2')
+                ->optimize('jpg')
+                ->maxSize(1024 * 3)
+                ->rules('dimensions:max_width=1080,max_height=720')
+                ->required()
+                ->columnSpanFull(),
+            Map::make('lokasi')
+                ->label('Lokasi')
+                ->required()
+                ->columnSpanFull()
+                ->afterStateUpdated(function (Get $get, Set $set, string|array|null $old, ?array $state): void {
+                    $set('latitude', $state['lat']);
+                    $set('longitude', $state['lng']);
+                })
+                ->afterStateHydrated(function ($state, $record, Set $set): void {
+                    if ($record){
+                        $set('lokasi', ['lat' => $record->latitude, 'lng' => $record->longitude]);
+                    }
+                })
+                ->extraStyles([
+                    'min-height: 100vh',
+                    'border-radius: 12px'
+                ])
+                ->liveLocation()
+                ->showMarker()
+                ->markerColor("#22c55eff")
+                ->showFullscreenControl()
+                ->showZoomControl()
+                ->draggable()
+                ->tilesUrl("https://tile.openstreetmap.de/{z}/{x}/{y}.png")
+                ->zoom(15)
+                ->detectRetina()
+                ->showMyLocationButton()
+                ->extraTileControl([])
+                ->extraControl([
+                    'zoomDelta'           => 1,
+                    'zoomSnap'            => 2,
+                ]),
+            TextInput::make('latitude')
+                ->required()
+                ->numeric(),
+            TextInput::make('longitude')
+                ->required()
+                ->numeric(),
+        ];
     }
 }

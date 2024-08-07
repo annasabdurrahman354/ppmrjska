@@ -9,6 +9,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieTagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -38,6 +39,7 @@ class Media extends Model implements HasMedia
         'embed',
         'kategori_id',
         'pengunggah_id',
+        'highlight'
     ];
 
     /**
@@ -150,6 +152,16 @@ class Media extends Model implements HasMedia
                         ->relationship('pengunggah', 'nama')
                         ->nullable(false)
                         ->default(auth()->id()),
+                    ToggleButtons::make('highlight')
+                        ->label('Highlight')
+                        ->helperText('Pilih "Ya" jika ingin menampilkan di landing page.')
+                        ->options([
+                            true => 'Ya',
+                            false => 'Tidak'
+                        ])
+                        ->default(false)
+                        ->inline()
+                        ->grouped(),
                 ]),
         ];
     }

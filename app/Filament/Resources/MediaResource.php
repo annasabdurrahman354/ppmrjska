@@ -3,11 +3,13 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\MediaResource\Pages;
-use App\Filament\Resources\MediaResource\RelationManagers;
 use App\Models\Media;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
+use Filament\Tables\Columns\SpatieTagsColumn;
 use Filament\Tables\Table;
 
 class MediaResource extends Resource
@@ -31,6 +33,10 @@ class MediaResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label('ID')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('judul')
                     ->label('Judul')
                     ->sortable()
@@ -62,12 +68,20 @@ class MediaResource extends Resource
                 Tables\Columns\TextColumn::make('deskripsi')
                     ->label('Deskripsi')
                     ->limit(50)
-                    ->wrap()
-                    ->sortable()
-                    ->searchable(),
+                    ->wrap(),
+
+                SpatieMediaLibraryImageColumn::make('cover')
+                    ->label('Cover')
+                    ->collection('media_cover')
+                    ->conversion('thumb'),
 
                 Tables\Columns\TextColumn::make('kategori.nama')
                     ->label('Kategori')
+                    ->sortable()
+                    ->searchable(),
+
+                SpatieTagsColumn::make('tag')
+                    ->label('Tag')
                     ->sortable()
                     ->searchable(),
 
@@ -75,6 +89,10 @@ class MediaResource extends Resource
                     ->label('Pengunggah')
                     ->sortable()
                     ->searchable(),
+                IconColumn::make('highlight')
+                    ->label('Highlight')
+                    ->boolean()
+                    ->sortable(),
             ])
             ->filters([
                 //
@@ -82,12 +100,15 @@ class MediaResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->requiresConfirmation(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    //
                 ]),
-            ]);
+            ])
+            ->selectCurrentPageOnly();
     }
 
     public static function getRelations(): array

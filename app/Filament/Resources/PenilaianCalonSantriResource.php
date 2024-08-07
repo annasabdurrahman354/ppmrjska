@@ -25,6 +25,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Mokhosh\FilamentRating\Columns\RatingColumn;
 use Mokhosh\FilamentRating\Components\Rating;
 
 class PenilaianCalonSantriResource extends Resource
@@ -43,83 +44,7 @@ class PenilaianCalonSantriResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Select::make('calon_santri_id')
-                    ->label('Calon Santri')
-                    ->options(CalonSantri::all()->pluck('nama', 'id'))
-                    ->required()
-                    ->afterStateUpdated(
-                        function (Set $set, $state){
-                            if(filled($state)){
-                                $calonSantri = CalonSantri::where('id', $state)->first();
-                                $indikator_penilaian =  $calonSantri->gelombangPendaftaran->pendaftaran->indikator_penilaian;
-
-                                $set('nilai_tes', $indikator_penilaian);
-                            }
-                        }
-                    ),
-                Select::make('penguji_id')
-                    ->label('Penguji')
-                    ->options(User::all()->pluck('nama', 'id'))
-                    ->default(auth()->id())
-                    ->required(),
-
-                TableRepeater::make('nilai_tes')
-                    ->label('Nilai Tes')
-                    ->headers([
-                        Header::make('Indikator Penilaian'),
-                        Header::make('Nilai Tes')
-                    ])
-                    ->schema([
-                        TextInput::make('indikator')
-                            ->label('Indikator Penilaian'),
-                        TextInput::make('nilai')
-                            ->label('Nilai Tes')
-                            ->numeric()
-                            ->helperText('Masukkan nilai akhir untuk setiap indikator penilaian.')
-                    ])
-                    ->addable(false)
-                    ->deletable(false)
-                    ->reorderable(false)
-                    ->cloneable(false)
-                    ->collapsible(false)
-                    ->columnSpanFull()
-                    ->extraActions([
-                        Forms\Components\Actions\Action::make('hitungNilaiAkhir')
-                            ->icon('heroicon-m-inbox-arrow-down')
-                            ->action(function (Forms\Get $get, Forms\Set $set){
-                                if (!filled($get('nilai_tes')) ){
-                                    Notification::make()
-                                        ->title('Isi nilai tes untuk semua indikator!')
-                                        ->danger()
-                                        ->send();
-                                }
-                                else {
-                                    ## TODO HITUNG NILAI AKHIR
-                                    $set('nilai_akhir', 90);
-                                }
-                            })
-                    ]),
-
-                TextInput::make('nilai_akhir')
-                    ->label('Nilai Akhir')
-                    ->required(),
-                Textarea::make('catatan_penguji')
-                    ->label('Catatan Penguji')
-                    ->required(),
-                Rating::make('rekomendasi_penguji')
-                    ->label('Rekomendasi Penguji')
-                    ->stars(5)
-                    ->required(),
-                ToggleButtons::make('status_penerimaan')
-                    ->label('Status Penerimaan')
-                    ->inline()
-                    ->grouped()
-                    ->options(StatusPenerimaan::class)
-                    ->default(StatusPenerimaan::BELUM_DITENTUKAN->value)
-                    ->required(),
-
-            ]);
+            ->schema(PenilaianCalonSantri::getForm());
     }
 
     public static function table(Table $table): Table
@@ -130,22 +55,63 @@ class PenilaianCalonSantriResource extends Resource
                     ->label('ID')
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
-
+                Tables\Columns\TextColumn::make('calonSantri.gelombangPendaftaran.pendaftaran.tahun_pendaftaran')
+                    ->label('Tahun Pendaftaran')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('calonSantri.gelombangPendaftaran.pendaftaran.nomor_gelombang')
+                    ->label('Gelombang Pendaftaran')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('calonSantri.nama')
+                    ->label('Nama Calon Santri')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('penguji.nama')
+                    ->label('Penguji')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('nilai_tes')
+                    ->label('Nilai Tes')
+                    ->formatStateUsing(function ($state) {
+                        return collect($state)->map(function ($item) {
+                            return "{$item['indikator']}: {$item['nilai']}";
+                        })->implode(', ');
+                    })
+                    ->limit(50)
+                    ->wrap(),
+                Tables\Columns\TextColumn::make('nilai_akhir')
+                    ->label('Nilai Akhir')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('catatan_penguji')
+                    ->label('Catatan Penguji')
+                    ->limit(50)
+                    ->wrap(),
+                RatingColumn::make('rekomendasi_penguji')
+                    ->label('Rekomendasi Penguji'),
+                Tables\Columns\TextColumn::make('status_penerimaan')
+                    ->label('Status Penerimaan')
+                    ->badge()
+                    ->searchable()
+                    ->sortable()
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
+                //
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->requiresConfirmation(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->requiresConfirmation(),
                 ]),
-            ]);
+            ])
+            ->selectCurrentPageOnly();
     }
 
     public static function getRelations(): array
@@ -167,9 +133,6 @@ class PenilaianCalonSantriResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]);
+        return parent::getEloquentQuery();
     }
 }

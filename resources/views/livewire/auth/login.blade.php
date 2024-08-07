@@ -1,3 +1,7 @@
+@section('title')
+    SIMAK
+@stop
+
 <div>
     <!-- Hero -->
     <div class="relative flex justify-center items-center h-screen w-full bg-gradient-to-bl from-green-100 via-transparent dark:from-green-950 dark:via-transparent">

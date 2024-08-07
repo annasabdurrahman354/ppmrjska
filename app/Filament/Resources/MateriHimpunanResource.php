@@ -27,20 +27,7 @@ class MateriHimpunanResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                TextInput::make('nama')
-                    ->required()
-                    ->maxLength(96),
-                TextInput::make('jumlah_halaman')
-                    ->required()
-                    ->numeric(),
-                TextInput::make('halaman_awal')
-                    ->required()
-                    ->numeric(),
-                TextInput::make('halaman_akhir')
-                    ->required()
-                    ->numeric(),
-            ]);
+            ->schema(MateriHimpunan::getForm());
     }
 
     public static function table(Table $table): Table
@@ -81,13 +68,16 @@ class MateriHimpunanResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->requiresConfirmation(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->requiresConfirmation(),
                 ]),
-            ]);
+            ])
+            ->selectCurrentPageOnly();
     }
 
     public static function getPages(): array

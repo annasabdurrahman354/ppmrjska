@@ -21,7 +21,6 @@ return new class extends Migration
             $table->timestamp('batas_awal_pendaftaran')->nullable();
             $table->timestamp('batas_akhir_pendaftaran')->nullable();
             $table->timestamps();
-            $table->softDeletes();
         });
 
         Schema::enableForeignKeyConstraints();

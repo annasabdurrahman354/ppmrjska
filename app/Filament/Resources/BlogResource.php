@@ -8,6 +8,10 @@ use App\Models\Blog;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
+use Filament\Tables\Columns\SpatieTagsColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
 class BlogResource extends Resource
@@ -33,55 +37,75 @@ class BlogResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label('ID')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('judul')
                     ->label('Judul')
                     ->sortable()
                     ->searchable(),
-
-                Tables\Columns\TextColumn::make('slug')
+                TextColumn::make('slug')
                     ->label('Slug')
                     ->sortable()
                     ->searchable(),
-
-                Tables\Columns\TextColumn::make('deskripsi')
+                TextColumn::make('deskripsi')
                     ->label('Deskripsi')
                     ->limit(50)
-                    ->wrap()
-                    ->sortable()
-                    ->searchable(),
-
-                Tables\Columns\TextColumn::make('kategori.nama')
+                    ->wrap(),
+                SpatieMediaLibraryImageColumn::make('cover')
+                    ->label('Cover')
+                    ->collection('blog_cover')
+                    ->conversion('thumb'),
+                TextColumn::make('kategori.nama')
                     ->label('Kategori')
                     ->sortable()
                     ->searchable(),
-
-                Tables\Columns\TextColumn::make('penulis.nama')
+                SpatieTagsColumn::make('tag')
+                    ->label('Tag')
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('penulis.nama')
                     ->label('Penulis')
                     ->sortable()
                     ->searchable(),
-
-                Tables\Columns\TextColumn::make('seo_judul')
+                IconColumn::make('highlight')
+                    ->label('Highlight')
+                    ->boolean()
+                    ->sortable(),
+                TextColumn::make('seo_judul')
                     ->label('SEO Judul')
                     ->sortable()
                     ->searchable(),
-
-                Tables\Columns\TextColumn::make('seo_deskripsi')
+                TextColumn::make('seo_deskripsi')
                     ->label('SEO Deskripsi')
                     ->limit(50)
                     ->wrap()
                     ->sortable()
                     ->searchable(),
-
-                Tables\Columns\TextColumn::make('seo_keyword')
+                SpatieTagsColumn::make('seo_keyword')
                     ->label('SEO Keyword')
                     ->sortable()
                     ->searchable(),
-
-                Tables\Columns\TextColumn::make('status')
+                TextColumn::make('status')
                     ->label('Status')
                     ->badge()
                     ->sortable()
                     ->searchable(),
+                TextColumn::make('diterbitkan_pada')
+                    ->dateTime()
+                    ->sortable(),
+                TextColumn::make('dijadwalkan_pada')
+                    ->dateTime()
+                    ->sortable(),
+                TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
@@ -89,12 +113,15 @@ class BlogResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->requiresConfirmation(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    //
                 ]),
-            ]);
+            ])
+            ->selectCurrentPageOnly();
     }
 
     public static function getRelations(): array

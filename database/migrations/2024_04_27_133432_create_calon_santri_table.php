@@ -16,40 +16,36 @@ return new class extends Migration
         Schema::create('calon_santri', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->foreignUlid('gelombang_pendaftaran_id')->nullable()->references('id')->on('gelombang_pendaftaran')->cascadeOnUpdate()->nullOnDelete();
-            $table->string('nama', 96);
+            $table->string('nama');
             $table->string('nama_panggilan', 64);
             $table->string('jenis_kelamin');
             $table->string('nomor_telepon', 16);
-            $table->string('email', 96);
-            $table->string('nik', 16)->unique();
-
-            //$table->string('berkas_foto')->nullable();
-            //$table->json('berkas_pendaftaran')->nullable();
-
-            $table->unsignedSmallInteger('tempat_lahir_id');
-            $table->foreign('tempat_lahir_id')->references('id')->on('kota');
-            $table->date('tanggal_lahir');
+            $table->string('email');
             $table->boolean('status_mubaligh');
+
+            $table->string('nik', 16)->unique();
+            $table->unsignedSmallInteger('tempat_lahir_id')->nullable();
+            $table->foreign('tempat_lahir_id')->references('id')->on('kota')->nullOnDelete();
+            $table->date('tanggal_lahir');
             $table->string('kewarganegaraan');
             $table->string('golongan_darah');
             $table->string('ukuran_baju');
 
             $table->string('pendidikan_terakhir');
-            $table->string('program_studi', 96);
-            $table->string('universitas', 96);
+            $table->string('program_studi');
+            $table->string('universitas');
             $table->unsignedSmallInteger('angkatan_kuliah');
             $table->string('status_kuliah');
-            $table->date('tanggal_lulus_kuliah')->nullable();
 
             $table->string('alamat');
-            $table->unsignedTinyInteger('provinsi_id');
-            $table->foreign('provinsi_id')->references('id')->on('provinsi');
-            $table->unsignedSmallInteger('kota_id');
-            $table->foreign('kota_id')->references('id')->on('kota');
-            $table->unsignedBigInteger('kecamatan_id');
-            $table->foreign('kecamatan_id')->references('id')->on('kecamatan');
-            $table->unsignedBigInteger('kelurahan_id');
-            $table->foreign('kelurahan_id')->references('id')->on('kelurahan');
+            $table->unsignedTinyInteger('provinsi_id')->nullable();
+            $table->foreign('provinsi_id')->references('id')->on('provinsi')->nullOnDelete();
+            $table->unsignedSmallInteger('kota_id')->nullable();
+            $table->foreign('kota_id')->references('id')->on('kota')->nullOnDelete();
+            $table->unsignedBigInteger('kecamatan_id')->nullable();
+            $table->foreign('kecamatan_id')->references('id')->on('kecamatan')->nullOnDelete();
+            $table->unsignedBigInteger('kelurahan_id')->nullable();
+            $table->foreign('kelurahan_id')->references('id')->on('kelurahan')->nullOnDelete();
 
             $table->string('asal_kelompok', 96);
             $table->string('asal_desa', 96);
@@ -63,14 +59,19 @@ return new class extends Migration
             $table->unsignedTinyInteger('jumlah_saudara');
             $table->unsignedTinyInteger('anak_nomor');
 
-            $table->string('nama_ayah', 96);
+            $table->string('nama_ayah');
             $table->string('nomor_telepon_ayah', 16)->nullable();
-            $table->string('pekerjaan_ayah', 96)->nullable();
-            $table->string('dapukan_ayah', 96)->nullable();
-            $table->string('nama_ibu', 96);
+            $table->string('pekerjaan_ayah')->nullable();
+            $table->string('dapukan_ayah')->nullable();
+            $table->string('nama_ibu');
             $table->string('nomor_telepon_ibu', 16)->nullable();
-            $table->string('pekerjaan_ibu', 96)->nullable();
-            $table->string('dapukan_ibu', 96)->nullable();
+            $table->string('pekerjaan_ibu')->nullable();
+            $table->string('dapukan_ibu')->nullable();
+            $table->string('nama_wali')->nullable();
+            $table->string('nomor_telepon_wali', 16)->nullable();
+            $table->string('pekerjaan_wali')->nullable();
+            $table->string('dapukan_wali')->nullable();
+            $table->string('hubungan_wali')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

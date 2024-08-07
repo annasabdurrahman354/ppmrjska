@@ -28,16 +28,7 @@ class MateriTambahanResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                TextInput::make('nama')
-                    ->required()
-                    ->maxLength(96),
-                TextInput::make('jumlah_halaman')
-                    ->numeric()
-                    ->default(null),
-                Textarea::make('link_materi')
-                    ->columnSpanFull(),
-            ]);
+            ->schema(MateriTambahan::getForm());
     }
 
     public static function table(Table $table): Table
@@ -74,13 +65,16 @@ class MateriTambahanResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->requiresConfirmation(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->requiresConfirmation(),
                 ]),
-            ]);
+            ])
+            ->selectCurrentPageOnly();
     }
 
     public static function getPages(): array

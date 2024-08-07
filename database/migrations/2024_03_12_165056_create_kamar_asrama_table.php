@@ -15,7 +15,7 @@ return new class extends Migration
 
         Schema::create('kamar_asrama', function (Blueprint $table) {
             $table->ulid('id')->primary();
-            $table->foreignUlid('asrama_id')->nullable()->references('id')->on('asrama')->cascadeOnUpdate()->nullOnDelete();
+            $table->foreignUlid('asrama_id')->references('id')->on('asrama')->cascadeOnUpdate()->cascadeOnDelete();
             $table->tinyInteger('lantai');
             $table->string('nomor_kamar');
             $table->boolean('status_ketersediaan');

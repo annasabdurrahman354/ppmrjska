@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PlotKurikulum extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $table = 'plot_kurikulum';
 
@@ -33,7 +33,6 @@ class PlotKurikulum extends Model
      */
     protected $casts = [
         'jenjang_kelas' => JenjangKelas::class,
-        'semester' => 'integer'
     ];
 
     public function kurikulum(): BelongsTo

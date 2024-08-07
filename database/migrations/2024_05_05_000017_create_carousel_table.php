@@ -13,11 +13,9 @@ return new class extends Migration
         Schema::create('carousel', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->string('judul');
-            //$table->string('berkas_foto');
             $table->string('link_tujuan')->nullable();
             $table->boolean('status_aktif')->default(0)->nullable();
             $table->timestamps();
-            $table->softDeletes();
         });
 
         Schema::enableForeignKeyConstraints();

@@ -15,13 +15,14 @@ return new class () extends Migration {
         Schema::create('redaksi_media', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->string('judul');
-            $table->string('slug');
+            $table->string('slug')->unique();
             $table->string('sumber');
             $table->string('link_tujuan')->nullable();
-            $table->string('deskripsi')->nullable();
+            $table->text('deskripsi');
             $table->longText('embed')->nullable();
             $table->foreignId('kategori_id')->nullable()->references('id')->on('kategori')->nullOnDelete();
             $table->foreignUlid('pengunggah_id')->nullable()->references('id')->on('users')->nullOnDelete();
+            $table->boolean('highlight');
             $table->timestamps();
         });
     }

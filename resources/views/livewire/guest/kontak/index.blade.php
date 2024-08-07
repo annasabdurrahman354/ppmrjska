@@ -1,22 +1,25 @@
+@section('title')
+    Kontak Kami
+@stop
+
 <div>
     <!-- ========== MAIN CONTENT ========== -->
-    <main id="content">
-        <div class="overflow-hidden">
-            <x-guest-navbar></x-guest-navbar>
-            <div class="relative">
-                <!-- Gradients -->
-                <div aria-hidden="true" class="flex -z-[1] absolute -top-48 start-0">
-                    <div class="bg-lime-200 opacity-30 blur-3xl w-[1036px] h-[600px] dark:bg-lime-900 dark:opacity-20"></div>
-                    <div class="bg-gray-200 opacity-90 blur-3xl w-[577px] h-[300px] transform translate-y-32 dark:bg-neutral-800/60"></div>
-                </div>
-                <!-- End Gradients -->
-
-                <div class="absolute top-1/2 start-1/2 -z-[1] transform -translate-y-1/2 -translate-x-1/2 w-[340px] h-[340px] border border-dashed border-green-200 rounded-full dark:border-green-900/60"></div>
-                <div class="absolute top-1/2 start-1/2 -z-[1] transform -translate-y-1/2 -translate-x-1/2 w-[575px] h-[575px] border border-dashed border-green-200 rounded-full opacity-80 dark:border-green-900/60"></div>
-                <div class="absolute top-1/2 start-1/2 -z-[1] transform -translate-y-1/2 -translate-x-1/2 w-[840px] h-[840px] border border-dashed border-green-200 rounded-full opacity-60 dark:border-green-900/60"></div>
-                <div class="absolute top-1/2 start-1/2 -z-[1] transform -translate-y-1/2 -translate-x-1/2 w-[1080px] h-[1080px] border border-dashed border-green-200 rounded-full opacity-40 dark:border-green-900/60"></div>
+    <main id="content" class="overflow-hidden">
+        <x-guest-navbar></x-guest-navbar>
+        <div class="relative">
+            <!-- Gradients -->
+            <div aria-hidden="true" class="flex -z-[1] absolute -top-48 start-0">
+                <div class="bg-lime-200 opacity-30 blur-3xl w-[1036px] h-[600px] dark:bg-lime-900 dark:opacity-20"></div>
+                <div class="bg-gray-200 opacity-90 blur-3xl w-[577px] h-[300px] transform translate-y-32 dark:bg-neutral-800/60"></div>
             </div>
-            <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-12  mt-6 mx-auto h-full md:h-screen flex items-center">
+            <!-- End Gradients -->
+
+            <div class="absolute top-1/2 start-1/2 -z-[1] transform -translate-y-1/2 -translate-x-1/2 w-[340px] h-[340px] border border-dashed border-green-200 rounded-full dark:border-green-900/60"></div>
+            <div class="absolute top-1/2 start-1/2 -z-[1] transform -translate-y-1/2 -translate-x-1/2 w-[575px] h-[575px] border border-dashed border-green-200 rounded-full opacity-80 dark:border-green-900/60"></div>
+            <div class="absolute top-1/2 start-1/2 -z-[1] transform -translate-y-1/2 -translate-x-1/2 w-[840px] h-[840px] border border-dashed border-green-200 rounded-full opacity-60 dark:border-green-900/60"></div>
+            <div class="absolute top-1/2 start-1/2 -z-[1] transform -translate-y-1/2 -translate-x-1/2 w-[1080px] h-[1080px] border border-dashed border-green-200 rounded-full opacity-40 dark:border-green-900/60"></div>
+        </div>
+        <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-12  mt-6 mx-auto h-full md:h-screen flex items-center">
                 <div class="container my-auto mx-auto flex sm:flex-nowrap flex-wrap ">
                     <div class="lg:w-2/3 w-full bg-white shadow rounded-lg overflow-hidden mb-4 sm:mb-0 sm:mr-10 flex items-end justify-start relative">
                         <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d247.19137077174327!2d110.84967552718656!3d-7.5682272597240186!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a17d65fe27789%3A0xc1cdfb4c821f3901!2sRoudhotul%20Jannah%20Islamic%20Boarding%20School%20Surakarta%20(LDII)!5e0!3m2!1sen!2sid!4v1720080344403!5m2!1sen!2sid" width="100%" height="100%" class="absolute inset-0" frameborder="0" title="map" marginheight="0" marginwidth="0" scrolling="no" referrerpolicy="no-referrer-when-downgrade"></iframe>
@@ -163,8 +166,6 @@
                     </div>
                 </div>
             </div>
-        </div>
+        <x-guest-footer></x-guest-footer>
     </main>
-
-    <x-guest-footer></x-guest-footer>
 </div>

@@ -15,9 +15,9 @@ return new class extends Migration
 
         Schema::create('kecamatan', function (Blueprint $table) {
             $table->id();
-            $table->string('nama', 64);
-            $table->unsignedSmallInteger('kota_id');
-            $table->foreign('kota_id')->references('id')->on('kota');
+            $table->string('nama');
+            $table->unsignedSmallInteger('kota_id')->nullable();
+            $table->foreign('kota_id')->references('id')->on('kota')->nullOnDelete();
             $table->timestamps();
         });
 

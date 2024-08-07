@@ -13,6 +13,8 @@ use App\Models\MateriHimpunan;
 use App\Models\MateriJuz;
 use App\Models\MateriTambahan;
 use Awcodes\Shout\Components\Shout;
+use Awcodes\TableRepeater\Components\TableRepeater;
+use Awcodes\TableRepeater\Header;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
@@ -45,107 +47,7 @@ class KurikulumResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                TextInput::make('angkatan_pondok')
-                        ->label('Angkatan Pondok')
-                        ->placeholder('Isi angkatan pondok...')
-                        ->required()
-                        ->numeric()
-                        ->minValue(2015)
-                        ->columnSpanFull(),
-
-                Repeater::make('plotKurikulum')
-                    ->hiddenLabel()
-                    ->relationship('plotKurikulum')
-                    ->itemLabel(function ($uuid, $component) {
-                        $keys = array_keys($component->getState());
-                        $index = array_search($uuid, $keys);
-                        return "Semester ".$index + 1;
-                    })
-                    ->schema([
-                        Select::make('jenjang_kelas')
-                            ->required()
-                            ->options(JenjangKelas::class),
-                        TextInput::make('semester')
-                            ->hidden()
-                            ->numeric(),
-                        Shout::make('st-empty')
-                            ->content('Belum ada plotingan materi kurikulum!')
-                            ->type('info')
-                            ->color(Color::Yellow)
-                            ->visible(fn(Get $get) => !filled($get('plot_materi'))),
-                        Repeater::make('plotKurikulumMateri')
-                            ->hiddenLabel()
-                            ->relationship('plotKurikulumMateri')
-                            ->schema([
-                                ToggleButtons::make('materi_type')
-                                    ->hiddenLabel()
-                                    ->required()
-                                    ->inline()
-                                    ->options([
-                                        MateriJuz::class => 'Al-Quran',
-                                        MateriHimpunan::class => 'Himpunan',
-                                        MateriHafalan::class => 'Hafalan',
-                                        MateriTambahan::class => 'Lainnya',
-                                    ])
-                                    ->default(MateriJuz::class)
-                                    ->live()
-                                    ->afterStateUpdated(function(Set $set) {
-                                        $set('materi_id', null);
-                                    }),
-
-                                Select::make('materi_id')
-                                    ->hiddenLabel()
-                                    ->placeholder('Pilih nomor juz Al-Quran...')
-                                    ->required()
-                                    ->hidden(fn (Get $get) => $get('materi_type') == null || $get('materi_type') != MateriJuz::class)
-                                    ->options(
-                                        MateriJuz::all('nama', 'id')
-                                        ->pluck('nama', 'id')
-                                        ->sortBy('nama')
-                                        ->toArray(),
-                                    )
-                                    ->preload(),
-
-                                Select::make('materi_id')
-                                    ->hiddenLabel()
-                                    ->required()
-                                    ->placeholder('Pilih materi himpunan/materi kelas/hafalan...')
-                                    ->hidden(fn (Get $get) => $get('materi_type') == null || $get('materi_type') == MateriJuz::class)
-                                    ->searchable()
-                                    ->getSearchResultsUsing(fn (Get $get, string $search): array =>
-                                        $get('materi_type')::where('nama', 'like', "%{$search}%")
-                                            ->limit(20)
-                                            ->pluck('nama', 'id')
-                                            ->sortBy('nama')
-                                            ->toArray(),
-                                    )
-                                    ->getOptionLabelUsing(fn (Get $get, $value): ?string =>
-                                            $get('materi_type')::find($value)?->nama,
-                                    ),
-
-                                Toggle::make('status_tercapai')
-                                    ->onColor('success')
-                                    ->offColor('danger')
-                            ])
-                            ->live()
-                            ->addable(true)
-                            ->addActionLabel('Tambah Materi +')
-                            ->reorderableWithButtons()
-                            ->deletable()
-                            ->deleteAction(
-                                fn (Action $action) => $action->requiresConfirmation(),
-                            )
-                    ])
-                    ->columnSpanFull()
-                    ->addable(true)
-                    ->addActionLabel('Tambah Semester +')
-                    ->reorderableWithButtons()
-                    ->deletable()
-                    ->deleteAction(
-                        fn (Action $action) => $action->requiresConfirmation(),
-                    )
-            ]);
+            ->schema(Kurikulum::getForm());
     }
 
     public static function table(Table $table): Table
@@ -166,25 +68,19 @@ class KurikulumResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('deleted_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
+                //
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->requiresConfirmation(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
-                ]),
-            ]);
+            ])
+            ->selectCurrentPageOnly();
     }
 
     public static function getRelations(): array
@@ -206,9 +102,6 @@ class KurikulumResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]);
+        return parent::getEloquentQuery();
     }
 }

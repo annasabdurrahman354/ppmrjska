@@ -26,10 +26,10 @@ use Spatie\Tags\HasTags;
 
 class Blog extends Model implements HasMedia
 {
-    protected $table = 'blog';
-
     use HasTags, HasUlids;
     use InteractsWithMedia;
+
+    protected $table = 'blog';
 
     protected $fillable = [
         'judul',
@@ -38,6 +38,7 @@ class Blog extends Model implements HasMedia
         'konten',
         'kategori_id',
         'penulis_id',
+        'highlight',
         'seo_judul',
         'seo_deskripsi',
         'seo_keyword',
@@ -217,7 +218,19 @@ class Blog extends Model implements HasMedia
                     Select::make('penulis_id')
                         ->relationship('penulis', 'nama')
                         ->nullable(false)
-                        ->default(auth()->id()),
+                        ->default(auth()->id())
+                        ->required(),
+
+                    ToggleButtons::make('highlight')
+                        ->label('Highlight')
+                        ->helperText('Pilih "Ya" jika ingin menampilkan di landing page.')
+                        ->options([
+                            true => 'Ya',
+                            false => 'Tidak'
+                        ])
+                        ->default(false)
+                        ->inline()
+                        ->grouped(),
 
                     TextInput::make('seo_judul')
                         ->label('SEO Judul')

@@ -19,12 +19,12 @@ return new class extends Migration
             $table->string('jenis_kelamin');
             $table->date('tanggal');
             $table->string('sesi');
-            $table->ulid('dewan_guru_id')->nullable();
             $table->string('dewan_guru_type')->nullable();
-            $table->unsignedTinyInteger('materi_awal_id')->nullable();
+            $table->ulid('dewan_guru_id')->nullable();
             $table->string('materi_awal_type')->nullable();
-            $table->unsignedTinyInteger('materi_akhir_id')->nullable();
+            $table->unsignedTinyInteger('materi_awal_id')->nullable();
             $table->string('materi_akhir_type')->nullable();
+            $table->unsignedTinyInteger('materi_akhir_id')->nullable();
             $table->unsignedSmallInteger('halaman_awal')->nullable();
             $table->unsignedSmallInteger('halaman_akhir')->nullable();
             $table->unsignedSmallInteger('ayat_awal')->nullable();
@@ -33,7 +33,6 @@ return new class extends Migration
             $table->string('keterangan')->nullable();
             $table->foreignUlid('perekap_id')->nullable()->references('id')->on('users')->cascadeOnUpdate()->nullOnDelete();
             $table->timestamps();
-            $table->softDeletes();
         });
 
         Schema::enableForeignKeyConstraints();

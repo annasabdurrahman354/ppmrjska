@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 
 class PlotKamarAsrama extends Model
 {
-    use HasFactory, HasUlids;
+    use HasFactory, HasUlids, SoftDeletes;
 
     protected $table = 'plot_kamar_asrama';
 
@@ -51,5 +52,15 @@ class PlotKamarAsrama extends Model
         return Attribute::make(
             get: fn () => $this->user->nama
         );
+    }
+
+    protected static function booted(): void
+    {
+        parent::boot();
+        static::created(function (PlotKamarAsrama $record) {
+            TahunAjaran::firstOrCreate(
+                ['tahun_ajaran' =>  $record->tahun_ajaran],
+            );
+        });
     }
 }

@@ -48,4 +48,10 @@ class PembayaranAdministrasi extends Model
     {
         return $this->belongsTo(TagihanAdministrasi::class, 'tagihan_administrasi_id');
     }
+
+    public static function getForm()
+    {
+        return [
+        ];
+    }
 }
