@@ -55,14 +55,25 @@ class Kurikulum extends Model
     public static function getForm()
     {
        return [
-            TextInput::make('angkatan_pondok')
-                ->label('Angkatan Pondok')
-                ->placeholder('Isi angkatan pondok...')
-                ->required()
-                ->numeric()
-                ->minValue(2015)
-                ->unique(ignoreRecord: true)
-                ->columnSpanFull(),
+           Select::make('angkatan_pondok')
+               ->label('Angkatan Pondok')
+               ->preload()
+               ->createOptionAction(fn(Action $action) =>
+                   $action->form(AngkatanPondok::getForm())
+                       ->action(function (array $data, AngkatanPondok $record): void {
+                           $record = AngkatanPondok::updateOrCreate(
+                               ['angkatan_pondok' => $data['angkatan_pondok']],
+                               [
+                                   'kelas' => $data['is_takmili'] ? 'Takmili' : (string) $data['angkatan_pondok'],
+                                   'tanggal_masuk_takmili' => $data['is_takmili'] ? $data['tanggal_masuk_takmili'] : null
+                               ]
+                           );
+                       })
+               )
+               ->searchable()
+               ->options(AngkatanPondok::all()->pluck('angkatan_pondok', 'angkatan_pondok'))
+               ->unique(ignoreRecord: true)
+               ->required(),
 
             Repeater::make('plotKurikulum')
                 ->hiddenLabel()
@@ -127,14 +138,14 @@ class Kurikulum extends Model
                                 ->hidden(fn (Get $get) => $get('materi_type') == null || $get('materi_type') == MateriJuz::class)
                                 ->searchable()
                                 ->getSearchResultsUsing(fn (Get $get, string $search): array =>
-                                $get('materi_type')::where('nama', 'like', "%{$search}%")
-                                    ->limit(20)
-                                    ->pluck('nama', 'id')
-                                    ->sortBy('nama')
-                                    ->toArray(),
+                                    $get('materi_type')::where('nama', 'like', "%{$search}%")
+                                        ->limit(20)
+                                        ->pluck('nama', 'id')
+                                        ->sortBy('nama')
+                                        ->toArray(),
                                 )
                                 ->getOptionLabelUsing(fn (Get $get, $value): ?string =>
-                                $get('materi_type')::find($value)?->nama,
+                                    $get('materi_type')::find($value)?->nama,
                                 ),
 
                             Toggle::make('status_tercapai')

@@ -10,7 +10,7 @@ use App\Filament\Resources\KurikulumResource;
 use App\Filament\Resources\MateriMunaqosahResource;
 use App\Filament\Resources\PendaftaranResource;
 use App\Filament\Resources\UserResource;
-use App\Settings\Admin\PengaturanUmum;
+use App\Settings\Admin\PengaturanWebsite;
 use Awcodes\FilamentQuickCreate\QuickCreatePlugin;
 use BezhanSalleh\FilamentExceptions\FilamentExceptionsPlugin;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
@@ -43,10 +43,10 @@ class AdminPanelProvider extends PanelProvider
             ->font('Inter', provider: SpatieGoogleFontProvider::class)
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->favicon(asset('storage/sites/favicon.ico'))
-            ->brandName(fn (PengaturanUmum $settings) => $settings->brand_name)
+            ->brandName(fn (PengaturanWebsite $settings) => $settings->brand_name)
             ->brandLogo(asset('storage/sites/logo.png'))
-            ->brandLogoHeight(fn (PengaturanUmum $settings) => $settings->brand_logoHeight)
-            ->colors(fn (PengaturanUmum $settings) => $settings->site_theme)
+            ->brandLogoHeight(fn (PengaturanWebsite $settings) => $settings->brand_logoHeight)
+            ->colors(fn (PengaturanWebsite $settings) => $settings->site_theme)
             ->databaseNotifications()->databaseNotificationsPolling('30s')
             ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
             ->unsavedChangesAlerts()

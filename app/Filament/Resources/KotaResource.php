@@ -42,9 +42,11 @@ class KotaResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 TextColumn::make('nama')
+                    ->label('Nama')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('provinsi.nama')
+                    ->label('Provinsi')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('created_at')

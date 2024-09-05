@@ -40,8 +40,19 @@ class MateriTambahanResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 TextColumn::make('nama')
-                    ->searchable(),
+                    ->label('Nama')
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('jumlah_halaman')
+                    ->label('Jumlah Halaman')
+                    ->numeric()
+                    ->sortable(),
+                TextColumn::make('halaman_awal')
+                    ->label('Halaman Awal')
+                    ->numeric()
+                    ->sortable(),
+                TextColumn::make('halaman_akhir')
+                    ->label('Halaman Akhir')
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('link_materi')

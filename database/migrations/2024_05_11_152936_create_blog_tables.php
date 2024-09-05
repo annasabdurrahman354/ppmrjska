@@ -12,6 +12,8 @@ return new class () extends Migration {
      */
     public function up()
     {
+        Schema::disableForeignKeyConstraints();
+
         Schema::create('kategori', function (Blueprint $table) {
             $table->id();
             $table->string('nama')->unique();
@@ -45,6 +47,8 @@ return new class () extends Migration {
             $table->boolean('status_disetujui')->default(true);
             $table->timestamps();
         });
+
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -54,8 +58,12 @@ return new class () extends Migration {
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
+
         Schema::dropIfExists('komentar_blog');
         Schema::dropIfExists('blog');
         Schema::dropIfExists('kategori');
+
+        Schema::enableForeignKeyConstraints();
     }
 };

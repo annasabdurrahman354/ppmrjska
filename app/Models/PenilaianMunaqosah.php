@@ -2,11 +2,17 @@
 
 namespace App\Models;
 
+use App\Enums\StatusPondok;
+use Awcodes\TableRepeater\Components\TableRepeater;
+use Awcodes\TableRepeater\Header;
 use Filament\Forms\Components\KeyValue;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -64,7 +70,14 @@ class PenilaianMunaqosah extends Model
         return [
             Select::make('user_id')
                 ->label('Santri')
-                ->relationship('user', 'nama')
+                ->relationship(
+                    'user',
+                    'nama',
+                    modifyQueryUsing: fn (Builder $query, Get $get) =>
+                        $query->whereNotIn('status_pondok', [StatusPondok::KELUAR, StatusPondok::LULUS])
+                            ->whereNull('tanggal_lulus_pondok')
+                )
+                ->searchable()
                 ->required()
                 ->live(),
 
@@ -79,19 +92,26 @@ class PenilaianMunaqosah extends Model
                         if(filled($state)){
                             $materiMunaqosah = MateriMunaqosah::where('id', $state)->first();
 
-                            $indikator_materi = [];
+                            $nilai_materi = [];
+                            $nilai_hafalan = [];
 
                             foreach ($materiMunaqosah->indikator_materi as $indikator) {
-                                $indikator_materi[$indikator] = 0;
+                                $nilai_materi[] = [
+                                    'indikator' => $indikator,
+                                    'nilai' => 0
+                                ];
                             }
 
-                            $indikator_hafalan = [];
+
                             foreach ($materiMunaqosah->indikator_hafalan as $indikator) {
-                                $indikator_hafalan[$indikator] = 0;
+                                $nilai_hafalan[] = [
+                                    'indikator' => $indikator,
+                                    'nilai' => 0
+                                ];
                             }
 
-                            $set('nilai_materi', $indikator_materi);
-                            $set('nilai_hafalan', $indikator_hafalan);
+                            $set('nilai_materi', $nilai_materi);
+                            $set('nilai_hafalan', $nilai_hafalan);
 
                             $set('materi', $materiMunaqosah->materi);
                             $set('hafalan', $materiMunaqosah->hafalan);
@@ -117,25 +137,45 @@ class PenilaianMunaqosah extends Model
                 })
                 ->visible(fn(Get $get) => filled($get('materi_munaqosah_id'))),
 
-            KeyValue::make('nilai_materi')
+            TableRepeater::make('nilai_materi')
                 ->label('Nilai Munaqosah Materi')
                 ->columnSpanFull()
-                ->keyLabel('Indikator Penilaian')
-                ->keyPlaceholder('Indikator Penilaian')
-                ->editableKeys(false)
                 ->addable(false)
                 ->deletable(false)
-                ->visible(fn(Get $get) => filled($get('materi_munaqosah_id'))),
+                ->visible(fn(Get $get) => filled($get('materi_munaqosah_id')))
+                ->headers([
+                    Header::make('Indikator'),
+                    Header::make('Nilai')
+                ])
+                ->schema([
+                    TextInput::make('indikator')
+                        ->disabled()->dehydrated(),
+                    TextInput::make('nilai')
+                        ->numeric()
+                        ->minValue(0)
+                        ->maxValue(100)
+                        ->required()
+                ]),
 
-            KeyValue::make('nilai_hafalan')
+            TableRepeater::make('nilai_hafalan')
                 ->label('Nilai Munaqosah Hafalan')
                 ->columnSpanFull()
-                ->keyLabel('Indikator Penilaian')
-                ->keyPlaceholder('Indikator Penilaian')
-                ->editableKeys(false)
                 ->addable(false)
                 ->deletable(false)
-                ->visible(fn(Get $get) => filled($get('materi_munaqosah_id'))),
+                ->visible(fn(Get $get) => filled($get('materi_munaqosah_id')))
+                ->headers([
+                    Header::make('Indikator'),
+                    Header::make('Nilai')
+                ])
+                ->schema([
+                    TextInput::make('indikator')
+                        ->disabled()->dehydrated(),
+                    TextInput::make('nilai')
+                        ->numeric()
+                        ->minValue(0)
+                        ->maxValue(100)
+                        ->required()
+                ]),
         ];
     }
 }

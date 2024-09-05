@@ -6,7 +6,7 @@ use App\Filament\Pages\Auth\Login;
 use App\Filament\Resources\CalonSantriResource;
 use App\Filament\Resources\PendaftaranResource;
 use App\Filament\Resources\PenilaianCalonSantriResource;
-use App\Settings\Admin\PengaturanUmum;
+use App\Settings\Admin\PengaturanWebsite;
 use Awcodes\FilamentQuickCreate\QuickCreatePlugin;
 use Filament\FontProviders\SpatieGoogleFontProvider;
 use Filament\Http\Middleware\Authenticate;
@@ -33,10 +33,10 @@ class PPSBPanelProvider extends PanelProvider
             ->path('ppsb')
             ->font('Inter', provider: SpatieGoogleFontProvider::class)
             ->favicon(asset('storage/sites/favicon.ico'))
-            ->brandName(fn (PengaturanUmum $settings) => $settings->brand_name)
+            ->brandName(fn (PengaturanWebsite $settings) => $settings->brand_name)
             ->brandLogo(asset('storage/sites/logo.png'))
-            ->brandLogoHeight(fn (PengaturanUmum $settings) => $settings->brand_logoHeight)
-            ->colors(fn (PengaturanUmum $settings) => $settings->site_theme)
+            ->brandLogoHeight(fn (PengaturanWebsite $settings) => $settings->brand_logoHeight)
+            ->colors(fn (PengaturanWebsite $settings) => $settings->site_theme)
             ->databaseNotifications()->databaseNotificationsPolling('30s')
             ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
             ->resources([

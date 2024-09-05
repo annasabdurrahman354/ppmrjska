@@ -93,10 +93,10 @@ class Album extends Model
                         ->columnSpanFull(),
                     Select::make('kategori_id')
                         ->label('Kategori')
-                        ->preload()
                         ->createOptionForm(Kategori::getForm())
-                        ->searchable()
                         ->relationship('kategori', 'nama')
+                        ->searchable()
+                        ->preload()
                         ->required(),
                     SpatieTagsInput::make('tag')
                         ->label('Tag')
@@ -108,9 +108,11 @@ class Album extends Model
                         })
                         ->required(),
                     Select::make('pengunggah_id')
+                        ->label('Pengunggah')
                         ->relationship('pengunggah', 'nama')
-                        ->nullable(false)
                         ->default(auth()->id())
+                        ->searchable()
+                        ->preload()
                         ->required(),
                     Repeater::make('fotoAlbum')
                         ->label('Foto Album')

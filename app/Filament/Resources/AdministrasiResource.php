@@ -16,6 +16,7 @@ use App\Filament\Resources\AdministrasiResource\Pages\ManageTagihanAdministrasi;
 use App\Filament\Resources\AdministrasiResource\Pages\ViewAdministrasi;
 use App\Models\Administrasi;
 use App\Models\Rekening;
+use App\Models\TahunAjaran;
 use App\Models\User;
 use Awcodes\TableRepeater\Components\TableRepeater;
 use Awcodes\TableRepeater\Header;
@@ -63,36 +64,13 @@ class AdministrasiResource extends Resource
         return $form
             ->schema([
                 Section::make('Detail Administrasi ')->columns(2)->schema([
-                    Cluster::make([
-                            TextInput::make('tahun_ajaran_awal')
-                                ->hiddenLabel()
-                                ->required()
-                                ->numeric()
-                                ->default(date('Y'))
-                                ->live(onBlur: true)
-                                ->afterStateUpdated(function (Get $get, Set $set){
-                                    $set('tahun_ajaran', $get('tahun_ajaran_awal').'/'.$get('tahun_ajaran_akhir'));
-                                    if ($get('jenis_administrasi') === JenisAdministrasi::ASRAMA->value){
-                                        $set('nama_administrasi', 'Tagihan Asrama TA ' . $get('tahun_ajaran_awal').'/'.$get('tahun_ajaran_akhir'));
-                                    }
-                                }),
-                            TextInput::make('tahun_ajaran_akhir')
-                                ->hiddenLabel()
-                                ->required()
-                                ->numeric()
-                                ->default(date('Y')+1)
-                                ->gt('tahun_ajaran_awal')
-                                ->live(onBlur: true)
-                                ->afterStateUpdated(function (Get $get, Set $set){
-                                    $set('tahun_ajaran', $get('tahun_ajaran_awal').'/'.$get('tahun_ajaran_akhir'));
-                                    if ($get('jenis_administrasi') === JenisAdministrasi::ASRAMA->value){
-                                        $set('nama_administrasi', 'Tagihan Asrama TA ' . $get('tahun_ajaran_awal').'/'.$get('tahun_ajaran_akhir'));
-                                    }
-                                }),
-                        ])
+                    Select::make('tahun_ajaran')
                         ->label('Tahun Ajaran')
-                        ->columnSpanFull(),
-                    Hidden::make('tahun_ajaran'),
+                        ->options(TahunAjaran::all()->pluck('tahun_ajaran', 'tahun_ajaran'))
+                        ->searchable()
+                        ->preload()
+                        ->createOptionForm(TahunAjaran::getForm())
+                        ->required(),
 
                     ToggleButtons::make('jenis_administrasi')
                         ->label('Jenis Administrasi')
@@ -191,13 +169,12 @@ class AdministrasiResource extends Resource
                         ->multiple()
                         ->disabledOn('edit')
                         ->options(
-                            User::where('status_pondok', StatusPondok::AKTIF->value)
-                                ->where('tanggal_lulus_pondok', null)
-                                ->select('kelas')
-                                ->orderBy('kelas')
+                            User::whereNotIn('status_pondok', [StatusPondok::KELUAR, StatusPondok::LULUS])
+                                ->whereNull('tanggal_lulus_pondok')
+                                ->join('angkatan_pondok', 'users.angkatan_pondok', '=', 'angkatan_pondok.angkatan_pondok')
                                 ->distinct()
-                                ->get()
-                                ->pluck('kelas', 'kelas')
+                                ->orderBy('angkatan_pondok.kelas')
+                                ->pluck('angkatan_pondok.kelas', 'angkatan_pondok.kelas')
                         )
                         ->default(match (auth()->user()->kelas) {
                             config('filament-shield.super_admin.name') => ['Takmili'],
@@ -212,8 +189,9 @@ class AdministrasiResource extends Resource
                             ->color('secondary')
                             ->action(function (Get $get, Set $set, $state) {
                                 if ($get('jenis_administrasi') === JenisAdministrasi::ASRAMA->value){
-                                    $userWithoutPlot = User::whereNull('tanggal_lulus_pondok')
-                                        ->whereIn('kelas', $get('sasaran'))
+                                    $userWithoutPlot = User::whereKelasIn($get('sasaran'))
+                                        ->whereNotIn('status_pondok', [StatusPondok::KELUAR, StatusPondok::LULUS])
+                                        ->whereNull('tanggal_lulus_pondok')
                                         ->whereDoesntHave('plotKamarAsrama', function ($query) use ($get) {
                                             $query->where('tahun_ajaran', $get('tahun_ajaran'));
                                         })->get();
@@ -228,10 +206,11 @@ class AdministrasiResource extends Resource
                                     $users = User::whereHas('plotKamarAsrama', function ($query) use ($state) {
                                             $query->where('tahun_ajaran', $state['tahun_ajaran_awal'].'/'.$state['tahun_ajaran_akhir'] );
                                         })
+                                        ->whereKelasIn($state['sasaran'])
+                                        ->whereNotIn('status_pondok', [StatusPondok::KELUAR, StatusPondok::LULUS])
                                         ->whereNull('tanggal_lulus_pondok')
-                                        ->whereIn('kelas', $state['sasaran'])
                                         ->orderBy('jenis_kelamin')
-                                        ->orderBy('kelas')
+                                        ->orderBy('angkatan_pondok')
                                         ->orderBy('nama')
                                         ->get();
 
@@ -255,10 +234,11 @@ class AdministrasiResource extends Resource
                                     $set('tagihanAdministrasi', $tagihanData->toArray());
                                 }
                                 else {
-                                    $users = User::whereNull('tanggal_lulus_pondok')
-                                        ->whereIn('kelas', $get('sasaran'))
+                                    $users = User::whereKelasIn($get('sasaran'))
+                                        ->whereNotIn('status_pondok', [StatusPondok::KELUAR, StatusPondok::LULUS])
+                                        ->whereNull('tanggal_lulus_pondok')
                                         ->orderBy('jenis_kelamin')
-                                        ->orderBy('kelas')
+                                        ->orderBy('angkatan_pondok')
                                         ->orderBy('nama')
                                         ->get();
 
@@ -301,8 +281,9 @@ class AdministrasiResource extends Resource
                                 ->preload()
                                 ->getSearchResultsUsing(fn (string $search, Get $get): array =>
                                     User::where('nama', 'like', "%{$search}%")
-                                        ->whereIn('kelas', $get('../../sasaran'))
-                                        ->where('tanggal_lulus_pondok', null)
+                                        ->whereKelasIn($get('../../sasaran'))
+                                        ->whereNotIn('status_pondok', [StatusPondok::KELUAR, StatusPondok::LULUS])
+                                        ->whereNull('tanggal_lulus_pondok')
                                         ->limit(20)
                                         ->pluck('nama', 'id')
                                         ->toArray()

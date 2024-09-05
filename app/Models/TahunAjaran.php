@@ -2,6 +2,13 @@
 
 namespace App\Models;
 
+use App\Enums\JenisAdministrasi;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Guava\FilamentClusters\Forms\Cluster;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -18,6 +25,10 @@ class TahunAjaran extends Model
      */
     protected $fillable = [
         'tahun_ajaran',
+        'tanggal_awal_semester_ganjil',
+        'tanggal_akhir_semester_ganjil',
+        'tanggal_awal_semester_genap',
+        'tanggal_akhir_semester_genap',
     ];
 
     public function plotKamarAsrama(): HasMany
@@ -53,5 +64,50 @@ class TahunAjaran extends Model
                     ->count();
             }
         );
+    }
+
+    public static function getForm()
+    {
+        return [
+            Cluster::make([
+                TextInput::make('tahun_ajaran_awal')
+                    ->hiddenLabel()
+                    ->required()
+                    ->numeric()
+                    ->default(date('Y'))
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(function (Get $get, Set $set){
+                        $set('tahun_ajaran', $get('tahun_ajaran_awal').'/'.$get('tahun_ajaran_akhir'));
+                    }),
+                TextInput::make('tahun_ajaran_akhir')
+                    ->hiddenLabel()
+                    ->required()
+                    ->numeric()
+                    ->default(date('Y')+1)
+                    ->gt('tahun_ajaran_awal')
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(function (Get $get, Set $set){
+                        $set('tahun_ajaran', $get('tahun_ajaran_awal').'/'.$get('tahun_ajaran_akhir'));
+                    }),
+            ])
+                ->label('Tahun Ajaran')
+                ->columnSpanFull(),
+            Hidden::make('tahun_ajaran'),
+            DatePicker::make('tanggal_awal_semester_ganjil')
+                ->label('Tanggal Awal Semester Ganjil')
+                ->required(),
+            DatePicker::make('tanggal_akhir_semester_ganjil')
+                ->label('Tanggal Akhir Semester Ganjil')
+                ->after('tanggal_awal_semester_ganjil')
+                ->required(),
+            DatePicker::make('tanggal_awal_semester_genap')
+                ->label('Tanggal Awal Semester Genap')
+                ->after('tanggal_akhir_semester_ganjil')
+                ->required(),
+            DatePicker::make('tanggal_akhir_semester_genap')
+                ->label('Tanggal Akhir Semester Genap')
+                ->after('tanggal_awal_semester_genap')
+                ->required(),
+        ];
     }
 }

@@ -4,10 +4,16 @@ namespace App\Filament\Pages\RekapKehadiran;
 
 use App\Enums\JenisKelamin;
 use App\Enums\StatusKehadiran;
+use App\Filament\Exports\KehadiranExporter;
+use App\Models\AngkatanPondok;
+use App\Models\PresensiKelas;
 use App\Models\User;
 use Carbon\Carbon;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
 use Filament\Pages\Page;
+use Filament\Tables\Actions\ExportAction;
+use Filament\Tables\Actions\ExportBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -39,45 +45,104 @@ class RekapKehadiran extends Page implements HasTable
         return $table
             ->query(
                 User::query()
-                    ->select('users.*')
                     ->addSelect([
-                        'total_presensi' => User::query()
+                        'total_presensi' => PresensiKelas::query()
                             ->selectRaw('COUNT(*)')
-                            ->from('presensi_kelas')
                             ->whereColumn('presensi_kelas.user_id', 'users.id')
+                            ->when($this->tableFilters['date_range']['mulai_tanggal'] ?? null, function ($query) {
+                                $query->whereHas('jurnalKelas', function ($query) {
+                                    $query->where('tanggal', '>=', $this->tableFilters['date_range']['mulai_tanggal']);
+                                });
+                            })
+                            ->when($this->tableFilters['date_range']['sampai_tanggal'] ?? null, function ($query) {
+                                $query->whereHas('jurnalKelas', function ($query) {
+                                    $query->where('tanggal', '<=', $this->tableFilters['date_range']['sampai_tanggal']);
+                                });
+                            })
                             ->toBase(),
-                        'hadir_count' => User::query()
+
+                        'hadir_count' => PresensiKelas::query()
                             ->selectRaw('COUNT(*)')
-                            ->from('presensi_kelas')
                             ->whereColumn('presensi_kelas.user_id', 'users.id')
                             ->where('status_kehadiran', StatusKehadiran::HADIR->value)
+                            ->when($this->tableFilters['date_range']['mulai_tanggal'] ?? null, function ($query) {
+                                $query->whereHas('jurnalKelas', function ($query) {
+                                    $query->where('tanggal', '>=', $this->tableFilters['date_range']['mulai_tanggal']);
+                                });
+                            })
+                            ->when($this->tableFilters['date_range']['sampai_tanggal'] ?? null, function ($query) {
+                                $query->whereHas('jurnalKelas', function ($query) {
+                                    $query->where('tanggal', '<=', $this->tableFilters['date_range']['sampai_tanggal']);
+                                });
+                            })
                             ->toBase(),
-                        'telat_count' => User::query()
+
+                        'telat_count' => PresensiKelas::query()
                             ->selectRaw('COUNT(*)')
-                            ->from('presensi_kelas')
                             ->whereColumn('presensi_kelas.user_id', 'users.id')
                             ->where('status_kehadiran', StatusKehadiran::TELAT->value)
+                            ->when($this->tableFilters['date_range']['mulai_tanggal'] ?? null, function ($query) {
+                                $query->whereHas('jurnalKelas', function ($query) {
+                                    $query->where('tanggal', '>=', $this->tableFilters['date_range']['mulai_tanggal']);
+                                });
+                            })
+                            ->when($this->tableFilters['date_range']['sampai_tanggal'] ?? null, function ($query) {
+                                $query->whereHas('jurnalKelas', function ($query) {
+                                    $query->where('tanggal', '<=', $this->tableFilters['date_range']['sampai_tanggal']);
+                                });
+                            })
                             ->toBase(),
-                        'izin_count' => User::query()
+
+                        'izin_count' => PresensiKelas::query()
                             ->selectRaw('COUNT(*)')
-                            ->from('presensi_kelas')
                             ->whereColumn('presensi_kelas.user_id', 'users.id')
                             ->where('status_kehadiran', StatusKehadiran::IZIN->value)
+                            ->when($this->tableFilters['date_range']['mulai_tanggal'] ?? null, function ($query) {
+                                $query->whereHas('jurnalKelas', function ($query) {
+                                    $query->where('tanggal', '>=', $this->tableFilters['date_range']['mulai_tanggal']);
+                                });
+                            })
+                            ->when($this->tableFilters['date_range']['sampai_tanggal'] ?? null, function ($query) {
+                                $query->whereHas('jurnalKelas', function ($query) {
+                                    $query->where('tanggal', '<=', $this->tableFilters['date_range']['sampai_tanggal']);
+                                });
+                            })
                             ->toBase(),
-                        'sakit_count' => User::query()
+
+                        'sakit_count' => PresensiKelas::query()
                             ->selectRaw('COUNT(*)')
-                            ->from('presensi_kelas')
                             ->whereColumn('presensi_kelas.user_id', 'users.id')
                             ->where('status_kehadiran', StatusKehadiran::SAKIT->value)
+                            ->when($this->tableFilters['date_range']['mulai_tanggal'] ?? null, function ($query) {
+                                $query->whereHas('jurnalKelas', function ($query) {
+                                    $query->where('tanggal', '>=', $this->tableFilters['date_range']['mulai_tanggal']);
+                                });
+                            })
+                            ->when($this->tableFilters['date_range']['sampai_tanggal'] ?? null, function ($query) {
+                                $query->whereHas('jurnalKelas', function ($query) {
+                                    $query->where('tanggal', '<=', $this->tableFilters['date_range']['sampai_tanggal']);
+                                });
+                            })
                             ->toBase(),
-                        'alpa_count' => User::query()
+
+                        'alpa_count' => PresensiKelas::query()
                             ->selectRaw('COUNT(*)')
-                            ->from('presensi_kelas')
                             ->whereColumn('presensi_kelas.user_id', 'users.id')
                             ->where('status_kehadiran', StatusKehadiran::ALPA->value)
+                            ->when($this->tableFilters['date_range']['mulai_tanggal'] ?? null, function ($query) {
+                                $query->whereHas('jurnalKelas', function ($query) {
+                                    $query->where('tanggal', '>=', $this->tableFilters['date_range']['mulai_tanggal']);
+                                });
+                            })
+                            ->when($this->tableFilters['date_range']['sampai_tanggal'] ?? null, function ($query) {
+                                $query->whereHas('jurnalKelas', function ($query) {
+                                    $query->where('tanggal', '<=', $this->tableFilters['date_range']['sampai_tanggal']);
+                                });
+                            })
                             ->toBase(),
+
+                        // Repeat for izin_count, sakit_count, and alpa_count
                     ])
-                    ->leftJoin('presensi_kelas', 'presensi_kelas.user_id', '=', 'users.id')
                     ->groupBy('users.id')
                 )
             ->columns([
@@ -86,7 +151,7 @@ class RekapKehadiran extends Page implements HasTable
                     ->sortable()
                     ->searchable(),
 
-                TextColumn::make('kelas')
+                TextColumn::make('angkatanPondok.kelas')
                     ->label('Kelas')
                     ->sortable()
                     ->searchable(),
@@ -192,35 +257,47 @@ class RekapKehadiran extends Page implements HasTable
                         }
                     }),
 
+                TextColumn::make('total_presensi')
+                    ->label('Total Presensi')
+                    ->getStateUsing(function ($record) {
+                        return $record->total_presensi . 'x';
+                    }),
+
             ])
             ->filters([
-                SelectFilter::make('kelas')
-                    ->label('Kelas')
-                    ->multiple()
-                    ->options(User::distinct('kelas')->orderBy('kelas')->pluck('kelas', 'kelas')->toArray()),
+                Filter::make('angkatanPondok')
+                    ->form([
+                        Select::make('kelas')
+                            ->label('Kelas')
+                            ->options(AngkatanPondok::distinct('kelas')->orderBy('kelas')->pluck('kelas', 'kelas')->toArray()),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        if ($data['kelas']) {
+                            return $query->whereHas('angkatanPondok', function (Builder $query) use ($data) {
+                                $query->where('kelas', $data['kelas']);
+                            });
+                        }
+                        return $query;
+                    }),
 
                 SelectFilter::make('jenis_kelamin')
                     ->label('Jenis Kelamin')
                     ->multiple()
                     ->options(JenisKelamin::class),
+
                 Filter::make('date_range')
                     ->columnSpan(2)
                     ->columns(2)
                     ->form([
                         DatePicker::make('mulai_tanggal')
-                            ->label('Mulai Tanggal'),
+                            ->label('Mulai Tanggal')
+                            ->live(),
                         DatePicker::make('sampai_tanggal')
-                            ->label('Sampai Tanggal'),
+                            ->label('Sampai Tanggal')
+                            ->live(),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
-                        return $query->whereHas('presensiKelas.jurnalKelas', function (Builder $query) use ($data) {
-                            if ($data['mulai_tanggal']) {
-                                $query->where('tanggal', '>=', $data['mulai_tanggal']);
-                            }
-                            if ($data['sampai_tanggal']) {
-                                $query->where('tanggal', '<=', $data['sampai_tanggal']);
-                            }
-                        });
+                        return $query;
                     })
                     ->indicateUsing(function (array $data): ?string {
                         if (!$data['mulai_tanggal'] && !$data['sampai_tanggal']) {
@@ -241,7 +318,10 @@ class RekapKehadiran extends Page implements HasTable
             ->actions([
             ])
             ->bulkActions([
+                ExportBulkAction::make('exportKehadiran')
+                    ->exporter(KehadiranExporter::class)
             ])
-            ->persistFiltersInSession();
+            ->deferLoading()
+            ->deferFilters();
     }
 }

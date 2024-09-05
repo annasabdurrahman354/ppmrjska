@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\JenisMateriMunaqosah;
+use App\Enums\StatusPondok;
 use Awcodes\Shout\Components\Shout;
 use Awcodes\TableRepeater\Components\TableRepeater;
 use Awcodes\TableRepeater\Header;
@@ -15,7 +16,6 @@ use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Support\Colors\Color;
-use Guava\FilamentClusters\Forms\Cluster;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -106,11 +106,13 @@ class MateriMunaqosah extends Model
                         ->required()
                         ->disabledOn('edit')
                         ->options(
-                            User::select('kelas')
+                            AngkatanPondok::whereHas('users', function ($query) {
+                                    $query->whereIn('status_pondok', [StatusPondok::AKTIF, StatusPondok::KEPERLUAN_AKADEMIK, StatusPondok::SAMBANG, StatusPondok::NONAKTIF]);
+                                })
                                 ->distinct()
                                 ->get()
-                                ->sortBy('kelas')
-                                ->pluck('kelas', 'kelas'))
+                                ->pluck('kelas', 'kelas')
+                        )
                         ->default(match (auth()->user()->kelas) {
                             config('filament-shield.super_admin.name') => 'Takmili',
                             default => auth()->user()->kelas
@@ -121,18 +123,13 @@ class MateriMunaqosah extends Model
                         ->numeric()
                         ->maxValue(10),
 
-                    Cluster::make([
-                        TextInput::make('tahun_ajaran_awal')
-                            ->required()
-                            ->numeric()
-                            ->default(date('Y')),
-                        TextInput::make('tahun_ajaran_akhir')
-                            ->required()
-                            ->numeric()
-                            ->default(date('Y')+1)
-                            ->gte('tahun_ajaran_awal'),
-                    ])
-                        ->label('Tahun Ajaran'),
+                    Select::make('tahun_ajaran')
+                        ->label('Tahun Ajaran')
+                        ->options(TahunAjaran::all()->pluck('tahun_ajaran', 'tahun_ajaran'))
+                        ->searchable()
+                        ->preload()
+                        ->createOptionForm(TahunAjaran::getForm())
+                        ->required(),
 
                     Select::make('dewan_guru_id')
                         ->label('Dewan Guru')
@@ -285,11 +282,12 @@ class MateriMunaqosah extends Model
                                 ->schema([
                                     Select::make('user_id')
                                         ->options(fn (Get $get) =>
-                                        User::where('tanggal_lulus_pondok', null)
-                                            ->where('kelas', $get('../../../../kelas'))
-                                            ->get()
-                                            ->pluck('nama', 'id')
-                                            ->toArray()
+                                            User::whereKelas($get('../../../../kelas'))
+                                                ->whereNotIn('status_pondok', [StatusPondok::NONAKTIF, StatusPondok::KELUAR, StatusPondok::LULUS])
+                                                ->whereNull('tanggal_lulus_pondok')
+                                                ->get()
+                                                ->pluck('nama', 'id')
+                                                ->toArray()
                                         )
                                         ->preload()
                                         ->searchable()

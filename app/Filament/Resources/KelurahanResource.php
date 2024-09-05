@@ -42,13 +42,21 @@ class KelurahanResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 TextColumn::make('nama')
+                    ->label('Nama')
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('kecamatan.nama')
+                    ->label('Kecamatan')
                     ->numeric()
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('kecamatan.kota.nama')
+                    ->label('Kota')
+                    ->numeric()
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('kecamatan.kota.provinsi.nama')
+                    ->label('Provinsi')
                     ->numeric()
                     ->sortable()
                     ->searchable(),

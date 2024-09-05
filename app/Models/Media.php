@@ -140,10 +140,10 @@ class Media extends Model implements HasMedia
                         ->columnSpanFull(),
                     Select::make('kategori_id')
                         ->label('Kategori')
-                        ->preload()
                         ->createOptionForm(Kategori::getForm())
-                        ->searchable()
                         ->relationship('kategori', 'nama')
+                        ->searchable()
+                        ->preload()
                         ->required(),
                     SpatieTagsInput::make('tag')
                         ->label('Tag')

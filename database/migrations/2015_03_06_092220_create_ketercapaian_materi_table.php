@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignUlid('user_id')->references('id')->on('users')->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('materi_type')->nullable();
             $table->unsignedTinyInteger('materi_id')->nullable();
-            $table->json('halaman_tercapai')->default([]);
+            $table->integer('ketercapaian_materi');
             $table->timestamps();
         });
 

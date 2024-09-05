@@ -32,13 +32,11 @@ class ListJadwalMunaqosahs extends ListRecords
     #[Js]
     public function getTabs(): array
     {
-        $semuaKelas = User::where('tanggal_lulus_pondok', null)
-            ->where('status_pondok', StatusPondok::AKTIF->value)
-            ->orderBy('kelas')
-            ->select('kelas')
+        $semuaKelas =  User::whereNotIn('status_pondok', [StatusPondok::KELUAR, StatusPondok::LULUS])
+            ->join('angkatan_pondok', 'users.angkatan_pondok', '=', 'angkatan_pondok.angkatan_pondok')
             ->distinct()
-            ->get()
-            ->pluck('kelas');
+            ->orderBy('angkatan_pondok.kelas')
+            ->pluck('angkatan_pondok.kelas');
 
         $tabs = [
             null => Tab::make('All'),

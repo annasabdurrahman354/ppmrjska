@@ -48,7 +48,7 @@
                         <!-- Progress Bar -->
                         @if($materi['materi_type'] != \App\Models\MateriHafalan::class)
                             <div class="flex items-center gap-x-3 whitespace-nowrap">
-                                <div class="flex w-full h-2 bg-gray-200 rounded-full overflow-hidden dark:bg-neutral-700" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+                                <div class="flex w-full bg-gray-200 rounded-full overflow-hidden dark:bg-neutral-700" role="progressbar" aria-valuenow="{{$materi['status_tercapai'] ? '100' : $materi['persen_tercapai']}}" aria-valuemin="0" aria-valuemax="100" style="height: 8px">
                                     <div class="flex flex-col justify-center rounded-full overflow-hidden bg-primary-500 text-xs text-white text-center whitespace-nowrap transition duration-500" style="width: {{$materi['status_tercapai'] ? '100' : $materi['persen_tercapai']}}%;"></div>
                                 </div>
                                 <div class="w-9 text-end">

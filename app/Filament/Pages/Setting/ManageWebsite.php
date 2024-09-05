@@ -2,9 +2,7 @@
 
 namespace App\Filament\Pages\Setting;
 
-use App\Settings\Admin\PengaturanUmum;
-use Awcodes\TableRepeater\Components\TableRepeater;
-use Awcodes\TableRepeater\Header;
+use App\Settings\Admin\PengaturanWebsite;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
@@ -20,10 +18,10 @@ use Illuminate\Contracts\Support\Htmlable;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use function Filament\Support\is_app_url;
 
-class ManageGeneral extends SettingsPage
+class ManageWebsite extends SettingsPage
 {
     use HasPageShield;
-    protected static string $settings = PengaturanUmum::class;
+    protected static string $settings = PengaturanWebsite::class;
 
     protected static ?int $navigationSort = -2;
     protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
@@ -101,51 +99,6 @@ class ManageGeneral extends SettingsPage
                                 ->required(),
                         ])->columns(4),
                     ]),
-                Section::make('Informasi Pondok')
-                    ->label('Informasi Pondok')
-                    ->description('Mengelola kontak informasi pondok.')
-                    ->icon('fluentui-phone-24-o')
-                    ->schema([
-                        TextInput::make('site_alamat')
-                            ->label('Alamat Pondok')
-                            ->required(),
-                        TextInput::make('site_email')
-                            ->label('Email Pondok')
-                            ->email()
-                            ->required(),
-                        TableRepeater::make('site_narahubung')
-                            ->label('Narahubung')
-                            ->headers([
-                                Header::make('Nama'),
-                                Header::make('Nomor Telepon'),
-                            ])
-                            ->schema([
-                                TextInput::make('nama')
-                                    ->label('Nama')
-                                    ->required(),
-                                TextInput::make('nomor_telepon')
-                                    ->label('Nomor Telepon')
-                                    ->tel()
-                                    ->required(),
-                            ])
-                            ->columns(2),
-                        TableRepeater::make('site_penerima_tamu')
-                            ->label('Penerima Tamu')
-                            ->headers([
-                                Header::make('Nama'),
-                                Header::make('Nomor Telepon'),
-                            ])
-                            ->schema([
-                                TextInput::make('nama')
-                                    ->label('Nama')
-                                    ->required(),
-                                TextInput::make('nomor_telepon')
-                                    ->label('Nomor Telepon')
-                                    ->tel()
-                                    ->required(),
-                            ])
-                            ->columns(2)
-                    ]),
                 Section::make('Theme')
                     ->label(fn () => __('page.general_settings.sections.theme.title'))
                     ->description(fn () => __('page.general_settings.sections.theme.description'))
@@ -203,7 +156,7 @@ class ManageGeneral extends SettingsPage
         } catch (\Throwable $th) {
             throw $th;
             Notification::make()
-                ->title('Failed to update settings.')
+                ->title('Gagal untuk memperbarui pengaturan!')
                 ->danger()
                 ->send();
         }
@@ -234,21 +187,21 @@ class ManageGeneral extends SettingsPage
 
     public static function getNavigationLabel(): string
     {
-        return __("page.general_settings.navigationLabel");
+        return 'Website';
     }
 
     public function getTitle(): string|Htmlable
     {
-        return __("page.general_settings.title");
+        return 'Website';
     }
 
     public function getHeading(): string|Htmlable
     {
-        return __("page.general_settings.heading");
+        return 'Pengaturan Website';
     }
 
     public function getSubheading(): string|Htmlable|null
     {
-        return __("page.general_settings.subheading");
+        return 'Mengelola konfigurasi website.';
     }
 }

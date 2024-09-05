@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\TargetMateri;
 
+use App\Models\AngkatanPondok;
 use App\Models\JurnalKelas;
 use App\Models\MateriHafalan;
 use App\Models\MateriHimpunan;
@@ -55,7 +56,7 @@ class TargetMateri extends Page implements HasForms, HasActions
                             ->required()
                             ->disabled(cant('view_any_kurikulum'))->dehydrated()
                             ->options(
-                                User::select('angkatan_pondok')
+                                AngkatanPondok::select('angkatan_pondok')
                                     ->orderBy('angkatan_pondok')
                                     ->distinct()
                                     ->get()
@@ -84,7 +85,13 @@ class TargetMateri extends Page implements HasForms, HasActions
                 $plotKurikulumMateri = $plots->flatMap->plotKurikulumMateri->toArray();
                 $allHalamanQuranTercapai = [];
 
+                $angkatanPondok = AngkatanPondok::where('angkatan_pondok', $angkatan_pondok)->first();
+
                 $jurnalKelasSuratRecords = JurnalKelas::whereJsonContains('kelas', $angkatan_pondok)
+                    ->when($angkatanPondok->kelas === 'Takmili', function ($query) use ($angkatanPondok) {
+                        $query->orWhere('tanggal', '>=', $angkatanPondok->tanggal_masuk_takmili)
+                            ->whereJsonContains('kelas', 'Takmili');
+                    })
                     ->where('materi_awal_type', MateriSurat::class)
                     ->where('materi_akhir_type', MateriSurat::class)
                     ->get();
@@ -141,6 +148,10 @@ class TargetMateri extends Page implements HasForms, HasActions
                     }
                     else if ($materiData['materi_type'] === MateriHimpunan::class || $materiData['materi_type'] === MateriTambahan::class){
                         $jurnalKelasData = JurnalKelas::whereJsonContains('kelas', $angkatan_pondok)
+                            ->when($angkatanPondok->kelas === 'Takmili', function ($query) use ($angkatanPondok) {
+                                $query->orWhere('tanggal','>=', $angkatanPondok->tanggal_masuk_takmili)
+                                    ->whereJsonContains('kelas', 'Takmili');
+                            })
                             ->where('materi_awal_type', $materiData['materi_type'])
                             ->where('materi_awal_id', $materiData['materi_id'])
                             ->get()
@@ -202,7 +213,7 @@ class TargetMateri extends Page implements HasForms, HasActions
                 PlotKurikulumMateri::find($arguments['plotKurikulumMateriId'])->update([
                     'status_tercapai' => true,
                 ]);
-                $this->loadKetercapaianMateri();
+                $this->loadTargetMateri();
             });
     }
 
@@ -219,7 +230,7 @@ class TargetMateri extends Page implements HasForms, HasActions
                 PlotKurikulumMateri::find($arguments['plotKurikulumMateriId'])->update([
                     'status_tercapai' => false,
                 ]);
-                $this->loadKetercapaianMateri();
+                $this->loadTargetMateri();
             });
     }
     public function exportTargetMateri()

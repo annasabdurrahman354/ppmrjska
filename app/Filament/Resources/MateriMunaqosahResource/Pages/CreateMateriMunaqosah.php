@@ -9,25 +9,8 @@ class CreateMateriMunaqosah extends CreateRecord
 {
     protected static string $resource = MateriMunaqosahResource::class;
 
-    function toTitleCase($string) {
-        // Convert the first letter of each word to uppercase.
-        $words = explode(' ', $string);
-        $words = array_map('ucfirst', $words);
-
-        // Return the title-cased string.
-        return implode(' ', $words);
-    }
-
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $data['tahun_ajaran'] = $data['tahun_ajaran_awal'].'/'.$data['tahun_ajaran_akhir'];
-
-        function toTitleCase($string) {
-            $words = explode(' ', $string);
-            $words = array_map('ucfirst', $words);
-            return implode(' ', $words);
-        }
-
         if(isset($data['indikator_hafalan'])){
             $indikatorHafalan = $data['indikator_hafalan'];
             $indikatorHafalan = array_map(function ($string) {

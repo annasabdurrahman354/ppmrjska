@@ -12,6 +12,8 @@ return new class () extends Migration {
      */
     public function up()
     {
+        Schema::disableForeignKeyConstraints();
+
         Schema::create('album', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->string('judul');
@@ -32,6 +34,8 @@ return new class () extends Migration {
             $table->text('deskripsi');
             $table->timestamps();
         });
+
+        Schema::enableForeignKeyConstraints();
     }
 
     /**

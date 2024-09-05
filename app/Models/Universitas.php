@@ -137,4 +137,9 @@ class Universitas extends Model implements HasMedia
                 ->numeric(),
         ];
     }
+
+    public static function getInfolist()
+    {
+
+    }
 }

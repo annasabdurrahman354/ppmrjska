@@ -27,7 +27,7 @@ class ListUsers extends ListRecords
         $user = auth()->user();
         $tabs = [
             null => Tab::make('All')->query(fn ($query) => $query->where('tanggal_lulus_pondok', '=', null)),
-            'Teman Kelas' => Tab::make()->query(fn ($query) => $query->where('kelas', '=', $user->kelas)->where('tanggal_lulus_pondok', '=', null)),
+            'Teman Kelas' => Tab::make()->query(fn ($query) => $query->whereKelas($user->kelas)->where('tanggal_lulus_pondok', '=', null)),
         ];
 
         if (can('view_any_users')) {

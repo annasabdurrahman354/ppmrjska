@@ -41,6 +41,7 @@ class ProvinsiResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 TextColumn::make('nama')
+                    ->label('Nama')
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('created_at')

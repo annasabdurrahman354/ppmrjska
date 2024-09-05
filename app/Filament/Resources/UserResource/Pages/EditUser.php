@@ -18,30 +18,4 @@ class EditUser extends EditRecord
             Actions\RestoreAction::make(),
         ];
     }
-
-    protected function mutateFormDataBeforeFill(array $data): array
-    {
-        if (isset($data['kelas'])){
-            if ($data['kelas']) {
-                $data['is_takmili'] = 1;
-            } else {
-                $data['kelas'] = (string) $data['angkatan_pondok'];
-            }
-        }
-
-        return $data;
-    }
-
-    protected function mutateFormDataBeforeSave(array $data): array
-    {
-        if (isset($data['is_takmili'])){
-            if ($data['is_takmili']) {
-                $data['kelas'] = 'takmili';
-            } else {
-                $data['kelas'] = (string) $data['angkatan_pondok'];
-            }
-        }
-
-        return $data;
-    }
 }

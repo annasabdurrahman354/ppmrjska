@@ -34,6 +34,7 @@ class Munaqosah extends Page implements HasTable, HasForms, HasActions
     public function table(Table $table): Table
     {
         return JadwalMunaqosahResource::table($table)
+            ->heading('Jadwal Munaqosah Saya')
             ->query(JadwalMunaqosah::query()
                 ->whereHas('plotJadwalMunaqosah', fn($query) => $query->where('user_id', auth()->user()->id)
                 )

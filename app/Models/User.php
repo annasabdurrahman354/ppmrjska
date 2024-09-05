@@ -7,7 +7,7 @@ use App\Enums\StatusKehadiran;
 use App\Enums\StatusPondok;
 use Askedio\SoftCascade\Traits\SoftCascadeTrait;
 use BezhanSalleh\FilamentShield\Traits\HasPanelShield;
-use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Section;
@@ -22,7 +22,9 @@ use Filament\Panel;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -42,7 +44,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
 {
     use HasApiTokens, HasFactory, Notifiable;
     use HasPanelShield;
-    use HasFactory, HasRoles, HasUlids, SoftDeletes;
+    use HasRoles, HasUlids, SoftDeletes;
     use InteractsWithMedia, HasApiTokens, Notifiable;
     use SoftCascadeTrait;
 
@@ -60,10 +62,10 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
         'nis',
         'nomor_telepon',
         'email',
-        'kelas',
         'angkatan_pondok',
         'status_pondok',
         'tanggal_lulus_pondok',
+        'tanggal_keluar_pondok',
         'alasan_keluar_pondok',
         'password',
         'email_verified_at',
@@ -87,6 +89,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
     protected $casts = [
         'angkatan_pondok' => 'integer',
         'tanggal_lulus_pondok' => 'date',
+        'tanggal_keluar_pondok' => 'date',
         'email_verified_at' => 'timestamp',
         'password' => 'hashed',
         'jenis_kelamin' => JenisKelamin::class,
@@ -119,9 +122,26 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
         return filament()->getUserAvatarUrl($this);
     }
 
+    public function angkatanPondok(): BelongsTo
+    {
+        return $this->belongsTo(AngkatanPondok::class, 'angkatan_pondok', 'angkatan_pondok');
+    }
+
     public function biodataSantri(): HasOne
     {
         return $this->hasOne(BiodataSantri::class);
+    }
+
+    public function jurnalKelas(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            JurnalKelas::class, // The final model you want to access
+            PresensiKelas::class, // The intermediate model
+            'user_id', // Foreign key on the PresensiKelas table
+            'id', // Foreign key on the JurnalKelas table
+            'id', // Local key on the User table
+            'jurnal_kelas_id' // Local key on the PresensiKelas table
+        );
     }
 
     public function plotKamarAsrama(): HasMany
@@ -144,6 +164,19 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
         return $this->hasMany(TagihanAdministrasi::class);
     }
 
+    protected function kelas(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->angkatan_pondok != 0 ? $this->angkatanPondok->kelas : config('filament-shield.super_admin.name'),
+        );
+    }
+
+    protected function tanggalMasukTakmili(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->angkatanPondok()->tanggal_masuk_takmili,
+        );
+    }
 
     protected function namaAsramaTerbaru(): Attribute
     {
@@ -193,6 +226,20 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
     public function isNotSuperAdmin(): bool
     {
         return !$this->hasRole(config('filament-shield.super_admin.name'));
+    }
+
+    public function scopeWhereKelas(Builder $query, string $kelas): void
+    {
+        $query->whereHas('angkatanPondok', function ($query) use ($kelas) {
+            $query->where('kelas', $kelas);
+        });
+    }
+
+    public function scopeWhereKelasIn(Builder $query, $kelas): void
+    {
+        $query->whereHas('angkatanPondok', function ($query) use ($kelas) {
+            $query->whereIn('kelas', $kelas);
+        });
     }
 
     public function cekPerekap(JurnalKelas $jurnalKelas): bool
@@ -294,14 +341,23 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
 
             Section::make('Data Kesiswaan')
                 ->schema([
-                    TextInput::make('angkatan_pondok')
+                    Select::make('angkatan_pondok')
                         ->label('Angkatan Pondok')
-                        ->numeric()
-                        ->required()
-                        ->disabled(fn (string $operation) => cant('ubah_data_kesiswaan_user') && $operation != 'create'),
-                    Checkbox::make('is_takmili')
-                        ->label('Apakah santri takmili?')
-                        ->inline(false)
+                        ->createOptionAction(fn(Action $action) =>
+                            $action->form(AngkatanPondok::getForm())
+                                ->action(function (array $data, AngkatanPondok $record): void {
+                                    $record = AngkatanPondok::updateOrCreate(
+                                        ['angkatan_pondok' => $data['angkatan_pondok']],
+                                        [
+                                            'kelas' => $data['is_takmili'] ? 'Takmili' : (string) $data['angkatan_pondok'],
+                                            'tanggal_masuk_takmili' => $data['is_takmili'] ? $data['tanggal_masuk_takmili'] : null
+                                        ]
+                                    );
+                                })
+                        )
+                        ->options(AngkatanPondok::all()->pluck('angkatan_pondok', 'angkatan_pondok'))
+                        ->searchable()
+                        ->preload()
                         ->required()
                         ->disabled(fn (string $operation) => cant('ubah_data_kesiswaan_user') && $operation != 'create'),
                     Select::make('status_pondok')
@@ -313,6 +369,11 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
                         ->label('Tanggal Lulus Pondok')
                         ->visible(fn(Get $get) => $get('status_pondok') === StatusPondok::LULUS->value)
                         ->required(fn(Get $get) => $get('status_pondok') === StatusPondok::LULUS->value)
+                        ->disabled(fn (string $operation) => cant('ubah_data_kesiswaan_user') && $operation != 'create'),
+                    DatePicker::make('tanggal_keluar_pondok')
+                        ->label('Tanggal Keluar Pondok')
+                        ->visible(fn(Get $get) => $get('status_pondok') === StatusPondok::KELUAR->value)
+                        ->required(fn(Get $get) => $get('status_pondok') === StatusPondok::KELUAR->value)
                         ->disabled(fn (string $operation) => cant('ubah_data_kesiswaan_user') && $operation != 'create'),
                     TextInput::make('alasan_keluar_pondok')
                         ->label('Alasan Keluar Pondok')
@@ -327,11 +388,16 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
         ];
     }
 
+    public static function getInfolist()
+    {
+
+    }
+
     protected static function booted(): void
     {
-        static::addGlobalScope('notSuperAdmin', function (Builder $builder) {
-            $builder->where('kelas', '!=', config('filament-shield.super_admin.name'));
-        });
+        //static::addGlobalScope('notSuperAdmin', function (Builder $builder) {
+        //    $builder->where('angkatan_pondok', '!=', 0);
+        //});
 
         static::softDeleted(function ($record) {
             JurnalKelas::where('dewan_guru_type', $this::class)->where('dewan_guru_id', $record->id)->update(['dewan_guru_type' => null, 'dewan_guru_id' => null]);

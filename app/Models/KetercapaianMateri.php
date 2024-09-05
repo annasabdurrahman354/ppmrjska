@@ -3,6 +3,12 @@
 namespace App\Models;
 
 use App\Enums\StatusKehadiran;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ToggleButtons;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -25,11 +31,7 @@ class KetercapaianMateri extends Model
         'user_id',
         'materi_type',
         'materi_id',
-        'halaman_tercapai'
-    ];
-
-    protected $casts = [
-        'halaman_tercapai' => 'array',
+        'ketercapaian_materi'
     ];
 
     public function user(): BelongsTo
@@ -42,10 +44,19 @@ class KetercapaianMateri extends Model
         return $this->morphTo(__FUNCTION__, 'materi_type', 'materi_id');
     }
 
-    public function jumlahHalamanTercapai(): Attribute
+    public static function getFormKetercapaianMateriAction()
     {
-        return Attribute::make(
-            get: fn () => count($this->halaman_tercapai),
-        );
+        return [
+            Hidden::make('user_id'),
+            Hidden::make('materi_type'),
+            Hidden::make('materi_id'),
+            TextInput::make('ketercapaian_materi')
+                ->label('Persen Ketercapaian')
+                ->numeric()
+                ->maxValue(100)
+                ->minValue(0)
+                ->step(1)
+                ->required()
+        ];
     }
 }

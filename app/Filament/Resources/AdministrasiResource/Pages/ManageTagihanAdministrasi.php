@@ -70,7 +70,8 @@ class ManageTagihanAdministrasi extends ManageRelatedRecords
                     ->preload()
                     ->getSearchResultsUsing(fn (string $search, Get $get, ManageRelatedRecords $livewire): array =>
                         User::where('nama', 'like', "%{$search}%")
-                            ->whereIn('kelas', $livewire->getOwnerRecord()->sasaran)
+                            ->whereKelasIn($livewire->getOwnerRecord()->sasaran)
+                            ->whereNotIn('status_pondok', [StatusPondok::KELUAR, StatusPondok::LULUS])
                             ->whereNull('tanggal_lulus_pondok')
                             ->whereDoesntHave('tagihanAdministrasi', function ($query) use ($livewire) {
                                 $query->where('administrasi_id', $livewire->getOwnerRecord()->id);

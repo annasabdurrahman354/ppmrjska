@@ -67,10 +67,10 @@ class Agenda extends Model
                         ->required(),
                     Select::make('kategori_id')
                         ->label('Kategori')
-                        ->preload()
                         ->createOptionForm(Kategori::getForm())
-                        ->searchable()
                         ->relationship('kategori', 'nama')
+                        ->searchable()
+                        ->preload()
                         ->required(),
                     DatePicker::make('tanggal_awal')
                         ->label('Tanggal Awal')

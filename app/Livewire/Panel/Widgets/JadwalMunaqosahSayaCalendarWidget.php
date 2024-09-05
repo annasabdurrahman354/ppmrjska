@@ -58,12 +58,12 @@ class JadwalMunaqosahSayaCalendarWidget extends FullCalendarWidget
 
                 $isTelahMelaksanakan = $materiMunaqosah->jadwalmunaqosah()
                     ->where('waktu', '<', now())
-                    ->whereHas('plotJadwalMunaqosah', fn($query) => $query->where('user_id', auth()->id)->where('status_terlaksana', true))
+                    ->whereHas('plotJadwalMunaqosah', fn($query) => $query->where('user_id', auth()->user()->id)->where('status_terlaksana', true))
                     ->exists();
 
                 $isSudahAmbilBelumMelaksanakan = $materiMunaqosah->jadwalmunaqosah()
                     ->where('waktu', '>', now())
-                    ->whereHas('plotJadwalMunaqosah', fn($query) => $query->where('user_id', auth()->id)->where('status_terlaksana', false))
+                    ->whereHas('plotJadwalMunaqosah', fn($query) => $query->where('user_id', auth()->user()->id)->where('status_terlaksana', false))
                     ->exists();
 
                 $isLewatJadwal = $jadwalMunaqosah->waktu < now();
@@ -94,14 +94,14 @@ class JadwalMunaqosahSayaCalendarWidget extends FullCalendarWidget
                     $isTelahMelaksanakan = $materiMunaqosah->jadwalmunaqosah()
                         ->where('waktu', '<', now())
                         ->whereHas('plotJadwalMunaqosah', function ($query) {
-                            $query->where('user_id', auth()->id)->where('status_terlaksana', true);
+                            $query->where('user_id', auth()->user()->id)->where('status_terlaksana', true);
                         })
                         ->exists();
 
                     $isSudahAmbilBelumMelaksanakan = $materiMunaqosah->jadwalmunaqosah()
                         ->where('waktu', '>', now())
                         ->whereHas('plotJadwalMunaqosah', function ($query) {
-                            $query->where('user_id', auth()->id)->where('status_terlaksana', false);
+                            $query->where('user_id', auth()->user()->id)->where('status_terlaksana', false);
                         })
                         ->exists();
 
@@ -117,7 +117,7 @@ class JadwalMunaqosahSayaCalendarWidget extends FullCalendarWidget
                 ->action(function (JadwalMunaqosah $record): void {
                     $plotMunaqosah = PlotJadwalMunaqosah::create([
                         'jadwal_munaqosah_id' => $record->id,
-                        'user_id' => auth()->id(),
+                        'user_id' => auth()->user()->id(),
                         'status_terlaksana' => false
                     ]);
                     $plotMunaqosah->save();
@@ -132,12 +132,12 @@ class JadwalMunaqosahSayaCalendarWidget extends FullCalendarWidget
     protected function viewAction(): Action
     {
         return ViewAction::make()
-            ->form($this->getFormSchema())
+            ->form(JadwalMunaqosah::getInfolist())
             ->slideOver();
     }
 
-    public function getFormSchema(): array
+    protected function headerActions(): array
     {
-        return JadwalMunaqosah::getForm();
+        return [];
     }
 }

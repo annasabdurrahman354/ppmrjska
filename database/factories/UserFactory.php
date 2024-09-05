@@ -29,7 +29,6 @@ class UserFactory extends Factory
             'nis' => $this->faker->regexify('[0-9]{9}'),
             'nomor_telepon' => $this->faker->regexify('[0-9]{13}'),
             'email' => $this->faker->safeEmail(),
-            'kelas' => $this->faker->randomElement(["2022","2023","Takmili"]),
             'angkatan_pondok' => $this->faker->numberBetween(2021, 2023),
             'status_pondok' => $this->faker->randomElement(["aktif", "aktif", 'aktif', "lulus"]),
             'tanggal_lulus_pondok' => null,

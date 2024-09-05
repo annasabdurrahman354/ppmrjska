@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\StatusPondok;
 use App\Filament\Resources\PlotKamarAsramaResource\Pages;
 use App\Models\Asrama;
 use App\Models\KamarAsrama;
@@ -150,7 +151,8 @@ class PlotKamarAsramaResource extends Resource
                                             ->schema([
                                                 Select::make('user_id')
                                                     ->options(fn (Get $get) =>
-                                                        User::where('tanggal_lulus_pondok', null)
+                                                        User::whereNotIn('status_pondok', [StatusPondok::KELUAR, StatusPondok::LULUS])
+                                                            ->whereNull('tanggal_lulus_pondok')
                                                             ->where('jenis_kelamin', $get('../../../../../../penghuni'))
                                                             ->get()
                                                             ->pluck('nama', 'id')

@@ -12,8 +12,6 @@ class CreateAdministrasi extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $data['tahun_ajaran'] = $data['tahun_ajaran_awal'].'/'.$data['tahun_ajaran_akhir'];
-
         if ($data['jenis_tagihan'] === JenisTagihan::TAHUNAN->value || $data['jenis_tagihan'] === JenisTagihan::SEKALI->value){
             $data['periode_tagihan'] = $data['tahun_ajaran'];
         }

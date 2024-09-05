@@ -39,20 +39,27 @@ class MateriSuratResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 TextColumn::make('nomor')
+                    ->label('Nomor Surat')
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('nama')
-                    ->searchable(),
+                    ->label('Nama')
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('jumlah_ayat')
+                    ->label('Jumlah Ayat')
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('jumlah_halaman')
+                    ->label('Jumlah Halaman')
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('halaman_awal')
+                    ->label('Halaman Awal')
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('halaman_akhir')
+                    ->label('Halaman Akhir')
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('created_at')

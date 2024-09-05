@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\StatusPondok;
 use App\Filament\Resources\PeranResource\Pages\ManagePeran;
 use App\Models\User;
 use BezhanSalleh\FilamentShield\Support\Utils;
@@ -46,7 +47,8 @@ class PeranResource extends Resource
                     ->native(true)
                     ->preload()
                     ->options(
-                        User::where('tanggal_lulus_pondok', null)
+                        User::whereNotIn('status_pondok', [StatusPondok::KELUAR, StatusPondok::LULUS])
+                            ->whereNull('tanggal_lulus_pondok')
                             ->get()
                             ->pluck('recordTitle', 'id')
                             ->toArray()

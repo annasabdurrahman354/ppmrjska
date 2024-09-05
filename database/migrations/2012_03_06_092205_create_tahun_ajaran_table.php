@@ -14,6 +14,10 @@ return new class extends Migration
         Schema::create('tahun_ajaran', function (Blueprint $table) {
             $table->id();
             $table->string('tahun_ajaran')->unique();
+            $table->date('tanggal_awal_semester_ganjil')->nullable();
+            $table->date('tanggal_akhir_semester_ganjil')->nullable();
+            $table->date('tanggal_awal_semester_genap')->nullable();
+            $table->date('tanggal_akhir_semester_genap')->nullable();
             $table->timestamps();
         });
     }

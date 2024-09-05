@@ -2,23 +2,16 @@
 
 namespace App\Filament\Pages\KetercapaianMateri;
 
+use App\Models\AngkatanPondok;
 use App\Models\JurnalKelas;
 use App\Models\MateriHafalan;
 use App\Models\MateriHimpunan;
-use App\Models\MateriJuz;
 use App\Models\MateriSurat;
 use App\Models\MateriTambahan;
 use App\Models\PlotKurikulum;
-use App\Models\PlotKurikulumMateri;
-use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
 use Filament\Pages\Page;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\IconPosition;
@@ -39,7 +32,7 @@ class KetercapaianMateri extends Page implements HasActions
 
     public function loadKetercapaianMateri(): void
     {
-        $angkatan_pondok = $this->form->getState()['angkatan_pondok'];
+        $angkatan_pondok = auth()->user()->angkatan_pondok;
         $plotKurikulumBySemester = PlotKurikulum::with('plotKurikulumMateri')
             ->whereHas('kurikulum', function ($query) use ($angkatan_pondok) {
                 $query->where('angkatan_pondok', $angkatan_pondok);
@@ -75,7 +68,7 @@ class KetercapaianMateri extends Page implements HasActions
 
                 foreach ($plotKurikulumMateri as $materiData) {
                     $materi = $materiData['materi_type']::where('id', $materiData['materi_id'])->first();
-                    $ketercapaianMateri = KetercapaianMateri::where('materi_type', $materiData['materi_type'])
+                    $ketercapaianMateri = \App\Models\KetercapaianMateri::where('materi_type', $materiData['materi_type'])
                         ->where('materi_id', $materiData['materi_id'])
                         ->first();
 
@@ -101,16 +94,15 @@ class KetercapaianMateri extends Page implements HasActions
                             'halaman_awal' => $materi->halaman_awal,
                             'halaman_akhir' => $materi->halaman_akhir,
                             'total_halaman' => $totalHalaman,
-                            'nonprediksi' => fn ($ketercapaianMateri) => $ketercapaianMateri ? [
-                                'jumlah_halaman_tercapai' => $ketercapaianMateri->jumlahHalamanTercapai,
-                                'persen_tercapai' => $totalHalaman > 0 ? (int)(($ketercapaianMateri->jumlahHalamanTercapai * 100) / $totalHalaman) : 0,
-                                'status_tercapai' => $ketercapaianMateri->jumlahHalamanTercapai >= $totalHalaman,
-                                'terkahir_diperbarui' => $ketercapaianMateri->updated_at,
+                            'nonprediksi' => $ketercapaianMateri ? [
+                                'persen_tercapai' => $ketercapaianMateri->ketercapaian_materi,
+                                'status_tercapai' => $ketercapaianMateri->ketercapaian_materi == 100,
+                                'terkahir_diperbarui' => $ketercapaianMateri->updated_at ?? $ketercapaianMateri->created_at,
                                 'prediksi' => false
                             ] : null,
-                            'prediksi' => function ($materiData, $materi, $halamanAwal, $halamanAkhir, $totalHalaman, $allHalamanQuranTercapai) {
-                                if ($materiData['materi_type'] === MateriHimpunan::class || $materiData['materi_type'] === MateriTambahan::class){
-                                    $jurnalKelasData = JurnalKelas::where('materi_awal_type', $materiData['materi_type'])
+                            'prediksi' => ($materiData['materi_type'] === MateriHimpunan::class || $materiData['materi_type'] === MateriTambahan::class) ?
+                                [
+                                    'jumlah_halaman_tercapai' => $jurnalKelasData = JurnalKelas::where('materi_awal_type', $materiData['materi_type'])
                                         ->where('materi_awal_id', $materiData['materi_id'])
                                         ->whereHas('presensiKelas', function ($query) {
                                             $query->where('user_id', auth()->user()->id);
@@ -121,42 +113,25 @@ class KetercapaianMateri extends Page implements HasActions
                                                 'id' => $jurnal->id,
                                                 'tanggal' => $jurnal->tanggal,
                                                 'halaman_awal' => $jurnal->halaman_awal,
-                                                'halaman_akhir' => function () use ($materi, $jurnal) {
-                                                    if ($jurnal->materi_akhir_type == $jurnal->materi_awal_type && $jurnal->materi_akhir_id == $jurnal->materi_awal_id) {
-                                                        return $jurnal->halaman_akhir;
-                                                    }
-                                                    else{
-                                                        return $materi->halaman_akhir;
-                                                    }
-                                                },
+                                                'halaman_akhir' => $jurnal->materi_akhir_type == $jurnal->materi_awal_type && $jurnal->materi_akhir_id == $jurnal->materi_awal_id
+                                                    ? $jurnal->halaman_akhir
+                                                    : $materi->halaman_akhir,
                                             ];
-                                        });
-
-                                    $jumlahHalamanTercapai = $jurnalKelasData->sum(function ($jurnal) {
-                                        return $jurnal['halaman_akhir'] - $jurnal['halaman_awal'] + 1;
-                                    });
-
-                                    return [
-                                        'jumlah_halaman_tercapai' => $jumlahHalamanTercapai,
-                                        'persen_tercapai' => $totalHalaman > 0 ? (int)(($jumlahHalamanTercapai * 100) / $totalHalaman) : 0,
-                                        'status_tercapai' => $materiData['status_tercapai'] || ($jumlahHalamanTercapai >= $totalHalaman),
-                                        'terakhir_diperbarui' => null,
-                                        'prediksi' => true
-                                    ];
-                                }
-                                else {
-                                    $jumlahHalamanTercapai = count(array_filter($allHalamanQuranTercapai, function ($halaman) use ($halamanAwal, $halamanAkhir) {
-                                        return $halaman >= $halamanAwal && $halaman <= $halamanAkhir;
-                                    }));
-                                    return [
-                                        'jumlah_halaman_tercapai' => $jumlahHalamanTercapai,
-                                        'persen_tercapai' => $totalHalaman > 0 ? (int)(($jumlahHalamanTercapai * 100) / $totalHalaman) : 0,
-                                        'status_tercapai' => $materiData['status_tercapai'] || ($jumlahHalamanTercapai >= $totalHalaman),
-                                        'terakhir_diperbarui' => null,
-                                        'prediksi' => true
-                                    ];
-                                }
-                            }
+                                        })
+                                        ->sum(function ($jurnal) {
+                                            return $jurnal['halaman_akhir'] - $jurnal['halaman_awal'] + 1;
+                                        }),
+                                    'persen_tercapai' => $totalHalaman > 0 ? (int)(($jurnalKelasData * 100) / $totalHalaman) : 0,
+                                    'status_tercapai' => $materiData['status_tercapai'] || ($jurnalKelasData >= $totalHalaman),
+                                    'terakhir_diperbarui' => null,
+                                    'prediksi' => true
+                                ] :
+                                [
+                                    'persen_tercapai' => $totalHalaman > 0 ? (int)(($jumlahHalamanTercapai * 100) / $totalHalaman) : 0,
+                                    'status_tercapai' => $materiData['status_tercapai'] || ($jumlahHalamanTercapai >= $totalHalaman),
+                                    'terakhir_diperbarui' => null,
+                                    'prediksi' => true
+                                ]
                         ];
                     }
                 }
@@ -169,39 +144,35 @@ class KetercapaianMateri extends Page implements HasActions
         $this->ketercapaianMateri = $plotKurikulumBySemester->toArray();
     }
 
-    public function tuntaskanMateriAction(): Action
+    public function perbaruiKetercapaianMateri(): Action
     {
-        return Action::make('tuntaskanMateri')
-            ->label('Tuntaskan')
+        return Action::make('perbaruiKetercapaianMateri')
+            ->label('Perbarui Progress')
             ->requiresConfirmation()
             ->icon('heroicon-m-sparkles')
             ->iconPosition(IconPosition::After)
             ->size(ActionSize::ExtraSmall)
             ->color('success')
-            ->action(function (array $arguments) {
-                PlotKurikulumMateri::find($arguments['plotKurikulumMateriId'])->update([
-                    'status_tercapai' => true,
-                ]);
+            ->form(\App\Models\KetercapaianMateri::getFormKetercapaianMateriAction())
+            ->fillForm(fn (array $arguments): array => [
+                'user_id' => auth()->user()->id,
+                'materi_type' => $arguments['materi_type'],
+                'materi_id' => $arguments['materi_id'],
+                'ketercapaian_materi' => $arguments['ketercapaian_materi'],
+            ])
+            ->action(function (array $data) {
+                \App\Models\KetercapaianMateri::updateOrCreate(
+                    [
+                        'user_id' =>  $data['user_id'],
+                        'materi_type' => $data['materi_type'],
+                        'materi_id' => $data['materi_id'],
+                    ],
+                    ['ketercapaian_materi' => $data['ketercapaian_materi']]
+                );
                 $this->loadKetercapaianMateri();
             });
     }
 
-    public function belumTuntaskanMateriAction(): Action
-    {
-        return Action::make('belumTuntaskanMateri')
-            ->label('Reset')
-            ->requiresConfirmation()
-            ->icon('heroicon-m-exclamation-triangle')
-            ->iconPosition(IconPosition::After)
-            ->size(ActionSize::ExtraSmall)
-            ->color('danger')
-            ->action(function (array $arguments) {
-                PlotKurikulumMateri::find($arguments['plotKurikulumMateriId'])->update([
-                    'status_tercapai' => false,
-                ]);
-                $this->loadKetercapaianMateri();
-            });
-    }
     public function exportKetercapaianMateri()
     {
 

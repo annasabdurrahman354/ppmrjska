@@ -12,6 +12,8 @@ return new class () extends Migration {
      */
     public function up()
     {
+        Schema::disableForeignKeyConstraints();
+
         Schema::create('redaksi_media', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->string('judul');
@@ -25,6 +27,8 @@ return new class () extends Migration {
             $table->boolean('highlight');
             $table->timestamps();
         });
+
+        Schema::enableForeignKeyConstraints();
     }
 
     /**

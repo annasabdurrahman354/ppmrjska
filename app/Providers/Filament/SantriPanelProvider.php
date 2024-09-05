@@ -17,7 +17,7 @@ use App\Filament\Resources\MateriMunaqosahResource;
 use App\Filament\Resources\MateriSuratResource;
 use App\Filament\Resources\MateriTambahanResource;
 use App\Filament\Resources\PenilaianMunaqosahResource;
-use App\Settings\Admin\PengaturanUmum;
+use App\Settings\Admin\PengaturanWebsite;
 use Awcodes\FilamentQuickCreate\QuickCreatePlugin;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\FontProviders\SpatieGoogleFontProvider;
@@ -47,10 +47,10 @@ class SantriPanelProvider extends PanelProvider
             ->path('santri')
             ->font('Inter', provider: SpatieGoogleFontProvider::class)
             ->favicon(asset('storage/sites/favicon.ico'))
-            ->brandName(fn (PengaturanUmum $settings) => $settings->brand_name)
+            ->brandName(fn (PengaturanWebsite $settings) => $settings->brand_name)
             ->brandLogo(asset('storage/sites/logo.png'))
-            ->brandLogoHeight(fn (PengaturanUmum $settings) => $settings->brand_logoHeight)
-            ->colors(fn (PengaturanUmum $settings) => $settings->site_theme)
+            ->brandLogoHeight(fn (PengaturanWebsite $settings) => $settings->brand_logoHeight)
+            ->colors(fn (PengaturanWebsite $settings) => $settings->site_theme)
             ->databaseNotifications()->databaseNotificationsPolling('30s')
             ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
             ->unsavedChangesAlerts()

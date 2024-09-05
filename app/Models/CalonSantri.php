@@ -198,8 +198,9 @@ class CalonSantri extends Model implements HasMedia
                         ->maxLength(16),
                     Select::make('tempat_lahir_id')
                         ->label('Tempat Lahir')
+                        ->disabled(fn (string $operation) => cant('ubah_data_kesiswaan_user') && $operation != 'create')
+                        ->relationship('tempatLahir', 'nama')
                         ->searchable()
-                        ->options(fn (Get $get) => Kota::pluck('nama', 'id'))
                         ->required(),
                     DatePicker::make('tanggal_lahir')
                         ->label('Tanggal Lahir')
@@ -244,24 +245,24 @@ class CalonSantri extends Model implements HasMedia
                         ->options(PendidikanTerakhir::class),
 
                     Cluster::make([
-                        Select::make('program_studi_jenjang')
-                            ->options([
-                                'S1' => 'S1',
-                                'S2' => 'S2',
-                                'S3' => 'S3',
-                                'D3' => 'D3',
-                                'D4' => 'D4',
-                                'Profesi' => 'Profesi',
-                            ])
-                            ->default('S1')
-                            ->required(),
-                        TextInput::make('program_studi')
-                            ->label('Program Studi')
-                            ->required()
-                            ->columnSpan(7)
-                            ->autocapitalize('words')
-                            ->datalist(getProgramStudiList()),
-                    ])
+                            Select::make('program_studi_jenjang')
+                                ->options([
+                                    'S1' => 'S1',
+                                    'S2' => 'S2',
+                                    'S3' => 'S3',
+                                    'D3' => 'D3',
+                                    'D4' => 'D4',
+                                    'Profesi' => 'Profesi',
+                                ])
+                                ->default('S1')
+                                ->required(),
+                            TextInput::make('program_studi')
+                                ->label('Program Studi')
+                                ->required()
+                                ->columnSpan(7)
+                                ->autocapitalize('words')
+                                ->datalist(getProgramStudiList()),
+                        ])
                         ->label('Program Studi')
                         ->columns(8),
 
@@ -299,40 +300,40 @@ class CalonSantri extends Model implements HasMedia
                         ->autocapitalize('words'),
                     Select::make('provinsi_id')
                         ->label('Provinsi')
-                        ->required()
-                        ->searchable()
                         ->options(Provinsi::all()->pluck('nama', 'id'))
+                        ->searchable()
                         ->live()
+                        ->required()
                         ->afterStateUpdated(function (Set $set) {
                             $set('kota_id', null);
                         }),
                     Select::make('kota_id')
                         ->label('Kota')
-                        ->required()
-                        ->searchable()
                         ->options(fn (Get $get) => Kota::where('provinsi_id', $get('provinsi_id'))->pluck('nama', 'id'))
+                        ->searchable()
                         ->hidden(fn (Get $get) => $get('provinsi_id') == null)
                         ->live()
+                        ->required()
                         ->afterStateUpdated(function (Set $set) {
                             $set('kecamatan_id', null);
                         }),
                     Select::make('kecamatan_id')
                         ->label('Kecamatan')
-                        ->required()
-                        ->searchable()
                         ->options(fn (Get $get) => Kecamatan::where('kota_id', $get('kota_id'))->pluck('nama', 'id'))
+                        ->searchable()
                         ->hidden(fn (Get $get) => $get('kota_id') == null)
                         ->live()
+                        ->required()
                         ->afterStateUpdated(function (Set $set) {
                             $set('kelurahan_id', null);
                         }),
                     Select::make('kelurahan_id')
                         ->label('Kelurahan')
-                        ->required()
-                        ->searchable()
                         ->options(fn (Get $get) => Kelurahan::where('kecamatan_id', $get('kecamatan_id'))->pluck('nama', 'id'))
+                        ->searchable()
                         ->hidden(fn (Get $get) => $get('kecamatan_id') == null)
                         ->live()
+                        ->required()
                 ])
                 ->columns([
                     'sm' => 1,

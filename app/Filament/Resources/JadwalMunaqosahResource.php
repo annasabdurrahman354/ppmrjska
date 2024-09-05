@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Enums\StatusPondok;
 use App\Filament\Resources\JadwalMunaqosahResource\Pages\CreateJadwalMunaqosah;
 use App\Filament\Resources\JadwalMunaqosahResource\Pages\EditJadwalMunaqosah;
 use App\Filament\Resources\JadwalMunaqosahResource\Pages\ListJadwalMunaqosahs;
@@ -10,20 +9,10 @@ use App\Filament\Resources\JadwalMunaqosahResource\Pages\ManageJadwalMunaqosahPl
 use App\Filament\Resources\JadwalMunaqosahResource\Pages\ViewJadwalMunaqosah;
 use App\Filament\Resources\JadwalMunaqosahResource\Widgets\JadwalMunaqosahCalendarWidget;
 use App\Models\JadwalMunaqosah;
-use App\Models\MateriMunaqosah;
 use App\Models\PlotJadwalMunaqosah;
-use App\Models\User;
-use Awcodes\TableRepeater\Components\TableRepeater;
-use Awcodes\TableRepeater\Header;
 use Carbon\Carbon;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
+use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
@@ -31,7 +20,6 @@ use Filament\Tables;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class JadwalMunaqosahResource extends Resource
 {
@@ -50,6 +38,12 @@ class JadwalMunaqosahResource extends Resource
     {
         return $form
             ->schema(JadwalMunaqosah::getForm());
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema(JadwalMunaqosah::getInfolist());
     }
 
     public static function table(Table $table): Table
@@ -113,18 +107,55 @@ class JadwalMunaqosahResource extends Resource
                     ->label('Ambil Jadwal')
                     ->visible(function (JadwalMunaqosah $record) {
                         $user = auth()->user();
-                        $hasPlot = PlotJadwalMunaqosah::where('user_id', $user->id)
+                        $now = Carbon::now();
+
+                        $existsFalseStatus = PlotJadwalMunaqosah::where('user_id', $user->id)
+                            ->where('status_terlaksana', false)
+                            ->whereHas('jadwalMunaqosah', function ($query) use ($record, $now) {
+                                $query->where('materi_munaqosah_id', $record->materi_munaqosah_id)
+                                    ->where('waktu', '>', $now);
+                            })
                             ->exists();
-                        $isRegistrationOpen = $record->batas_akhir_pendaftaran >= now();
-                        return !$hasPlot && $isRegistrationOpen;
+
+                        $existsTrueStatus = PlotJadwalMunaqosah::where('user_id', $user->id)
+                            ->where('status_terlaksana', true)
+                            ->whereHas('jadwalMunaqosah', function ($query) use ($record, $now) {
+                                $query->where('materi_munaqosah_id', $record->materi_munaqosah_id)
+                                    ->where('waktu', '<', $now);
+                            })
+                            ->exists();
+
+                        $isMatchingClass = $record->materiMunaqosah->kelas === $user->kelas;
+
+                        return !$existsFalseStatus && !$existsTrueStatus && $isMatchingClass;
                     })
                     ->action(
                         function (JadwalMunaqosah $record) {
-                            PlotJadwalMunaqosah::create([
-                                'jadwal_munaqosah_id' => $record->id,
-                                'user_id' => auth()->user()->id,
-                                'status_terlaksana' => false,
-                            ]);
+                            $user = auth()->user();
+                            $plots = PlotJadwalMunaqosah::where('user_id', $user->id)
+                                ->whereHas('jadwalMunaqosah', function ($query) use ($record) {
+                                    $query->where('materi_munaqosah_id', $record->materi_munaqosah_id);
+                                })
+                                ->get();
+
+                            if ($plots->isNotEmpty()) {
+                                // Ambil plot pertama untuk diupdate
+                                $firstPlot = $plots->first();
+                                $firstPlot->update([
+                                    'jadwal_munaqosah_id' => $record->id,
+                                    'status_terlaksana' => false,
+                                ]);
+
+                                // Hapus plot lainnya jika ada
+                                $plots->slice(1)->each->delete();
+                            } else {
+                                // Jika tidak ditemukan, buat plot baru
+                                PlotJadwalMunaqosah::create([
+                                    'user_id' => $user->id,
+                                    'jadwal_munaqosah_id' => $record->id,
+                                    'status_terlaksana' => false,
+                                ]);
+                            }
                             Notification::make('ambil_jadwal')
                                 ->title('Jadwal munaqosah sukses diambil!')
                                 ->success()

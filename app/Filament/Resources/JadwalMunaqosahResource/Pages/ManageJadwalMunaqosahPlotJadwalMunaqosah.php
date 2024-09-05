@@ -57,10 +57,10 @@ class ManageJadwalMunaqosahPlotJadwalMunaqosah extends ManageRelatedRecords
                     ->getSearchResultsUsing(function (string $search, JadwalMunaqosah $record): array{
                         $materiMunaqosah = $record;
                         $kelas = $materiMunaqosah->kelas;
-                        return User::where('kelas', $kelas)
-                            ->where('nama', 'like', "%{$search}%")
-                            ->where('status_pondok', StatusPondok::AKTIF->value)
-                            ->where('tanggal_lulus_pondok', null)
+                        return User::where('nama', 'like', "%{$search}%")
+                            ->whereKelas($kelas)
+                            ->whereNotIn('status_pondok', [StatusPondok::KELUAR, StatusPondok::LULUS])
+                            ->whereNull('tanggal_lulus_pondok')
                             ->limit(20)
                             ->pluck('nama', 'id')
                             ->toArray();

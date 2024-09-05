@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::disableForeignKeyConstraints();
 
-        Schema::create('kelas', function (Blueprint $table) {
+        Schema::create('angkatan_pondok', function (Blueprint $table) {
             $table->id();
-            $table->integer('kelas');
-            $table->boolean('takmili')->default(false);
+            $table->unsignedInteger('angkatan_pondok')->unique();
+            $table->string('kelas');
             $table->date('tanggal_masuk_takmili')->nullable();
             $table->timestamps();
         });
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('kelas');
+        Schema::dropIfExists('angkatan_pondok');
     }
 };

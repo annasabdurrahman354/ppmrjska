@@ -6,6 +6,7 @@ use App\Enums\JenisKelamin;
 use App\Enums\PeriodeTagihanBulanan;
 use App\Enums\StatusPondok;
 use App\Exports\RekapPresensiExport;
+use App\Models\AngkatanPondok;
 use App\Models\JurnalKelas;
 use App\Models\PresensiKelas;
 use App\Models\User;
@@ -59,9 +60,7 @@ class FormulirPresensi extends Page implements HasForms, HasActions
                             ->maxItems(fn () => cant('rekap_kelas_lain_jurnal::kelas') ? 1 : 6)
                             ->disabled(cant('rekap_kelas_lain_jurnal::kelas'))->dehydrated()
                             ->options(
-                                User::where('status_pondok', StatusPondok::AKTIF->value)
-                                    ->where('tanggal_lulus_pondok', null)
-                                    ->select('kelas')
+                                AngkatanPondok::select('kelas')
                                     ->orderBy('kelas')
                                     ->distinct()
                                     ->get()
@@ -115,21 +114,21 @@ class FormulirPresensi extends Page implements HasForms, HasActions
 
         $distinctTanggalSesi = JurnalKelas::join('presensi_kelas', 'jurnal_kelas.id', '=', 'presensi_kelas.jurnal_kelas_id')
             ->join('users', 'presensi_kelas.user_id', '=', 'users.id')
-            ->whereIn('users.kelas', $this->kelas)
+            ->join('angkatan_pondok', 'users.angkatan_pondok', '=', 'angkatan_pondok.angkatan_pondok') // Specify the correct column from 'angkatan_pondok'
+            ->whereIn('angkatan_pondok.kelas', $this->kelas)
             ->where('users.jenis_kelamin', $this->jenis_kelamin)
             ->whereNotIn('users.status_pondok', [StatusPondok::NONAKTIF->value, StatusPondok::LULUS->value, StatusPondok::KELUAR->value])
-            ->whereMonth('tanggal', $monthNumber)
+            ->whereMonth('jurnal_kelas.tanggal', $monthNumber) // Ensure 'tanggal' is from the correct table
             ->distinct()
             ->get(['jurnal_kelas.tanggal', 'jurnal_kelas.sesi'])
             ->mapToGroups(function ($item) {
                 return [(string) $item->tanggal => $item->sesi];
             });
 
-        // Step 2: Get all users with kelas 'takmili'
-        $takmiliUsers = User::whereIn('kelas', $this->kelas)
-            ->where('jenis_kelamin', $this->jenis_kelamin)
-            ->whereNotIn('status_pondok', [StatusPondok::NONAKTIF->value, StatusPondok::LULUS->value, StatusPondok::KELUAR->value])
-            ->orderBy('kelas', 'ASC')
+        $santris = User::where('jenis_kelamin', $this->jenis_kelamin)
+            ->whereKelasIn($this->kelas)
+            ->whereNotIn('status_pondok', [StatusPondok::NONAKTIF, StatusPondok::KELUAR, StatusPondok::LULUS])
+            ->whereNull('tanggal_lulus_pondok')
             ->orderBy('angkatan_pondok', 'DESC')
             ->orderBy('nama', 'ASC')
             ->get();
@@ -137,7 +136,7 @@ class FormulirPresensi extends Page implements HasForms, HasActions
         // Step 3: Prepare the final JSON structure
         $results = [];
 
-        foreach ($takmiliUsers as $index => $user) {
+        foreach ($santris as $index => $santri) {
             $attendanceData = [];
             $statusCounts = [
                 'hadir' => 0,
@@ -156,7 +155,7 @@ class FormulirPresensi extends Page implements HasForms, HasActions
                     // Step 4: Get the attendance status for the user on the specific tanggal and sesi
                     $sesi = $sesi->value;
                     $presensi = PresensiKelas::join('jurnal_kelas', 'presensi_kelas.jurnal_kelas_id', '=', 'jurnal_kelas.id')
-                        ->where('presensi_kelas.user_id', $user->id)
+                        ->where('presensi_kelas.user_id', $santri->id)
                         ->where('jurnal_kelas.tanggal', $tanggal)
                         ->where('jurnal_kelas.sesi', $sesi)
                         ->first();
@@ -179,9 +178,9 @@ class FormulirPresensi extends Page implements HasForms, HasActions
 
             $results[] = [
                 'no' => $index + 1,
-                'id' => $user->id,
-                'nama' => $user->nama,
-                'kelas' => $user->kelas,
+                'id' => $santri->id,
+                'nama' => $santri->nama,
+                'kelas' => $santri->kelas,
                 'tanggal' => $attendanceData,
                 'jumlah' => $statusCounts,
                 'total_pertemuan' => $totalMeetings,

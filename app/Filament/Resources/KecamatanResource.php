@@ -42,13 +42,16 @@ class KecamatanResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 TextColumn::make('nama')
+                    ->label('Nama')
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('kota.nama')
+                    ->label('Kota')
                     ->numeric()
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('kota.provinsi.nama')
+                    ->label('Provinsi')
                     ->numeric()
                     ->sortable()
                     ->searchable(),

@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Settings\Admin\PengaturanUmum;
+use App\Settings\Admin\PengaturanWebsite;
 use BezhanSalleh\PanelSwitch\PanelSwitch;
 use Carbon\Carbon;
 use Filament\Support\Facades\FilamentAsset;
@@ -43,7 +43,7 @@ class AppServiceProvider extends ServiceProvider
                 ->defaultSort('created_at', 'desc');
         });
 
-        View::share('pengaturan_umum', app(PengaturanUmum::class));
+        View::share('pengaturan_umum', app(PengaturanWebsite::class));
 
         FilamentAsset::register([
             //Js::make('html5-qrcode', 'https://unpkg.com/html5-qrcode')->loadedOnRequest(),

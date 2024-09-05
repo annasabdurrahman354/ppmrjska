@@ -20,7 +20,7 @@ return new class extends Migration
             $table->foreignUlid('user_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->unsignedInteger('tahun_pendaftaran');
 
-            $table->string('nik', 16)->unique();
+            $table->string('nik', 16);
             $table->unsignedSmallInteger('tempat_lahir_id')->nullable();
             $table->foreign('tempat_lahir_id')->references('id')->on('kota')->nullOnDelete();
             $table->date('tanggal_lahir');

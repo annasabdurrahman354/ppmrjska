@@ -4,6 +4,7 @@ namespace App\Filament\Resources\JurnalKelasResource\Pages;
 
 use App\Enums\StatusPondok;
 use App\Filament\Resources\JurnalKelasResource;
+use App\Models\AngkatanPondok;
 use App\Models\User;
 use Filament\Actions;
 use Filament\Actions\Action;
@@ -36,19 +37,16 @@ class ListJurnalKelas extends ListRecords
 
     public function getTabs(): array
     {
-        $semuaKelas = User::where('tanggal_lulus_pondok', null)
-            ->whereNotIn('status_pondok', [StatusPondok::LULUS, StatusPondok::KELUAR, StatusPondok::NONAKTIF])
-            ->orderBy('kelas')
-            ->select('kelas')
+        $semuaKelas = AngkatanPondok::whereHas('users', function ($query) {
+                $query->whereIn('status_pondok', [StatusPondok::AKTIF, StatusPondok::KEPERLUAN_AKADEMIK, StatusPondok::SAMBANG, StatusPondok::NONAKTIF]);
+            })
             ->distinct()
-            ->get()
             ->pluck('kelas');
-        $alumni = User::where('tanggal_lulus_pondok', null)
-            ->whereIn('status_pondok', [StatusPondok::LULUS, StatusPondok::KELUAR, StatusPondok::NONAKTIF])
-            ->orderBy('kelas')
-            ->select('kelas')
+
+        $alumni = AngkatanPondok::whereDoesntHave('users', function ($query) {
+            $query->whereIn('status_pondok', [StatusPondok::AKTIF, StatusPondok::KEPERLUAN_AKADEMIK, StatusPondok::SAMBANG, StatusPondok::NONAKTIF]);
+            })
             ->distinct()
-            ->get()
             ->pluck('kelas');
 
         $tabs = [

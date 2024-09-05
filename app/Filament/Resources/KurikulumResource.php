@@ -59,6 +59,7 @@ class KurikulumResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('angkatan_pondok')
+                    ->label('Angkatan Pondok')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

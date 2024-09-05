@@ -13,6 +13,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Infolists\Components\TextEntry;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -84,23 +86,24 @@ class JadwalMunaqosah extends Model
                         ->label('Materi Munaqosah')
                         ->options(MateriMunaqosah::all()->pluck('recordTitle', 'id'))
                         ->searchable()
+                        ->preload()
                         ->columnSpanFull()
                         ->required()
                         ->live()
                         ->afterStateUpdated(function(Set $set) {
                             $set('plotJadwalMunaqosah', []);
                         }),
+                    TextInput::make('maksimal_pendaftar')
+                        ->label('Maksimal Pendaftar')
+                        ->default(8)
+                        ->required()
+                        ->numeric()
+                        ->live(),
                     DateTimePicker::make('waktu')
                         ->label('Waktu Munaqosah')
                         ->required()
                         ->live()
                         ->afterStateUpdated(fn (Set $set, $state) => $set('batas_akhir_pendaftaran', Carbon::parse($state)->subDay())),
-                    TextInput::make('maksimal_pendaftar')
-                        ->label('Maksimal Pendaftar')
-                        ->required()
-                        ->numeric()
-                        ->minValue(fn (Get $get) => count($get('plotJadwalMunaqosah')))
-                        ->live(),
                     DateTimePicker::make('batas_awal_pendaftaran')
                         ->label('Batas Mulai Pendaftaran')
                         ->beforeOrEqual('batas_akhir_pendaftaran')
@@ -108,7 +111,6 @@ class JadwalMunaqosah extends Model
                         ->required(),
                     DateTimePicker::make('batas_akhir_pendaftaran')
                         ->label('Batas Akhir Pendaftaran')
-                        ->afterOrEqual('batas_awal_pendaftaran')
                         ->beforeOrEqual('waktu')
                         ->required(),
                 ]),
@@ -134,9 +136,9 @@ class JadwalMunaqosah extends Model
                                 ->getSearchResultsUsing(function (string $search, Get $get): array{
                                     $materiMunaqosah = MateriMunaqosah::where('id', $get('../../materi_munaqosah_id'))->first();
                                     $kelas = $materiMunaqosah->kelas ?? ['a'];
-                                    return User::where('kelas', $kelas)
-                                        ->where('nama', 'like', "%{$search}%")
-                                        ->where('status_pondok', StatusPondok::AKTIF->value)
+                                    return User::where('nama', 'like', "%{$search}%")
+                                        ->whereKelas($kelas)
+                                        ->whereNotIn('status_pondok', [StatusPondok::NONAKTIF, StatusPondok::KELUAR, StatusPondok::LULUS])
                                         ->whereNull('tanggal_lulus_pondok')
                                         ->limit(20)
                                         ->pluck('nama', 'id')
@@ -152,6 +154,42 @@ class JadwalMunaqosah extends Model
                         ->addActionLabel('Tambah Pendaftar +')
                         ->maxItems(fn (Get $get) => $get('maksimal_pendaftar'))
                         ->live()
+                ])
+        ];
+    }
+
+    public static function getInfolist()
+    {
+        return [
+            TextEntry::make('materiMunaqosah.recordTitle')
+                ->label('Materi Munaqosah'),
+            TextEntry::make('waktu')
+                ->label('Waktu Munaqosah')
+                ->dateTime(),
+            TextEntry::make('maksimal_pendaftar')
+                ->label('Maksimal Pendaftar')
+                ->numeric(),
+            TextEntry::make('batas_awal_pendaftaran')
+                ->label('Batas Awal Pendaftaran')
+                ->dateTime(),
+            TextEntry::make('batas_akhir_pendaftaran')
+                ->label('Batas Akhir Pendaftaran')
+                ->dateTime(),
+            RepeatableEntry::make('plotJadwalMunaqosah')
+                ->label('Pendaftar Jadwal Munaqosah')
+                ->schema([
+                    TextEntry::make('user.nama'),
+                    TextEntry::make('status_terlaksana')
+                        ->label('Status Terlaksana')
+                        ->suffixAction(
+                            \Filament\Infolists\Components\Actions\Action::make('ubahStatusTerlaksana')
+                                ->icon('heroicon-m-clipboard')
+                                ->requiresConfirmation()
+                                ->action(function ($record) {
+                                    $record->status_terlaksana = !$record->status_terlaksana;
+                                    $record->save();
+                                })
+                        ),
                 ])
         ];
     }

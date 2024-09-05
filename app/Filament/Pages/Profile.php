@@ -493,13 +493,6 @@ class Profile extends Page implements HasForms
     public function updateProfile(): void
     {
         $data = $this->editProfileForm->getState();
-        if (isset($data['is_takmili'])){
-            if ($data['is_takmili']) {
-                $data['kelas'] = 'takmili';
-            } else {
-                $data['kelas'] = (string) $data['angkatan_pondok'];
-            }
-        }
         $this->handleRecordUpdate($this->getUser(), $data);
         $this->sendSuccessNotification();
     }
