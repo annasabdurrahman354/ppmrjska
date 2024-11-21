@@ -409,6 +409,8 @@ class UserResource extends Resource implements HasShieldPermissions
             ], layout: Tables\Enums\FiltersLayout::AboveContent)
             ->filtersFormColumns(2)
             ->headerActions([
+                //ExcelImportAction::make()
+                //    ->color("secondary"),
                 ImportAction::make()
                     ->importer(SantriImporter::class)
             ])
@@ -446,8 +448,11 @@ class UserResource extends Resource implements HasShieldPermissions
                         $record->status_pondok = $data['status_pondok'];
                         if ($data['status_pondok'] == StatusPondok::LULUS) {
                             $record->tanggal_lulus_pondok = $data['tanggal_lulus_pondok'];
+                            $record->tanggal_keluar_pondok = null;
+                            $record->alasan_keluar_pondok = '';
                         }
                         if ($data['status_pondok'] == StatusPondok::KELUAR) {
+                            $record->tanggal_lulus_pondok = null;
                             $record->alasan_keluar_pondok = $data['alasan_keluar_pondok'];
                         }
                         $record->save();

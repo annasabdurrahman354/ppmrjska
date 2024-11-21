@@ -56,7 +56,7 @@
 
                                         <div class="grow">
                                             <div class="mt-1 text-sm text-gray-600 not-italic dark:text-white">
-                                                {{ $pengaturan_umum->site_email }}
+                                                {{ $pengaturan_informasi_pondok->email }}
                                             </div>
                                         </div>
                                     </div>
@@ -73,7 +73,7 @@
 
                                         <div class="grow">
                                             <ul class="marker:text-blue-600 list-disc ps-5 space-y-2 text-sm text-gray-600 dark:text-white">
-                                                @foreach($pengaturan_umum->site_narahubung as $narahubung)
+                                                @foreach($pengaturan_informasi_pondok->narahubung as $narahubung)
                                                     <li>
                                                         <a class="relative before:absolute before:bottom-0.5 before:start-0 before:-z-[1] before:w-full before:h-1 before:bg-lime-400 hover:before:bg-black focus:outline-none focus:before:bg-black dark:text-white dark:hover:before:bg-white dark:focus:before:bg-white" href="tel:{{$narahubung['nomor_telepon']}}">
                                                             <span>
@@ -102,7 +102,7 @@
 
                                     <div class="grow">
                                         <ul class="marker:text-blue-600 list-disc ps-5 space-y-2 text-sm text-gray-600 dark:text-white">
-                                            @foreach($pengaturan_umum->site_penerima_tamu as $penerima_tamu)
+                                            @foreach($pengaturan_informasi_pondok->penerima_tamu as $penerima_tamu)
                                                 <li>
                                                     <a class="relative before:absolute before:bottom-0.5 before:start-0 before:-z-[1] before:w-full before:h-1 before:bg-lime-400 hover:before:bg-black focus:outline-none focus:before:bg-black dark:text-white dark:hover:before:bg-white dark:focus:before:bg-white" href="tel:{{$narahubung['nomor_telepon']}}">
                                                             <span>

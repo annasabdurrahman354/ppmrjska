@@ -57,11 +57,11 @@ return new class extends Migration
             $table->unsignedTinyInteger('jumlah_saudara');
             $table->unsignedTinyInteger('anak_nomor');
 
-            $table->string('nama_ayah');
+            $table->string('nama_ayah')->nullable();
             $table->string('nomor_telepon_ayah', 16)->nullable();
             $table->string('pekerjaan_ayah')->nullable();
             $table->string('dapukan_ayah')->nullable();
-            $table->string('nama_ibu');
+            $table->string('nama_ibu')->nullable();
             $table->string('nomor_telepon_ibu', 16)->nullable();
             $table->string('pekerjaan_ibu')->nullable();
             $table->string('dapukan_ibu')->nullable();

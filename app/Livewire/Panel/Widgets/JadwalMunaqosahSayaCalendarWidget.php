@@ -31,6 +31,7 @@ class JadwalMunaqosahSayaCalendarWidget extends FullCalendarWidget
         return [
             'initialView' => 'dayGridMonth',
             'firstDay' => 1,
+            'editable' => false,
             'headerToolbar' => [
                 'left' => 'prev,next,today',
                 'center' => 'title',
@@ -76,6 +77,7 @@ class JadwalMunaqosahSayaCalendarWidget extends FullCalendarWidget
                     'id' => $jadwalMunaqosah->id,
                     'title' => $jadwalMunaqosah->recordTitleCalendar,
                     'start' => $jadwalMunaqosah->waktu,
+                    'editable' => false,
                     //'url' => JadwalMunaqosahResource::getUrl(name: 'view', parameters: ['record' => $jadwalMunaqosah]),
                     //'shouldOpenUrlInNewTab' => true,
                     'color' => $color,
@@ -117,7 +119,7 @@ class JadwalMunaqosahSayaCalendarWidget extends FullCalendarWidget
                 ->action(function (JadwalMunaqosah $record): void {
                     $plotMunaqosah = PlotJadwalMunaqosah::create([
                         'jadwal_munaqosah_id' => $record->id,
-                        'user_id' => auth()->user()->id(),
+                        'user_id' => auth()->id(),
                         'status_terlaksana' => false
                     ]);
                     $plotMunaqosah->save();
@@ -132,7 +134,7 @@ class JadwalMunaqosahSayaCalendarWidget extends FullCalendarWidget
     protected function viewAction(): Action
     {
         return ViewAction::make()
-            ->form(JadwalMunaqosah::getInfolist())
+            ->form(JadwalMunaqosah::getForm())
             ->slideOver();
     }
 

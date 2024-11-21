@@ -3,21 +3,30 @@
 namespace App\Models;
 
 use App\Enums\JenisKelamin;
+use BezhanSalleh\FilamentShield\Traits\HasPanelShield;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasAvatar;
+use Filament\Models\Contracts\HasName;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\Permission\Traits\HasRoles;
 
-class DewanGuru extends Model implements HasMedia
+class DewanGuru extends Model implements FilamentUser, HasMedia, HasAvatar, HasName
 {
-    use InteractsWithMedia, HasUlids, SoftDeletes;
+    use InteractsWithMedia, HasUlids, SoftDeletes, Notifiable;
+    use HasPanelShield;
+    use HasRoles, HasApiTokens;
 
     protected $table = 'dewan_guru';
 
@@ -46,6 +55,22 @@ class DewanGuru extends Model implements HasMedia
         'jenis_kelamin' => JenisKelamin::class
     ];
 
+    public function getFilamentName(): string
+    {
+        return $this->nama;
+    }
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        return $this->getFirstMediaUrl('dewan_guru_avatar', 'thumb')
+            ??
+            "https://ui-avatars.com/api/?background=random&size=256&rounded=true&name=".str_replace(" ", "+", $this->nama);
+    }
+
+    public function getAvatarUrl()
+    {
+        return filament()->getUserAvatarUrl($this);
+    }
 
     public function registerMediaConversions(\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
     {
@@ -86,7 +111,7 @@ class DewanGuru extends Model implements HasMedia
                     Select::make('jenis_kelamin')
                         ->label('Jenis Kelamin')
                         ->options(JenisKelamin::class)
-                        ->disabled(fn (string $operation) => auth()->user()->isNotSuperAdmin() && $operation != 'create')
+                        ->disabled(fn (string $operation) => isNotAdmin() && $operation != 'create')
                         ->required(),
                     TextInput::make('nomor_telepon')
                         ->label('Nomor Telepon')

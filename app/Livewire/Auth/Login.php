@@ -19,10 +19,10 @@ class Login extends Component
 
         if(Auth::attempt(['email' => $this->email, 'password'=> $this->password])) {
 
-            if (\auth()->user()->isSuperAdmin()){
+            if (isAdmin()){
                 return redirect()->to('/admin');
             }
-            elseif (\auth()->user()->isNotSuperAdmin()) {
+            elseif (isNotAdmin()) {
                 return redirect()->to('/santri');
             }
             else{

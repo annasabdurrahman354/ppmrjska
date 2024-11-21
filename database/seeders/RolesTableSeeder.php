@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\Role;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -25,7 +26,43 @@ class RolesTableSeeder extends Seeder
 
         DB::table('roles')->insert(
             [
-                'name' => 'dmcp_keilmuan',
+                'name' => Role::DMC_PASUS_KEILMUAN,
+                'guard_name' => 'web',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        );
+
+        DB::table('roles')->insert(
+            [
+                'name' => Role::TIM_KEILMUAN,
+                'guard_name' => 'web',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        );
+
+        DB::table('roles')->insert(
+            [
+                'name' => Role::DMC_PASUS_KEDISIPLINAN,
+                'guard_name' => 'web',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        );
+
+        DB::table('roles')->insert(
+            [
+                'name' => Role::DMC_PASUS_KOORDINATOR,
+                'guard_name' => 'web',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        );
+
+        DB::table('roles')->insert(
+            [
+                'name' => Role::DMC_PASUS_SEKRETARIS,
                 'guard_name' => 'web',
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -52,7 +89,7 @@ class RolesTableSeeder extends Seeder
 
         DB::table('roles')->insert(
             [
-                'name' => 'ketua_kelas',
+                'name' => Role::KETUA_KELAS,
                 'guard_name' => 'web',
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -61,7 +98,7 @@ class RolesTableSeeder extends Seeder
 
         DB::table('roles')->insert(
             [
-                'name' => 'santri',
+                'name' => Role::SANTRI,
                 'guard_name' => 'web',
                 'created_at' => now(),
                 'updated_at' => now(),

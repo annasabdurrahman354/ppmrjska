@@ -26,7 +26,6 @@ class ManageMail extends SettingsPage
 
     protected static string $settings = PengaturanMail::class;
 
-    protected static ?int $navigationSort = -1;
     protected static ?string $navigationIcon = 'heroicon-o-envelope';
 
     /**

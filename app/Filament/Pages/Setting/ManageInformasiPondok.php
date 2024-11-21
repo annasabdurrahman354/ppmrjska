@@ -20,8 +20,7 @@ class ManageInformasiPondok extends SettingsPage
     use HasPageShield;
     protected static string $settings = PengaturanInformasiPondok::class;
 
-    protected static ?int $navigationSort = -2;
-    protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
+    protected static ?string $navigationIcon = 'heroicon-o-information-circle';
 
     /**
      * @var array<string, mixed> | null
@@ -147,7 +146,7 @@ class ManageInformasiPondok extends SettingsPage
 
     public function getTitle(): string|Htmlable
     {
-        return 'Informasi Pondok';
+        return 'Pengaturan Informasi Pondok';
     }
 
     public function getHeading(): string|Htmlable

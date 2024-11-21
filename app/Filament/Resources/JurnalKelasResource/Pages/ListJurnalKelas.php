@@ -67,7 +67,7 @@ class ListJurnalKelas extends ListRecords
         $user =  auth()->user();
         $model = (new (static::$resource::getModel()))->query();
 
-        if (isNotSuperAdmin() && !isKeilmuan()){
+        if (isNotAdmin() && !isKeilmuan()){
             $model = $model->where('jenis_kelamin', $user->jenis_kelamin);
         }
 

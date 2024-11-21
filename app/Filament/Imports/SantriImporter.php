@@ -36,7 +36,7 @@ class SantriImporter extends Importer
             ImportColumn::make('nama')
                 ->requiredMapping()
                 ->guess(['Nama', 'Nama Lengkap'])
-                ->rules(['required', 'max:255'])
+                ->rules(['max:255'])
                 ->castStateUsing(function ($state): ?string {
                     if (blank($state)) {
                         return null;
@@ -46,7 +46,7 @@ class SantriImporter extends Importer
             ImportColumn::make('nama_panggilan')
                 ->requiredMapping()
                 ->guess(['Nama Panggilan'])
-                ->rules(['required', 'max:64'])
+                ->rules(['max:64'])
                 ->castStateUsing(function ($state): ?string {
                     if (blank($state)) {
                         return null;
@@ -55,26 +55,26 @@ class SantriImporter extends Importer
                 }),
             ImportColumn::make('jenis_kelamin')
                 ->requiredMapping()
-                ->rules(['required', 'max:255'])
+                ->rules(['max:255'])
                 ->examples(array_column(JenisKelamin::cases(), 'value')),
             ImportColumn::make('nis')
                 ->requiredMapping()
                 ->guess(['Nomor Induk Santri'])
-                ->rules(['required', 'max:9']),
+                ->rules(['max:9']),
             ImportColumn::make('nomor_telepon')
                 ->requiredMapping()
-                ->rules(['required', 'max:16']),
+                ->rules(['max:16']),
             ImportColumn::make('email')
                 ->requiredMapping()
-                ->rules(['required', 'email', 'max:255','unique:users,email']),
+                ->rules(['email', 'max:255','unique:users,email']),
             ImportColumn::make('angkatan_pondok')
                 ->requiredMapping()
                 ->numeric()
-                ->rules(['required', 'integer'])
+                ->rules(['integer'])
                 ->examples([2021,2022,2023]),
             ImportColumn::make('status_pondok')
                 ->requiredMapping()
-                ->rules(['required', 'max:255'])
+                ->rules(['max:255'])
                 ->examples(array_column(StatusPondok::cases(), 'value')),
             ImportColumn::make('tanggal_lulus_pondok')
                 ->rules(['date']),
@@ -85,37 +85,37 @@ class SantriImporter extends Importer
             ImportColumn::make('tahun_pendaftaran')
                 ->requiredMapping()
                 ->numeric()
-                ->rules(['required', 'integer'])
+                ->rules(['integer'])
                 ->examples([2021, 2022, 2023]),
             ImportColumn::make('nik')
                 ->requiredMapping()
                 ->guess(['Nomor Induk Kependudukan'])
-                ->rules(['required', 'max:16','unique:biodata_santri,nik']),
+                ->rules(['max:16','unique:biodata_santri,nik']),
             ImportColumn::make('tempat_lahir_id')
-                ->requiredMapping()
+
                 ->guess(['Tempat Lahir', 'Kota Lahir']),
             ImportColumn::make('tanggal_lahir')
                 ->requiredMapping()
-                ->rules(['required', 'date']),
+                ->rules(['date']),
             ImportColumn::make('kewarganegaraan')
                 ->requiredMapping()
-                ->rules(['required', 'max:255'])
+                ->rules(['max:255'])
                 ->examples(array_column(Kewarganegaraan::cases(), 'value')),
             ImportColumn::make('golongan_darah')
                 ->requiredMapping()
-                ->rules(['required', 'max:255'])
+                ->rules(['max:255'])
                 ->examples(array_column(GolonganDarah::cases(), 'value')),
             ImportColumn::make('ukuran_baju')
                 ->requiredMapping()
-                ->rules(['required', 'max:255'])
+                ->rules(['max:255'])
                 ->examples(array_column(UkuranBaju::cases(), 'value')),
             ImportColumn::make('pendidikan_terakhir')
                 ->requiredMapping()
-                ->rules(['required', 'max:255'])
+                ->rules(['max:255'])
                 ->examples(array_column(PendidikanTerakhir::cases(), 'value')),
             ImportColumn::make('program_studi')
                 ->requiredMapping()
-                ->rules(['required', 'max:255'])
+                ->rules(['max:255'])
                 ->examples(['S1 Kedokteran', 'D3 Teknik Informatika', 'D4 Teknik Sipil','STRATA SPASI NAMA PRODI'])
                 ->castStateUsing(function ($state): ?string {
                     if (blank($state)) {
@@ -125,7 +125,7 @@ class SantriImporter extends Importer
                 }),
             ImportColumn::make('universitas')
                 ->requiredMapping()
-                ->rules(['required', 'max:255'])
+                ->rules(['max:255'])
                 ->examples(['Universitas Sebelas Maret', 'Universitas Muhammadiyah Surakarta', 'JANGAN DISIKNGKAT'])
                 ->castStateUsing(function ($state): ?string {
                     if (blank($state)) {
@@ -136,17 +136,17 @@ class SantriImporter extends Importer
             ImportColumn::make('angkatan_kuliah')
                 ->requiredMapping()
                 ->numeric()
-                ->rules(['required', 'integer'])
+                ->rules(['integer'])
                 ->examples([2021,2022,2023]),
             ImportColumn::make('status_kuliah')
                 ->requiredMapping()
-                ->rules(['required', 'max:255'])
+                ->rules(['max:255'])
                 ->examples(array_column(StatusKuliah::cases(), 'value')),
             ImportColumn::make('tanggal_lulus_kuliah')
                 ->rules(['date']),
             ImportColumn::make('alamat')
                 ->requiredMapping()
-                ->rules(['required', 'max:255'])
+                ->rules(['max:255'])
                 ->castStateUsing(function ($state): ?string {
                     if (blank($state)) {
                         return null;
@@ -163,7 +163,7 @@ class SantriImporter extends Importer
                 ->guess(['Kelurahan']),
             ImportColumn::make('asal_kelompok')
                 ->requiredMapping()
-                ->rules(['required', 'max:96'])
+                ->rules(['max:96'])
                 ->castStateUsing(function ($state): ?string {
                     if (blank($state)) {
                         return null;
@@ -172,7 +172,7 @@ class SantriImporter extends Importer
                 }),
             ImportColumn::make('asal_desa')
                 ->requiredMapping()
-                ->rules(['required', 'max:96'])
+                ->rules(['max:96'])
                 ->castStateUsing(function ($state): ?string {
                     if (blank($state)) {
                         return null;
@@ -181,7 +181,7 @@ class SantriImporter extends Importer
                 }),
             ImportColumn::make('asal_daerah')
                 ->requiredMapping()
-                ->rules(['required', 'max:96'])
+                ->rules(['max:96'])
                 ->castStateUsing(function ($state): ?string {
                     if (blank($state)) {
                         return null;
@@ -190,35 +190,35 @@ class SantriImporter extends Importer
                 }),
             ImportColumn::make('mulai_mengaji')
                 ->requiredMapping()
-                ->rules(['required', 'max:255'])
+                ->rules(['max:255'])
                 ->examples(array_column(MulaiMengaji::cases(), 'value')),
             ImportColumn::make('bahasa_makna')
                 ->requiredMapping()
-                ->rules(['required', 'max:255'])
+                ->rules(['max:255'])
                 ->examples(array_column(BahasaMakna::cases(), 'value')),
             ImportColumn::make('status_pernikahan')
                 ->requiredMapping()
-                ->rules(['required', 'max:255'])
+                ->rules(['max:255'])
                 ->examples(array_column(StatusPernikahan::cases(), 'value')),
             ImportColumn::make('status_tinggal')
                 ->requiredMapping()
-                ->rules(['required', 'max:255'])
+                ->rules(['max:255'])
                 ->examples(array_column(StatusTinggal::cases(), 'value')),
             ImportColumn::make('status_orangtua')
                 ->requiredMapping()
-                ->rules(['required', 'max:255'])
+                ->rules(['max:255'])
                 ->examples(array_column(StatusOrangTua::cases(), 'value')),
             ImportColumn::make('jumlah_saudara')
                 ->requiredMapping()
                 ->numeric()
-                ->rules(['required', 'integer']),
+                ->rules(['integer']),
             ImportColumn::make('anak_nomor')
                 ->requiredMapping()
                 ->numeric()
-                ->rules(['required', 'integer']),
+                ->rules(['integer']),
             ImportColumn::make('nama_ayah')
                 ->requiredMapping()
-                ->rules(['required', 'max:255'])
+                ->rules(['max:255'])
                 ->castStateUsing(function ($state): ?string {
                     if (blank($state)) {
                         return null;
@@ -246,7 +246,7 @@ class SantriImporter extends Importer
                 }),
             ImportColumn::make('nama_ibu')
                 ->requiredMapping()
-                ->rules(['required', 'max:255'])
+                ->rules(['max:255'])
                 ->castStateUsing(function ($state): ?string {
                     if (blank($state)) {
                         return null;

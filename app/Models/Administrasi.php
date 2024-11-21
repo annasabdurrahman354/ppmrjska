@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Enums\JenisAdministrasi;
 use App\Enums\JenisTagihan;
-use App\Enums\PeriodeTagihan;
 use App\Enums\StatusTagihan;
 use Askedio\SoftCascade\Traits\SoftCascadeTrait;
 use Illuminate\Database\Eloquent\Casts\Attribute;

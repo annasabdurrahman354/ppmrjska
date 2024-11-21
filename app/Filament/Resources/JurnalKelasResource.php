@@ -13,17 +13,13 @@ use App\Models\MateriHimpunan;
 use App\Models\MateriSurat;
 use App\Models\MateriTambahan;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
-use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
-use Filament\Forms\Set;
-use Filament\Notifications\Notification;
 use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
@@ -247,15 +243,15 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
             ->actions([
                 Tables\Actions\ViewAction::make()
                     ->visible(function (JurnalKelas $record){
-                        return auth()->user()->cekPerekap($record) || isKedisiplinan() || isKeilmuan() || isSuperAdmin();
+                        return auth()->user()->cekPerekap($record) || isKedisiplinan() || isKeilmuan() || isAdmin();
                     }),
                 Tables\Actions\EditAction::make()
                     ->visible(function (JurnalKelas $record){
-                        return auth()->user()->cekPerekap($record) || isKedisiplinan() || isKeilmuan() || isSuperAdmin();
+                        return auth()->user()->cekPerekap($record) || isKedisiplinan() || isKeilmuan() || isAdmin();
                     }),
                 Tables\Actions\DeleteAction::make()
                     ->visible(function (JurnalKelas $record){
-                        return auth()->user()->cekPerekap($record) || isKedisiplinan() || isKeilmuan() || isSuperAdmin();
+                        return auth()->user()->cekPerekap($record) || isKedisiplinan() || isKeilmuan() || isAdmin();
                     })
                     ->requiresConfirmation(),
                 Action::make('updateMateriRekaman')
@@ -293,7 +289,7 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                     ->label('Lihat Rekaman')
                     ->modalSubmitAction(false)
                     ->visible(function (JurnalKelas $record){
-                        return auth()->user()->cekKehadiran($record) || isSuperAdmin();
+                        return auth()->user()->cekKehadiran($record) || isAdmin();
                     })
                     ->color('info')
                     ->disabledForm()
@@ -454,7 +450,7 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
                     Tables\Actions\DeleteBulkAction::make()
                         ->requiresConfirmation()
                         ->visible(function (){
-                            return isKedisiplinan() || isKeilmuan() || isSuperAdmin();
+                            return isKedisiplinan() || isKeilmuan() || isAdmin();
                         })
                 ]),
             ])

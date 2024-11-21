@@ -13,9 +13,9 @@
 
         <title>
             @if(View::hasSection('title'))
-                @yield('title') - {{ $pengaturan_umum->brand_name }}
+                @yield('title') - {{ $pengaturan_website->brand_name }}
             @else
-                {{ $pengaturan_umum->brand_name }}
+                {{ $pengaturan_website->brand_name }}
             @endif
         </title>
 

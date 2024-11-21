@@ -45,7 +45,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
     use HasApiTokens, HasFactory, Notifiable;
     use HasPanelShield;
     use HasRoles, HasUlids, SoftDeletes;
-    use InteractsWithMedia, HasApiTokens, Notifiable;
+    use InteractsWithMedia;
     use SoftCascadeTrait;
 
     protected $softCascade = ['biodataSantri'];
@@ -101,18 +101,9 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
         return $this->nama;
     }
 
-    public function canAccessPanel(Panel $panel): bool
-    {
-        if ($panel->getId() === 'admin') {
-            return $this->isSuperAdmin();
-        }
-
-        return true;
-    }
-
     public function getFilamentAvatarUrl(): ?string
     {
-        return $this->getFirstMediaUrl('avatar', 'thumb')
+        return $this->getFirstMediaUrl('user_avatar', 'thumb')
             ??
             "https://ui-avatars.com/api/?background=random&size=256&rounded=true&name=".str_replace(" ", "+", $this->nama);
     }
@@ -120,6 +111,15 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
     public function getAvatarUrl()
     {
         return filament()->getUserAvatarUrl($this);
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        if ($panel->getId() === 'admin') {
+            return $this->isAdmin();
+        }
+
+        return true;
     }
 
     public function angkatanPondok(): BelongsTo
@@ -218,14 +218,9 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
         return $this->nama;
     }
 
-    public function isSuperAdmin(): bool
+    public function isAdmin(): bool
     {
         return $this->hasRole(config('filament-shield.super_admin.name'));
-    }
-
-    public function isNotSuperAdmin(): bool
-    {
-        return !$this->hasRole(config('filament-shield.super_admin.name'));
     }
 
     public function scopeWhereKelas(Builder $query, string $kelas): void
@@ -326,12 +321,12 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
                         ->native(false),
                     DateTimePicker::make('email_verified_at')
                         ->label('Email Terverifikasi Pada')
-                        ->disabled(fn (string $operation) => auth()->user()->isNotSuperAdmin()),
+                        ->disabled(fn (string $operation) => isNotAdmin()),
                     TextInput::make('password')
                         ->password()
                         ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
                         ->dehydrated(fn (?string $state): bool => filled($state))
-                        ->disabled(fn (string $operation) => auth()->user()->isNotSuperAdmin())
+                        ->disabled(fn (string $operation) => isNotAdmin())
                         ->required(fn (string $operation): bool => $operation === 'create'),
                 ])
                 ->columns([
@@ -395,7 +390,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
 
     protected static function booted(): void
     {
-        //static::addGlobalScope('notSuperAdmin', function (Builder $builder) {
+        //static::addGlobalScope('notAdmin', function (Builder $builder) {
         //    $builder->where('angkatan_pondok', '!=', 0);
         //});
 
@@ -406,6 +401,6 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
 
     public function scopeForAuthentication(Builder $query): Builder
     {
-        return $query->withoutGlobalScope('notSuperAdmin');
+        return $query->withoutGlobalScope('notAdmin');
     }
 }

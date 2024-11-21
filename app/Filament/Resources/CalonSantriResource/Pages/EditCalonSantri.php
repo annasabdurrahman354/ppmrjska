@@ -14,7 +14,7 @@ class EditCalonSantri extends EditRecord
     {
         return [
             Actions\DeleteAction::make()
-                ->visible(isSuperAdmin()),
+                ->visible(isAdmin()),
         ];
     }
 

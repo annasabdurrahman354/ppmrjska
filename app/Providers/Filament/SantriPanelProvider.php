@@ -7,6 +7,7 @@ use App\Filament\Pages\KetercapaianMateri\KetercapaianMateri;
 use App\Filament\Pages\Munaqosah\Munaqosah;
 use App\Filament\Pages\Profile;
 use App\Filament\Pages\RekapKehadiran\RekapKehadiran;
+use App\Filament\Pages\TargetMateri\TargetMateri;
 use App\Filament\Resources\JadwalMunaqosahResource;
 use App\Filament\Resources\JurnalKelasResource;
 use App\Filament\Resources\KurikulumResource;
@@ -70,6 +71,7 @@ class SantriPanelProvider extends PanelProvider
             ->pages([
                 Pages\Dashboard::class,
                 FormulirPresensi::class,
+                TargetMateri::class,
                 KetercapaianMateri::class,
                 RekapKehadiran::class,
                 Munaqosah::class,

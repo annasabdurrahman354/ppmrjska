@@ -10,6 +10,7 @@ use App\Models\AngkatanPondok;
 use App\Models\JurnalKelas;
 use App\Models\PresensiKelas;
 use App\Models\User;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\Section;
@@ -24,6 +25,7 @@ class FormulirPresensi extends Page implements HasForms, HasActions
 {
     use InteractsWithActions;
     use InteractsWithForms;
+    use HasPageShield;
 
     protected static ?string $slug = 'formulir-presensi';
     protected static ?string $navigationLabel = 'Formulir Presensi';

@@ -20,6 +20,7 @@
         "bezhansalleh/filament-shield": "^3.2",
         "codeat3/blade-fluentui-system-icons": "^1.33",
         "dotswan/filament-map-picker": "^1.2",
+        "eightynine/filament-excel-import": "^3.1",
         "eightynine/filament-reports": "^3.0",
         "filament/filament": "^3.2.45",
         "filament/spatie-laravel-google-fonts-plugin": "^3.2",

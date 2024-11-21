@@ -14,7 +14,7 @@ class ViewCalonSantri extends ViewRecord
     {
         return [
             Actions\EditAction::make()
-                ->visible(isSuperAdmin()),
+                ->visible(isAdmin()),
         ];
     }
 }

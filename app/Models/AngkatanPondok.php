@@ -48,21 +48,25 @@ class AngkatanPondok extends Model
                 ->boolean('Ya',  'Tidak')
                 ->grouped()
                 ->inline()
-                ->default(false)
                 ->required()
+                ->afterStateHydrated(function (ToggleButtons $component, Get $get) {
+                    $component->state($get('kelas') == 'Takmili');
+                })
                 ->afterStateUpdated(function ($state, Get $get, Set $set){
-                    if ($state) {
+                    if($state) {
                         $set('kelas', 'Takmili');
                     }
                     else {
                         $set('kelas', (string) $get('angkatan_pondok'));
+                        $set('tanggal_masuk_takmili', null);
                     }
                 })
                 ->live(),
             Hidden::make('kelas'),
             DatePicker::make('tanggal_masuk_takmili')
                 ->label('Tanggal Masuk Takmili')
-                ->visible(fn (Get $get) => $get('is_takmili') == true)
+                ->disabled(fn (Get $get) => $get('is_takmili') == false)
+                ->dehydrated(fn (Get $get) => $get('is_takmili') == false ? true : true)
                 ->required(fn (Get $get) => $get('is_takmili') == true)
         ];
     }

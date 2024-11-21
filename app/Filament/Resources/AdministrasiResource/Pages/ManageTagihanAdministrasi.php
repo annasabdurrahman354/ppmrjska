@@ -170,19 +170,19 @@ class ManageTagihanAdministrasi extends ManageRelatedRecords
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
-                    ->visible(isSuperAdmin()),
+                    ->visible(isAdmin()),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
-                    ->visible(isSuperAdmin()),
+                    ->visible(isAdmin()),
                 Tables\Actions\EditAction::make()
-                    ->visible(isSuperAdmin()),
+                    ->visible(isAdmin()),
                 Tables\Actions\DeleteAction::make()
-                    ->visible(isSuperAdmin()),
+                    ->visible(isAdmin()),
             ])
             ->groupedBulkActions([
                 Tables\Actions\DeleteBulkAction::make()
-                    ->visible(isSuperAdmin()),
+                    ->visible(isAdmin()),
             ]);
     }
 }

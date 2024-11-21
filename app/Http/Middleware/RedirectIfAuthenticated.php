@@ -21,10 +21,10 @@ class RedirectIfAuthenticated
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
-                if (auth()->user()->isSuperAdmin()){
+                if (isAdmin()){
                     return redirect('/admin');
                 }
-                elseif (!auth()->user()->isSuperAdmin()) {
+                elseif (isNotAdmin()) {
                     return redirect('/santri');
                 }
                 else{

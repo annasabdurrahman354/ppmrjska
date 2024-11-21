@@ -243,7 +243,7 @@ class MateriMunaqosah extends Model
                     TableRepeater::make('jadwalMunaqosah')
                         ->hiddenLabel()
                         ->addable()
-                        ->addActionLabel('Tambah Jadwal +')
+                        ->addActionLabel('+ Tambah Jadwal')
                         ->deletable()
                         ->relationship('jadwalMunaqosah')
                         ->headers([
@@ -275,6 +275,7 @@ class MateriMunaqosah extends Model
                                 ->relationship('plotJadwalMunaqosah')
                                 ->streamlined()
                                 ->renderHeader(false)
+                                ->default([])
                                 ->maxItems(fn (Get $get) => $get('maksimal_pendaftar'))
                                 ->headers([
                                     Header::make('Santri'),

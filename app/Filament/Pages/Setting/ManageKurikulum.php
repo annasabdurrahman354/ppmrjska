@@ -3,25 +3,18 @@
 namespace App\Filament\Pages\Setting;
 
 use App\Enums\Semester;
-use App\Mail\TestMail;
 use App\Models\TahunAjaran;
 use App\Settings\Admin\PengaturanKurikulum;
-use App\Settings\Admin\PengaturanMail;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\SettingsPage;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\Facades\Mail;
 use function Filament\Support\is_app_url;
 
 class ManageKurikulum extends SettingsPage
@@ -30,8 +23,7 @@ class ManageKurikulum extends SettingsPage
 
     protected static string $settings = PengaturanKurikulum::class;
 
-    protected static ?int $navigationSort = -1;
-    protected static ?string $navigationIcon = 'heroicon-o-envelope';
+    protected static ?string $navigationIcon = 'heroicon-o-book-open';
 
     /**
      * @var array<string, mixed> | null
@@ -146,7 +138,7 @@ class ManageKurikulum extends SettingsPage
 
     public function getTitle(): string|Htmlable
     {
-        return 'Kurikulum';
+        return 'Pengaturan Kurikulum';
     }
 
     public function getHeading(): string|Htmlable

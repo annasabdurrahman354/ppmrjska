@@ -4,10 +4,12 @@ namespace App\Filament\Pages\RekapKehadiran;
 
 use App\Enums\JenisKelamin;
 use App\Enums\StatusKehadiran;
+use App\Enums\StatusPondok;
 use App\Filament\Exports\KehadiranExporter;
 use App\Models\AngkatanPondok;
 use App\Models\PresensiKelas;
 use App\Models\User;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Carbon\Carbon;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
@@ -27,6 +29,8 @@ use Livewire\Attributes\Url;
 class RekapKehadiran extends Page implements HasTable
 {
     use InteractsWithTable;
+    use HasPageShield;
+
     protected static ?string $slug = 'rekap-kehadiran';
     protected static ?string $navigationLabel = 'Rekap Kehadiran';
     protected static ?string $navigationGroup = 'Manajemen Kelas';
@@ -162,6 +166,12 @@ class RekapKehadiran extends Page implements HasTable
                     ->sortable()
                     ->searchable(),
 
+                TextColumn::make('status_pondok')
+                    ->label('Status Pondok')
+                    ->badge()
+                    ->searchable()
+                    ->sortable(),
+
                 TextColumn::make('hadir_percentage')
                     ->label('Hadir')
                     ->sortable(query: function (Builder $query, string $direction): Builder {
@@ -284,6 +294,12 @@ class RekapKehadiran extends Page implements HasTable
                     ->label('Jenis Kelamin')
                     ->multiple()
                     ->options(JenisKelamin::class),
+
+                SelectFilter::make('status_pondok')
+                    ->label('Status Pondok')
+                    ->multiple()
+                    ->default(['aktif', 'sambang', 'keperluan akademik'])
+                    ->options(StatusPondok::class),
 
                 Filter::make('date_range')
                     ->columnSpan(2)

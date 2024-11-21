@@ -16,7 +16,13 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class AngkatanPondokResource extends Resource
 {
     protected static ?string $model = AngkatanPondok::class;
+    protected static ?string $slug = 'angkatan-pondok';
+    protected static ?string $modelLabel = 'Angkatan Pondok';
+    protected static ?string $pluralModelLabel = 'Angkatan Pondok';
+    protected static ?string $navigationLabel = 'Angkatan Pondok';
+    protected static ?string $recordTitleAttribute = 'angkatan_pondok';
 
+    protected static ?string $navigationGroup = 'Pengaturan';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
@@ -55,12 +61,8 @@ class AngkatanPondokResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
             ]);
     }
 

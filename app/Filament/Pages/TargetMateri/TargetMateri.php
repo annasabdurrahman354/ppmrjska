@@ -12,6 +12,7 @@ use App\Models\MateriTambahan;
 use App\Models\PlotKurikulum;
 use App\Models\PlotKurikulumMateri;
 use App\Models\User;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
@@ -28,6 +29,8 @@ class TargetMateri extends Page implements HasForms, HasActions
 {
     use InteractsWithActions;
     use InteractsWithForms;
+    use HasPageShield;
+
     protected static ?string $slug = 'target-materi';
     protected static ?string $navigationLabel = 'Target Materi';
     protected static ?string $navigationGroup = 'Manajemen Kelas';

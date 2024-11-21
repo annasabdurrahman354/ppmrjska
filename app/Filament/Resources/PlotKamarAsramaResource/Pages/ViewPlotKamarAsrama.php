@@ -21,13 +21,6 @@ class ViewPlotKamarAsrama extends ViewRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        // Example: Manipulate data before filling the form
-        if (isset($data['tahun_ajaran'])) {
-            list($tahun_awal, $tahun_akhir) = explode('/', $data['tahun_ajaran']);
-            $data['tahun_ajaran_awal'] = $tahun_awal;
-            $data['tahun_ajaran_akhir'] = $tahun_akhir;
-        }
-
         // Retrieve asrama data from the database
         $asramaData = Asrama::with(['kamarAsrama'])->get();
 

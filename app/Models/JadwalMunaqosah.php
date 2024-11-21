@@ -115,7 +115,7 @@ class JadwalMunaqosah extends Model
                         ->required(),
                 ]),
 
-            Section::make('Plot Jadwal Munaqosah')
+            Section::make('Pendaftar Jadwal Munaqosah')
                 ->schema([
                     TableRepeater::make('plotJadwalMunaqosah')
                         ->hiddenLabel()

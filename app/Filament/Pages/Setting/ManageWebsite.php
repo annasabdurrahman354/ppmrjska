@@ -23,8 +23,7 @@ class ManageWebsite extends SettingsPage
     use HasPageShield;
     protected static string $settings = PengaturanWebsite::class;
 
-    protected static ?int $navigationSort = -2;
-    protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
+    protected static ?string $navigationIcon = 'heroicon-o-globe-alt';
 
     /**
      * @var array<string, mixed> | null
@@ -192,7 +191,7 @@ class ManageWebsite extends SettingsPage
 
     public function getTitle(): string|Htmlable
     {
-        return 'Website';
+        return 'Pengaturan Website';
     }
 
     public function getHeading(): string|Htmlable

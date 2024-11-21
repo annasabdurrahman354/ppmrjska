@@ -42,7 +42,7 @@ class KurikulumResource extends Resource
     protected static ?string $navigationLabel = 'Kurikulum';
     protected static ?string $navigationGroup = 'Manajemen Kurikulum';
     protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
-    protected static ?int $navigationSort = 52;
+    protected static ?int $navigationSort = 51;
 
     public static function form(Form $form): Form
     {

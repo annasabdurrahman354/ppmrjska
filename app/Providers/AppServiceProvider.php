@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Settings\Admin\PengaturanInformasiPondok;
 use App\Settings\Admin\PengaturanWebsite;
 use BezhanSalleh\PanelSwitch\PanelSwitch;
 use Carbon\Carbon;
@@ -43,7 +44,8 @@ class AppServiceProvider extends ServiceProvider
                 ->defaultSort('created_at', 'desc');
         });
 
-        View::share('pengaturan_umum', app(PengaturanWebsite::class));
+        View::share('pengaturan_website', app(PengaturanWebsite::class));
+        View::share('pengaturan_informasi_pondok', app(PengaturanInformasiPondok::class));
 
         FilamentAsset::register([
             //Js::make('html5-qrcode', 'https://unpkg.com/html5-qrcode')->loadedOnRequest(),

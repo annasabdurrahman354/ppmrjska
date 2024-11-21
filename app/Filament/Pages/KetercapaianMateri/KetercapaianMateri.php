@@ -9,6 +9,7 @@ use App\Models\MateriHimpunan;
 use App\Models\MateriSurat;
 use App\Models\MateriTambahan;
 use App\Models\PlotKurikulum;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
@@ -19,6 +20,8 @@ use Filament\Support\Enums\IconPosition;
 class KetercapaianMateri extends Page implements HasActions
 {
     use InteractsWithActions;
+    use HasPageShield;
+
     protected static ?string $slug = 'ketercapaian-materi';
     protected static ?string $navigationLabel = 'Ketercapaian Materi';
     protected static ?string $navigationGroup = 'Manajemen Kelas';

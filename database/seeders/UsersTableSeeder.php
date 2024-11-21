@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\Role;
 use App\Models\BiodataSantri;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -18,13 +19,13 @@ class UsersTableSeeder extends Seeder
 
         DB::table('users')->insert([
             'id' => $sid,
-            'email' => 'superadmin@ppmrjska.web.id',
+            'email' => 'admin@ppmrjska.web.id',
             'email_verified_at' => now(),
-            'password' => Hash::make('superadmin'),
+            'password' => Hash::make('adminadmin'),
             'created_at' => now(),
             'updated_at' => now(),
-            'nama' => 'Super Admin',
-            'nama_panggilan' => "Super Admin",
+            'nama' => 'Admin',
+            'nama_panggilan' => "Admin",
             'jenis_kelamin' => "laki-laki",
             'nis' => "0",
             'nomor_telepon' => "0",
@@ -57,19 +58,23 @@ class UsersTableSeeder extends Seeder
         ]);
 
         BiodataSantri::factory(2)->create()->each(function ($biodata) {
-            $biodata->user->assignRole('santri');
+            $biodata->user->assignRole(Role::SANTRI);
             Artisan::call('shield:super-admin', ['--user' => $biodata->user->id]);
         });
         BiodataSantri::factory(50)->create()->each(function ($biodata) {
-            $biodata->user->assignRole('santri');
+            $biodata->user->assignRole(Role::SANTRI);
         });
         BiodataSantri::factory(6)->create()->each(function ($biodata) {
-            $biodata->user->assignRole('santri');
-            $biodata->user->assignRole('dmcp_keilmuan');
+            $biodata->user->assignRole(Role::SANTRI);
+            $biodata->user->assignRole(Role::DMC_PASUS_KEILMUAN);
+        });
+        BiodataSantri::factory(6)->create()->each(function ($biodata) {
+            $biodata->user->assignRole(Role::SANTRI);
+            $biodata->user->assignRole(Role::DMC_PASUS_KEDISIPLINAN);
         });
         BiodataSantri::factory(12)->create()->each(function ($biodata) {
-            $biodata->user->assignRole('santri');
-            $biodata->user->assignRole('ketua_kelas');
+            $biodata->user->assignRole(Role::SANTRI);
+            $biodata->user->assignRole(Role::KETUA_KELAS);
         });
     }
 }

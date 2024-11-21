@@ -3,20 +3,22 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\TahunAjaranResource\Pages;
-use App\Filament\Resources\TahunAjaranResource\RelationManagers;
 use App\Models\TahunAjaran;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class TahunAjaranResource extends Resource
 {
     protected static ?string $model = TahunAjaran::class;
+    protected static ?string $slug = 'tahun-ajaran';
+    protected static ?string $modelLabel = 'Tahun Ajaran';
+    protected static ?string $pluralModelLabel = 'Tahun Ajaran';
+    protected static ?string $navigationLabel = 'Tahun Ajaran';
+    protected static ?string $recordTitleAttribute = 'tahun_ajaran';
 
+    protected static ?string $navigationGroup = 'Pengaturan';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
@@ -65,9 +67,6 @@ class TahunAjaranResource extends Resource
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
             ]);
     }
 

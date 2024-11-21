@@ -23,13 +23,6 @@ class EditPlotKamarAsrama extends EditRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        // Example: Manipulate data before filling the form
-        if (isset($data['tahun_ajaran'])) {
-            list($tahun_awal, $tahun_akhir) = explode('/', $data['tahun_ajaran']);
-            $data['tahun_ajaran_awal'] = $tahun_awal;
-            $data['tahun_ajaran_akhir'] = $tahun_akhir;
-        }
-
         // Retrieve asrama data from the database
         $asramaData = Asrama::with(['kamarAsrama'])->get();
 
@@ -63,9 +56,6 @@ class EditPlotKamarAsrama extends EditRecord
 
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        // Update TahunAjaran
-        $record->update(['tahun_ajaran' => $data['tahun_ajaran']]);
-
         // Delete all existing PlotKamarAsrama records for the given tahun_ajaran
         PlotKamarAsrama::where('tahun_ajaran', $data['tahun_ajaran'])->delete();
 

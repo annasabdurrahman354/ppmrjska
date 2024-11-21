@@ -43,31 +43,13 @@ class PlotKamarAsramaResource extends Resource
     {
         return $form
             ->schema([
-                Cluster::make([
-                    TextInput::make('tahun_ajaran_awal')
-                        ->hiddenLabel()
-                        ->required()
-                        ->numeric()
-                        ->default(date('Y'))
-                        ->live(onBlur: true)
-                        ->afterStateHydrated(function (Get $get, Set $set){
-                            $set('tahun_ajaran', $get('tahun_ajaran_awal').'/'.$get('tahun_ajaran_akhir'));
-                        }),
-                    TextInput::make('tahun_ajaran_akhir')
-                        ->hiddenLabel()
-                        ->required()
-                        ->numeric()
-                        ->default(date('Y')+1)
-                        ->gt('tahun_ajaran_awal')
-                        ->live(onBlur: true)
-                        ->afterStateHydrated(function (Get $get, Set $set){
-                            $set('tahun_ajaran', $get('tahun_ajaran_awal').'/'.$get('tahun_ajaran_akhir'));
-                        }),
-                    ])
+                Select::make('tahun_ajaran')
                     ->label('Tahun Ajaran')
-                    ->columnSpanFull(),
-
-                Hidden::make('tahun_ajaran'),
+                    ->options(TahunAjaran::all()->pluck('tahun_ajaran', 'tahun_ajaran'))
+                    ->searchable()
+                    ->preload()
+                    ->createOptionForm(TahunAjaran::getForm())
+                    ->required(),
 
                 Repeater::make('asrama')
                     ->hiddenLabel()

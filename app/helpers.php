@@ -32,37 +32,37 @@ if(! function_exists('getMediaFilename')) {
 
 if(!function_exists('isKedisiplinan')) {
     function isKedisiplinan() {
-        return auth()->user()->hasRole('dmcp_kedisiplinan');
+        return auth()->user()->hasRole(\App\Enums\Role::DMC_PASUS_KEDISIPLINAN);
     }
 }
 
 if(!function_exists('isKeilmuan')) {
     function isKeilmuan() {
-        return auth()->user()->hasRole('dmcp_keilmuan');
+        return auth()->user()->hasRole(\App\Enums\Role::DMC_PASUS_KEILMUAN) || auth()->user()->hasRole(\App\Enums\Role::TIM_KEILMUAN);
     }
 }
 
 if(!function_exists('isDmcPasus')) {
     function isDmcPasus() {
-        return auth()->user()->hasRole('dmcp%');
+        return auth()->user()->hasRole('DMC Pasus%');
     }
 }
 
-if(!function_exists('isSuperAdmin')) {
-    function isSuperAdmin() {
+if(!function_exists('isAdmin')) {
+    function isAdmin() {
         return auth()->user()->hasRole(config('filament-shield.super_admin.name'));
     }
 }
 
-if(!function_exists('isNotSuperAdmin')) {
-    function isNotSuperAdmin() {
+if(!function_exists('isNotAdmin')) {
+    function isNotAdmin() {
         return !auth()->user()->hasRole(config('filament-shield.super_admin.name'));
     }
 }
 
 if(!function_exists('cant')) {
     function cant($abilities) {
-        if (isSuperAdmin()){
+        if (isAdmin()){
             return false;
         }
         else return !auth()->user()->can($abilities);
@@ -71,7 +71,7 @@ if(!function_exists('cant')) {
 
 if(!function_exists('can')) {
     function can($abilities) {
-        if (isSuperAdmin()){
+        if (isAdmin()){
             return true;
         }
         else return auth()->user()->can($abilities);

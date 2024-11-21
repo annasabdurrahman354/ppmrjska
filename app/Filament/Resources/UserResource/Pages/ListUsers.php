@@ -36,7 +36,7 @@ class ListUsers extends ListRecords
                 $query->where('name', 'like', 'dmcp%');
             }));
             $tabs['Alumni'] = Tab::make()->query(fn ($query) => $query->where('tanggal_lulus_pondok', '!=', null));
-            $tabs['Super Admin'] = Tab::make()->query(fn ($query) => $query->with('roles')->whereRelation('roles', 'name', '=', config('filament-shield.super_admin.name')));
+            $tabs['Admin'] = Tab::make()->query(fn ($query) => $query->with('roles')->whereRelation('roles', 'name', '=', config('filament-shield.super_admin.name')));
         }
 
         return $tabs;
@@ -44,10 +44,9 @@ class ListUsers extends ListRecords
 
     protected function getTableQuery(): Builder
     {
-
         $model = (new (static::$resource::getModel()))->with('roles');
 
-        if (isNotSuperAdmin()) {
+        if (isNotAdmin()) {
             $model = $model->whereDoesntHave('roles', function ($query) {
                 $query->where('name', '=', config('filament-shield.super_admin.name'));
             });
