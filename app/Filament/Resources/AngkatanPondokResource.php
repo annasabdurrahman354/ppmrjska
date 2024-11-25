@@ -22,8 +22,10 @@ class AngkatanPondokResource extends Resource
     protected static ?string $navigationLabel = 'Angkatan Pondok';
     protected static ?string $recordTitleAttribute = 'angkatan_pondok';
 
-    protected static ?string $navigationGroup = 'Pengaturan';
+    protected static ?string $navigationGroup = 'Manajemen Kurikulum';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?int $navigationSort = 71;
+
 
     public static function form(Form $form): Form
     {

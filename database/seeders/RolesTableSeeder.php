@@ -17,15 +17,6 @@ class RolesTableSeeder extends Seeder
 
         DB::table('roles')->insert(
             [
-                'name' => 'super_admin',
-                'guard_name' => 'web',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
-        );
-
-        DB::table('roles')->insert(
-            [
                 'name' => Role::DMC_PASUS_KEILMUAN,
                 'guard_name' => 'web',
                 'created_at' => now(),

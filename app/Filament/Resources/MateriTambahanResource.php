@@ -23,7 +23,7 @@ class MateriTambahanResource extends Resource
     protected static ?string $navigationLabel = 'Materi Tambahan';
     protected static ?string $navigationGroup = 'Manajemen Kurikulum';
     protected static ?string $navigationIcon = 'heroicon-o-book-open';
-    protected static ?int $navigationSort = 74;
+    //protected static ?int $navigationSort = 74;
 
     public static function form(Form $form): Form
     {

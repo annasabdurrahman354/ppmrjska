@@ -22,7 +22,7 @@ class MateriSuratResource extends Resource
     protected static ?string $navigationLabel = 'Materi Surat';
     protected static ?string $navigationGroup = 'Manajemen Kurikulum';
     protected static ?string $navigationIcon = 'heroicon-o-book-open';
-    protected static ?int $navigationSort = 72;
+    //protected static ?int $navigationSort = 72;
 
     public static function form(Form $form): Form
     {

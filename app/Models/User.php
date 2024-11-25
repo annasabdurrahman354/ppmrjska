@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\JenisKelamin;
+use App\Enums\Role;
 use App\Enums\StatusKehadiran;
 use App\Enums\StatusPondok;
 use Askedio\SoftCascade\Traits\SoftCascadeTrait;
@@ -397,6 +398,12 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
 
         static::softDeleted(function ($record) {
             JurnalKelas::where('dewan_guru_type', $this::class)->where('dewan_guru_id', $record->id)->update(['dewan_guru_type' => null, 'dewan_guru_id' => null]);
+        });
+
+        static::created(function ($record) {
+            if(in_array($record->status_pondok->value, [StatusPondok::SAMBANG->value, StatusPondok::AKTIF->value, StatusPondok::KEPERLUAN_AKADEMIK->value])) {
+                $record->assignRole(Role::SANTRI->value);
+            }
         });
     }
 

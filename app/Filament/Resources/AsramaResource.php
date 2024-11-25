@@ -22,7 +22,7 @@ class AsramaResource extends Resource
     protected static ?string $navigationLabel = 'Asrama';
     protected static ?string $navigationGroup = 'Manajemen Administrasi';
     protected static ?string $navigationIcon = 'heroicon-o-building-office';
-    protected static ?int $navigationSort = 42;
+    //protected static ?int $navigationSort = 42;
 
     public static function form(Form $form): Form
     {

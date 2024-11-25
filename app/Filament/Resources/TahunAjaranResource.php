@@ -18,8 +18,9 @@ class TahunAjaranResource extends Resource
     protected static ?string $navigationLabel = 'Tahun Ajaran';
     protected static ?string $recordTitleAttribute = 'tahun_ajaran';
 
-    protected static ?string $navigationGroup = 'Pengaturan';
+    protected static ?string $navigationGroup = 'Manajemen Kurikulum';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?int $navigationSort = 72;
 
     public static function form(Form $form): Form
     {

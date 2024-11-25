@@ -22,7 +22,7 @@ class MateriHafalanResource extends Resource
     protected static ?string $navigationLabel = 'Materi Hafalan';
     protected static ?string $navigationGroup = 'Manajemen Kurikulum';
     protected static ?string $navigationIcon = 'heroicon-o-book-open';
-    protected static ?int $navigationSort = 75;
+    //protected static ?int $navigationSort = 75;
 
     public static function form(Form $form): Form
     {

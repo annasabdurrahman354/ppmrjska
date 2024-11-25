@@ -34,7 +34,7 @@ class PendaftaranResource extends Resource
     protected static ?string $navigationLabel = 'Pendaftaran';
     protected static ?string $navigationGroup = 'Manajemen Pendaftaran';
     protected static ?string $navigationIcon = 'heroicon-o-identification';
-    protected static ?int $navigationSort = 42;
+    protected static ?int $navigationSort = 41;
 
     public static function form(Form $form): Form
     {

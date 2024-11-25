@@ -17,8 +17,7 @@ class Login extends Component
             'password'  => 'required'
         ]);
 
-        if(Auth::attempt(['email' => $this->email, 'password'=> $this->password])) {
-
+        if(Auth::attempt(['email' => $this->email, 'password'=> $this->password], true)) {
             if (isAdmin()){
                 return redirect()->to('/admin');
             }
@@ -28,10 +27,9 @@ class Login extends Component
             else{
                 return redirect()->route('guest.index');
             }
-
         } else {
             session()->flash('error', 'Alamat Email atau Password Anda salah!.');
-            return redirect()->route('auth.login');
+            return redirect()->to('/login');
         }
     }
 

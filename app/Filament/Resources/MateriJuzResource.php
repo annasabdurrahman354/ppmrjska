@@ -22,7 +22,7 @@ class MateriJuzResource extends Resource
     protected static ?string $navigationLabel = 'Materi Juz';
     protected static ?string $navigationGroup = 'Manajemen Kurikulum';
     protected static ?string $navigationIcon = 'heroicon-o-book-open';
-    protected static ?int $navigationSort = 71;
+    //protected static ?int $navigationSort = 71;
 
     public static function form(Form $form): Form
     {

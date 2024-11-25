@@ -29,7 +29,7 @@ class DewanGuruResource extends Resource
     protected static ?string $navigationLabel = 'Dewan Guru';
     protected static ?string $navigationGroup = 'Manajemen Pengguna';
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
-    protected static ?int $navigationSort = 43;
+    //protected static ?int $navigationSort = 43;
 
     public static function form(Form $form): Form
     {

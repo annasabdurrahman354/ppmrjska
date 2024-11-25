@@ -45,7 +45,7 @@ class JurnalKelasResource extends Resource implements HasShieldPermissions
 
     protected static ?string $navigationGroup = 'Manajemen Kelas';
     protected static ?string $navigationIcon = 'heroicon-o-pencil-square';
-    protected static ?int $navigationSort = 51;
+    //protected static ?int $navigationSort = 51;
 
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 

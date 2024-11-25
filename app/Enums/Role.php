@@ -5,13 +5,14 @@ use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
 enum Role : string implements HasLabel {
-    case DMC_PASUS_KEILMUAN = 'DMC Pasus Keilmuan';
-    case TIM_KEILMUAN = 'Tim Keilmuan';
-    case DMC_PASUS_KEDISIPLINAN = 'DMC Pasus Kedisiplinan';
-    case DMC_PASUS_SEKRETARIS = 'DMC Pasus Sekretaris';
-    case DMC_PASUS_KOORDINATOR = 'DMC Pasus Koordinator';
-    case KETUA_KELAS = 'Ketua Kelas';
-    case SANTRI = 'Santri';
+    case SUPERADMIN = 'superadmin';
+    case DMC_PASUS_KEILMUAN = 'dmc pasus keilmuan';
+    case TIM_KEILMUAN = 'tim keilmuan';
+    case DMC_PASUS_KEDISIPLINAN = 'dmc pasus kedisiplinan';
+    case DMC_PASUS_SEKRETARIS = 'dmc pasus sekretaris';
+    case DMC_PASUS_KOORDINATOR = 'dmc pasus koordinator';
+    case KETUA_KELAS = 'ketua kelas';
+    case SANTRI = 'santri';
 
     public function getLabel(): ?string
     {

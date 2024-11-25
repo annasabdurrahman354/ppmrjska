@@ -41,6 +41,21 @@ class UsersTableSeeder extends Seeder
 
         DB::table('angkatan_pondok')->insert([
             [
+                'angkatan_pondok' => 2018,
+                'kelas' => "Takmili",
+                'tanggal_masuk_takmili' => now(),
+            ],
+            [
+                'angkatan_pondok' => 2019,
+                'kelas' => "Takmili",
+                'tanggal_masuk_takmili' => now(),
+            ],
+            [
+                'angkatan_pondok' => 2020,
+                'kelas' => "Takmili",
+                'tanggal_masuk_takmili' => now(),
+            ],
+            [
                 'angkatan_pondok' => 2021,
                 'kelas' => "Takmili",
                 'tanggal_masuk_takmili' => now(),
@@ -54,9 +69,14 @@ class UsersTableSeeder extends Seeder
                 'angkatan_pondok' => 2023,
                 'kelas' => "2023",
                 'tanggal_masuk_takmili' => null,
+            ],
+            [
+                'angkatan_pondok' => 2024,
+                'kelas' => "2024",
+                'tanggal_masuk_takmili' => null,
             ]
         ]);
-
+        /*
         BiodataSantri::factory(2)->create()->each(function ($biodata) {
             $biodata->user->assignRole(Role::SANTRI);
             Artisan::call('shield:super-admin', ['--user' => $biodata->user->id]);
@@ -76,6 +96,7 @@ class UsersTableSeeder extends Seeder
             $biodata->user->assignRole(Role::SANTRI);
             $biodata->user->assignRole(Role::KETUA_KELAS);
         });
+        */
     }
 }
 
