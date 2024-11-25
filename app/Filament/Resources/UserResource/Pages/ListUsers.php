@@ -8,6 +8,8 @@ use Filament\Pages\Concerns\ExposesTableToWidgets;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class ListUsers extends ListRecords
 {
@@ -19,6 +21,13 @@ class ListUsers extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
+            \EightyNine\ExcelImport\ExcelImportAction::make('import_santri')
+                ->label('Import Santri')
+                ->mutateBeforeValidationUsing(function(array $data): array{
+                    $data['id'] = Str::ulid();
+                    $data['password'] = Hash::make($data['password']);
+                    return $data;
+                }),
         ];
     }
 

@@ -3936,16 +3936,16 @@
         },
         {
             "name": "joshembling/image-optimizer",
-            "version": "v1.4.1",
+            "version": "v1.4.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/joshembling/image-optimizer.git",
-                "reference": "1798fdb54eb994ed653111f09663397ff2e6b194"
+                "reference": "9f4d2ddfaffc28b19b6f7181987f83e4fb97123c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/joshembling/image-optimizer/zipball/1798fdb54eb994ed653111f09663397ff2e6b194",
-                "reference": "1798fdb54eb994ed653111f09663397ff2e6b194",
+                "url": "https://api.github.com/repos/joshembling/image-optimizer/zipball/9f4d2ddfaffc28b19b6f7181987f83e4fb97123c",
+                "reference": "9f4d2ddfaffc28b19b6f7181987f83e4fb97123c",
                 "shasum": ""
             },
             "require": {
@@ -4008,7 +4008,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-06-22T09:41:09+00:00"
+            "time": "2024-11-05T15:43:11+00:00"
         },
         {
             "name": "kirschbaum-development/eloquent-power-joins",

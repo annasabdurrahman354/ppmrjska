@@ -25,6 +25,7 @@ use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
 use HighSolutions\LaravelSearchy\Facades\Searchy;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class SantriImporter extends Importer
 {
@@ -33,288 +34,68 @@ class SantriImporter extends Importer
     public static function getColumns(): array
     {
         return [
+            ImportColumn::make('id')
+                ->requiredMapping()
+                ->rules(['required'])
+                ->examples(['ISI DENGAN URUTAN ROW SAJA']),
             ImportColumn::make('nama')
                 ->requiredMapping()
                 ->guess(['Nama', 'Nama Lengkap'])
-                ->rules(['max:255'])
+                ->rules(['required', 'max:255'])
                 ->castStateUsing(function ($state): ?string {
-                    if (blank($state)) {
-                        return null;
-                    }
                     return ucwords($state);
                 }),
             ImportColumn::make('nama_panggilan')
                 ->requiredMapping()
                 ->guess(['Nama Panggilan'])
-                ->rules(['max:64'])
+                ->rules(['required', 'max:64'])
                 ->castStateUsing(function ($state): ?string {
-                    if (blank($state)) {
-                        return null;
-                    }
                     return ucwords($state);
                 }),
             ImportColumn::make('jenis_kelamin')
                 ->requiredMapping()
-                ->rules(['max:255'])
+                ->rules(['required', 'max:255'])
                 ->examples(array_column(JenisKelamin::cases(), 'value')),
             ImportColumn::make('nis')
                 ->requiredMapping()
                 ->guess(['Nomor Induk Santri'])
-                ->rules(['max:9']),
+                ->rules(['required', 'unique:users,nis', 'max:9']),
             ImportColumn::make('nomor_telepon')
                 ->requiredMapping()
-                ->rules(['max:16']),
+                ->rules(['required', 'unique:users,nomor_telepon', 'max:16']),
             ImportColumn::make('email')
                 ->requiredMapping()
                 ->rules(['email', 'max:255','unique:users,email']),
             ImportColumn::make('angkatan_pondok')
                 ->requiredMapping()
-                ->numeric()
-                ->rules(['integer'])
+                ->rules(['required', 'integer'])
                 ->examples([2021,2022,2023]),
             ImportColumn::make('status_pondok')
                 ->requiredMapping()
-                ->rules(['max:255'])
+                ->rules(['required', 'max:255'])
                 ->examples(array_column(StatusPondok::cases(), 'value')),
-            ImportColumn::make('tanggal_lulus_pondok')
-                ->rules(['date']),
-            ImportColumn::make('tanggal_keluar_pondok')
-                ->rules(['date']),
-            ImportColumn::make('alasan_keluar_pondok')
-                ->rules(['max:255']),
-            ImportColumn::make('tahun_pendaftaran')
+            ImportColumn::make('password')
                 ->requiredMapping()
-                ->numeric()
-                ->rules(['integer'])
-                ->examples([2021, 2022, 2023]),
-            ImportColumn::make('nik')
-                ->requiredMapping()
-                ->guess(['Nomor Induk Kependudukan'])
-                ->rules(['max:16','unique:biodata_santri,nik']),
-            ImportColumn::make('tempat_lahir_id')
-
-                ->guess(['Tempat Lahir', 'Kota Lahir']),
-            ImportColumn::make('tanggal_lahir')
-                ->requiredMapping()
-                ->rules(['date']),
-            ImportColumn::make('kewarganegaraan')
-                ->requiredMapping()
-                ->rules(['max:255'])
-                ->examples(array_column(Kewarganegaraan::cases(), 'value')),
-            ImportColumn::make('golongan_darah')
-                ->requiredMapping()
-                ->rules(['max:255'])
-                ->examples(array_column(GolonganDarah::cases(), 'value')),
-            ImportColumn::make('ukuran_baju')
-                ->requiredMapping()
-                ->rules(['max:255'])
-                ->examples(array_column(UkuranBaju::cases(), 'value')),
-            ImportColumn::make('pendidikan_terakhir')
-                ->requiredMapping()
-                ->rules(['max:255'])
-                ->examples(array_column(PendidikanTerakhir::cases(), 'value')),
-            ImportColumn::make('program_studi')
-                ->requiredMapping()
-                ->rules(['max:255'])
-                ->examples(['S1 Kedokteran', 'D3 Teknik Informatika', 'D4 Teknik Sipil','STRATA SPASI NAMA PRODI'])
-                ->castStateUsing(function ($state): ?string {
-                    if (blank($state)) {
-                        return null;
-                    }
-                    return ucwords($state);
-                }),
-            ImportColumn::make('universitas')
-                ->requiredMapping()
-                ->rules(['max:255'])
-                ->examples(['Universitas Sebelas Maret', 'Universitas Muhammadiyah Surakarta', 'JANGAN DISIKNGKAT'])
-                ->castStateUsing(function ($state): ?string {
-                    if (blank($state)) {
-                        return null;
-                    }
-                    return ucwords($state);
-                }),
-            ImportColumn::make('angkatan_kuliah')
-                ->requiredMapping()
-                ->numeric()
-                ->rules(['integer'])
-                ->examples([2021,2022,2023]),
-            ImportColumn::make('status_kuliah')
-                ->requiredMapping()
-                ->rules(['max:255'])
-                ->examples(array_column(StatusKuliah::cases(), 'value')),
-            ImportColumn::make('tanggal_lulus_kuliah')
-                ->rules(['date']),
-            ImportColumn::make('alamat')
-                ->requiredMapping()
-                ->rules(['max:255'])
-                ->castStateUsing(function ($state): ?string {
-                    if (blank($state)) {
-                        return null;
-                    }
-                    return ucwords($state);
-                }),
-            ImportColumn::make('provinsi_id')
-                ->guess(['Provinsi']),
-            ImportColumn::make('kota_id')
-                ->guess(['Kota']),
-            ImportColumn::make('kecamatan_id')
-                ->guess(['Kecamatan']),
-            ImportColumn::make('kelurahan_id')
-                ->guess(['Kelurahan']),
-            ImportColumn::make('asal_kelompok')
-                ->requiredMapping()
-                ->rules(['max:96'])
-                ->castStateUsing(function ($state): ?string {
-                    if (blank($state)) {
-                        return null;
-                    }
-                    return ucwords($state);
-                }),
-            ImportColumn::make('asal_desa')
-                ->requiredMapping()
-                ->rules(['max:96'])
-                ->castStateUsing(function ($state): ?string {
-                    if (blank($state)) {
-                        return null;
-                    }
-                    return ucwords($state);
-                }),
-            ImportColumn::make('asal_daerah')
-                ->requiredMapping()
-                ->rules(['max:96'])
-                ->castStateUsing(function ($state): ?string {
-                    if (blank($state)) {
-                        return null;
-                    }
-                    return ucwords($state);
-                }),
-            ImportColumn::make('mulai_mengaji')
-                ->requiredMapping()
-                ->rules(['max:255'])
-                ->examples(array_column(MulaiMengaji::cases(), 'value')),
-            ImportColumn::make('bahasa_makna')
-                ->requiredMapping()
-                ->rules(['max:255'])
-                ->examples(array_column(BahasaMakna::cases(), 'value')),
-            ImportColumn::make('status_pernikahan')
-                ->requiredMapping()
-                ->rules(['max:255'])
-                ->examples(array_column(StatusPernikahan::cases(), 'value')),
-            ImportColumn::make('status_tinggal')
-                ->requiredMapping()
-                ->rules(['max:255'])
-                ->examples(array_column(StatusTinggal::cases(), 'value')),
-            ImportColumn::make('status_orangtua')
-                ->requiredMapping()
-                ->rules(['max:255'])
-                ->examples(array_column(StatusOrangTua::cases(), 'value')),
-            ImportColumn::make('jumlah_saudara')
-                ->requiredMapping()
-                ->numeric()
-                ->rules(['integer']),
-            ImportColumn::make('anak_nomor')
-                ->requiredMapping()
-                ->numeric()
-                ->rules(['integer']),
-            ImportColumn::make('nama_ayah')
-                ->requiredMapping()
-                ->rules(['max:255'])
-                ->castStateUsing(function ($state): ?string {
-                    if (blank($state)) {
-                        return null;
-                    }
-                    return ucwords($state);
-                }),
-            ImportColumn::make('nomor_telepon_ayah')
-                ->rules(['max:16']),
-            ImportColumn::make('pekerjaan_ayah')
-                ->rules(['max:255'])
-                ->castStateUsing(function ($state): ?string {
-                    if (blank($state)) {
-                        return null;
-                    }
-                    return ucwords($state);
-                }),
-            ImportColumn::make('dapukan_ayah')
-                ->rules(['max:255'])
-                ->examples(['Rukyah', 'Kiai Kelompok', 'Bendahara Kelompok', 'Mubaligh Daerah'])
-                ->castStateUsing(function ($state): ?string {
-                    if (blank($state)) {
-                        return null;
-                    }
-                    return ucwords($state);
-                }),
-            ImportColumn::make('nama_ibu')
-                ->requiredMapping()
-                ->rules(['max:255'])
-                ->castStateUsing(function ($state): ?string {
-                    if (blank($state)) {
-                        return null;
-                    }
-                    return ucwords($state);
-                }),
-            ImportColumn::make('nomor_telepon_ibu')
-                ->rules(['max:16']),
-            ImportColumn::make('pekerjaan_ibu')
-                ->rules(['max:255'])
-                ->castStateUsing(function ($state): ?string {
-                    if (blank($state)) {
-                        return null;
-                    }
-                    return ucwords($state);
-                }),
-            ImportColumn::make('dapukan_ibu')
-                ->rules(['max:255'])
-                ->castStateUsing(function ($state): ?string {
-                    if (blank($state)) {
-                        return null;
-                    }
-                    return ucwords($state);
-                }),
-            ImportColumn::make('nama_wali')
-                ->rules(['max:255'])
-                ->castStateUsing(function ($state): ?string {
-                    if (blank($state)) {
-                        return null;
-                    }
-                    return ucwords($state);
-                }),
-            ImportColumn::make('nomor_telepon_wali')
-                ->rules(['max:16']),
-            ImportColumn::make('pekerjaan_wali')
-                ->rules(['max:255'])
-                ->castStateUsing(function ($state): ?string {
-                    if (blank($state)) {
-                        return null;
-                    }
-                    return ucwords($state);
-                }),
-            ImportColumn::make('dapukan_wali')
-                ->rules(['max:255'])
-                ->examples(['Rukyah', 'Kiai Kelompok', 'Bendahara Kelompok', 'Mubaligh Daerah'])
-                ->castStateUsing(function ($state): ?string {
-                    if (blank($state)) {
-                        return null;
-                    }
-                    return ucwords($state);
-                }),
-            ImportColumn::make('hubungan_wali')
-                ->rules(['max:255'])
-                ->examples(array_column(HubunganWali::cases(), 'value')),
+                ->rules(['required'])
+                ->examples(['ISI DENGAN NIK'])
         ];
     }
 
     public function resolveRecord(): ?User
     {
-        $user = new User();
-        $this->data['password'] = Hash::make($this->data['nik']);
-        $this->data['tempat_lahir_id'] = Kota::hydrate(Searchy::kota('nama')->query($this->data['tempat_lahir_id'])->get())->first()->id ?? null;
-        $this->data['provinsi_id'] = Provinsi::hydrate(Searchy::provinsi('nama')->query($this->data['provinsi_id'])->get())->first()->id ?? null;
-        $this->data['kota_id'] = Kota::hydrate(Searchy::kota('nama')->query($this->data['kota_id'])->get())->first()->id ?? null;
-        $this->data['kecamatan_id'] = Kecamatan::hydrate(Searchy::kecamatan('nama')->query($this->data['kecamatan_id'])->get())->first()->id ?? null;
-        $this->data['kelurahan_id'] = Kelurahan::hydrate(Searchy::kelurahan('nama')->query($this->data['kelurahan_id'])->get())->first()->id ?? null;
-        $user->fill($this->data)->save();
-        $user->biodataSantri()->create($this->data);
+        $user = User::create([
+            'id' => Str::ulid(),
+            'nama' => $this->data['nama'],
+            'nama_panggilan' => $this->data['nama_panggilan'],
+            'jenis_kelamin' => $this->data['jenis_kelamin'],
+            'nis' => $this->data['nis'],
+            'nomor_telepon' => $this->data['nomor_telepon'],
+            'email' => $this->data['email'],
+            'angkatan_pondok' => $this->data['angkatan_pondok'],
+            'status_pondok' => $this->data['status_pondok'],
+            'password' => Hash::make($this->data['password']),
+        ]);
+        info(json_encode($user));
         return $user;
     }
 

@@ -29,6 +29,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class UserResource extends Resource implements HasShieldPermissions
@@ -409,10 +410,8 @@ class UserResource extends Resource implements HasShieldPermissions
             ], layout: Tables\Enums\FiltersLayout::AboveContent)
             ->filtersFormColumns(2)
             ->headerActions([
-                //ExcelImportAction::make()
-                //    ->color("secondary"),
-                ImportAction::make()
-                    ->importer(SantriImporter::class)
+                //ImportAction::make()
+                //    ->importer(SantriImporter::class)
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),

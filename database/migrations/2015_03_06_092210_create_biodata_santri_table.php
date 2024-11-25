@@ -23,19 +23,19 @@ return new class extends Migration
             $table->string('nik', 16);
             $table->unsignedSmallInteger('tempat_lahir_id')->nullable();
             $table->foreign('tempat_lahir_id')->references('id')->on('kota')->nullOnDelete();
-            $table->date('tanggal_lahir');
-            $table->string('kewarganegaraan');
-            $table->string('golongan_darah');
-            $table->string('ukuran_baju');
+            $table->date('tanggal_lahir')->nullable();
+            $table->string('kewarganegaraan')->nullable();
+            $table->string('golongan_darah')->nullable();
+            $table->string('ukuran_baju')->nullable();
 
-            $table->string('pendidikan_terakhir');
-            $table->string('program_studi');
-            $table->string('universitas');
-            $table->unsignedSmallInteger('angkatan_kuliah');
-            $table->string('status_kuliah');
+            $table->string('pendidikan_terakhir')->nullable();
+            $table->string('program_studi')->nullable();
+            $table->string('universitas')->nullable();
+            $table->unsignedSmallInteger('angkatan_kuliah')->nullable();
+            $table->string('status_kuliah')->nullable();
             $table->date('tanggal_lulus_kuliah')->nullable();
 
-            $table->string('alamat');
+            $table->string('alamat')->nullable();
             $table->unsignedTinyInteger('provinsi_id')->nullable();
             $table->foreign('provinsi_id')->references('id')->on('provinsi')->nullOnDelete();
             $table->unsignedSmallInteger('kota_id')->nullable();
@@ -48,14 +48,14 @@ return new class extends Migration
             $table->string('asal_kelompok', 96);
             $table->string('asal_desa', 96);
             $table->string('asal_daerah', 96);
-            $table->string('mulai_mengaji');
-            $table->string('bahasa_makna');
+            $table->string('mulai_mengaji')->nullable();
+            $table->string('bahasa_makna')->nullable();
 
-            $table->string('status_pernikahan');
-            $table->string('status_tinggal');
-            $table->string('status_orangtua');
-            $table->unsignedTinyInteger('jumlah_saudara');
-            $table->unsignedTinyInteger('anak_nomor');
+            $table->string('status_pernikahan')->nullable();
+            $table->string('status_tinggal')->nullable();
+            $table->string('status_orangtua')->nullable();
+            $table->unsignedTinyInteger('jumlah_saudara')->nullable();
+            $table->unsignedTinyInteger('anak_nomor')->nullable();
 
             $table->string('nama_ayah')->nullable();
             $table->string('nomor_telepon_ayah', 16)->nullable();
