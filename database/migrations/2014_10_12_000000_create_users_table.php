@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('nama_panggilan', 64);
             $table->integer('angkatan_pondok');
             $table->string('jenis_kelamin');
-            $table->string('nis', 9)->unique();
+            $table->string('nis', 10)->unique();
             $table->string('nomor_telepon', 16)->unique();
             $table->string('email')->unique();
             $table->string('status_pondok');

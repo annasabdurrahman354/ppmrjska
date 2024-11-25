@@ -301,7 +301,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
                         ->disabled(fn (string $operation) => cant('ubah_data_kesiswaan_user') && $operation != 'create')
                         ->numeric()
                         ->required()
-                        ->length(9),
+                        ->minLength(10),
                     TextInput::make('nomor_telepon')
                         ->label('Nomor Telepon')
                         ->tel()
