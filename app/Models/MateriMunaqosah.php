@@ -35,7 +35,7 @@ class MateriMunaqosah extends Model
      * @var array
      */
     protected $fillable = [
-        'kelas',
+        'angkatan_pondok',
         'semester',
         'tahun_ajaran',
         'jenis_materi',
@@ -82,7 +82,7 @@ class MateriMunaqosah extends Model
     protected function recordTitle(): Attribute
     {
         return Attribute::make(
-            get: fn () => 'Kelas '.$this->kelas. ' (Semester '.$this->semester.'): '.$this->jenis_materi->getLabel(),
+            get: fn () => 'Angkatan '.$this->angkatan_pondok. ' (Semester '.$this->semester.'): '.$this->jenis_materi->getLabel(),
         );
     }
 
@@ -101,22 +101,14 @@ class MateriMunaqosah extends Model
         return [
             Section::make('Informasi Kelas')
                 ->schema([
-                    Select::make('kelas')
-                        ->label('Kelas')
+                    Select::make('angkatan_pondok')
+                        ->label('Angkatan')
                         ->required()
                         ->disabledOn('edit')
                         ->options(
-                            AngkatanPondok::whereHas('users', function ($query) {
-                                    $query->whereIn('status_pondok', [StatusPondok::AKTIF, StatusPondok::KEPERLUAN_AKADEMIK, StatusPondok::SAMBANG, StatusPondok::NONAKTIF]);
-                                })
-                                ->distinct()
-                                ->get()
-                                ->pluck('kelas', 'kelas')
-                        )
-                        ->default(match (auth()->user()->kelas) {
-                            config('filament-shield.super_admin.name') => 'Takmili',
-                            default => auth()->user()->kelas
-                        }),
+                            AngkatanPondok::get()
+                                ->pluck('angkatan_pondok', 'angkatan_pondok')
+                        ),
 
                     TextInput::make('semester')
                         ->required()
@@ -129,6 +121,12 @@ class MateriMunaqosah extends Model
                         ->searchable()
                         ->preload()
                         ->createOptionForm(TahunAjaran::getForm())
+                        ->createOptionUsing(function($data){
+                            $tahunAjaran = new TahunAjaran();
+                            $tahunAjaran->fill($data);
+                            $tahunAjaran->save();
+                            return $tahunAjaran->tahun_ajaran;
+                        })
                         ->required(),
 
                     Select::make('dewan_guru_id')
@@ -283,7 +281,7 @@ class MateriMunaqosah extends Model
                                 ->schema([
                                     Select::make('user_id')
                                         ->options(fn (Get $get) =>
-                                            User::whereKelas($get('../../../../kelas'))
+                                            User::whereAngkatan($get('../../../../angkatan_pondok'))
                                                 ->whereNotIn('status_pondok', [StatusPondok::NONAKTIF, StatusPondok::KELUAR, StatusPondok::LULUS])
                                                 ->whereNull('tanggal_lulus_pondok')
                                                 ->get()

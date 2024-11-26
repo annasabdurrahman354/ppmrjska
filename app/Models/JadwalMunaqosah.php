@@ -15,6 +15,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -70,11 +71,82 @@ class JadwalMunaqosah extends Model
         );
     }
 
+    protected function jumlahPendaftar(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->plotJadwalMunaqosah()->count(),
+        );
+    }
+
+    protected function materi(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => implode(', ', $this->materiMunaqosah->materi). ' ('.$this->materiMunaqosah->detail.')',
+        );
+    }
+
+    protected function hafalan(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => implode(', ', $this->materiMunaqosah->hafalan),
+        );
+    }
+
+    protected function dewanGuru(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => implode(', ', $this->materiMunaqosah->dewanGuru->nama_panggilan),
+        );
+    }
+
     protected function recordTitleCalendar(): Attribute
     {
         return Attribute::make(
-            get: fn () => 'Kelas ' . $this->materiMunaqosah->kelas. ' (Semsester '.$this->materiMunaqosah->semester.'): '.$this->materiMunaqosah->jenis_materi->getLabel()
+            get: fn () => 'Kelas ' . $this->materiMunaqosah->kelas. ' (Semester '.$this->materiMunaqosah->semester.'): '.$this->materiMunaqosah->jenis_materi->getLabel()
         );
+    }
+
+    public static function getColumns()
+    {
+        return [
+            TextColumn::make('id')
+                ->label('ID')
+                ->toggleable(isToggledHiddenByDefault: true)
+                ->searchable(),
+            TextColumn::make('materiMunaqosah.recordTitle')
+                ->label('Materi Munaqosah')
+                ->searchable(),
+            TextColumn::make('waktu')
+                ->label('Waktu Munaqosah')
+                ->dateTime()
+                ->sortable(),
+            TextColumn::make('maksimal_pendaftar')
+                ->label('Maks Pendaftar')
+                ->numeric()
+                ->sortable(),
+            TextColumn::make('total_plotjadwalmunaqosah')
+                ->label('Pendaftar')
+                ->numeric(),
+            TextColumn::make('terlaksana_plotjadwalmunaqosah')
+                ->label('Terlaksana')
+                ->numeric(),
+            TextColumn::make('batas_awal_pendaftaran')
+                ->label('Batas Mulai Pendaftaran')
+                ->dateTime()
+                ->sortable(),
+            TextColumn::make('batas_akhir_pendaftaran')
+                ->label('Batas Akhir Pendaftaran')
+                ->dateTime()
+                ->sortable(),
+            TextColumn::make('created_at')
+                ->dateTime()
+                ->sortable()
+                ->toggleable(isToggledHiddenByDefault: true),
+            TextColumn::make('updated_at')
+                ->dateTime()
+                ->sortable()
+                ->toggleable(isToggledHiddenByDefault: true),
+        ];
     }
 
     public static function getForm()
@@ -135,9 +207,9 @@ class JadwalMunaqosah extends Model
                                 ->placeholder('Pilih santri sesuai kelas munaqosah...')
                                 ->getSearchResultsUsing(function (string $search, Get $get): array{
                                     $materiMunaqosah = MateriMunaqosah::where('id', $get('../../materi_munaqosah_id'))->first();
-                                    $kelas = $materiMunaqosah->kelas ?? ['a'];
+                                    $angkatan_pondok = $materiMunaqosah->angkatan_pondok ?? ['a'];
                                     return User::where('nama', 'like', "%{$search}%")
-                                        ->whereKelas($kelas)
+                                        ->whereAngkatan($angkatan_pondok)
                                         ->whereNotIn('status_pondok', [StatusPondok::NONAKTIF, StatusPondok::KELUAR, StatusPondok::LULUS])
                                         ->whereNull('tanggal_lulus_pondok')
                                         ->limit(20)
@@ -190,6 +262,15 @@ class JadwalMunaqosah extends Model
                                     $record->save();
                                 })
                         ),
+                ])
+                ->registerActions([
+                    \Filament\Infolists\Components\Actions\Action::make('ingatkanMunaqosah')
+                        ->label('Ingatkan')
+                        ->icon('heroicon-m-chat-bubble-left-ellipsis')
+                        ->url(function ($record) {
+                            $jadwal = $record->jadwalMunaqosah;
+                            return $record->user->ingatkanMunaqosah($jadwal);
+                        })
                 ])
         ];
     }

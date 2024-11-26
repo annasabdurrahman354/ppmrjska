@@ -55,9 +55,9 @@ class MateriTambahan extends Model
     {
         parent::boot();
         static::deleted(function ($record) {
-            JurnalKelas::where('materi_awal_type', $this::class)->where('materi_awal_id', $record->id)->update(['materi_awal_type' => null, 'materi_awal_id' => null]);
-            JurnalKelas::where('materi_akhir_type', $this::class)->where('materi_akhir_id', $record->id)->update(['materi_akhir_type' => null, 'materi_akhir_id' => null]);
-            PlotKurikulumMateri::where('materi_type', $this::class)->where('materi_id', $record->id)->delete();
+            JurnalKelas::where('materi_awal_type', get_class($record))->where('materi_awal_id', $record->id)->update(['materi_awal_type' => null, 'materi_awal_id' => null]);
+            JurnalKelas::where('materi_akhir_type', get_class($record))->where('materi_akhir_id', $record->id)->update(['materi_akhir_type' => null, 'materi_akhir_id' => null]);
+            PlotKurikulumMateri::where('materi_type', get_class($record))->where('materi_id', $record->id)->delete();
         });
     }
 }

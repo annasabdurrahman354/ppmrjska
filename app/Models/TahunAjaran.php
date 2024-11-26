@@ -76,9 +76,11 @@ class TahunAjaran extends Model
                     ->default(date('Y'))
                     ->live(onBlur: true)
                     ->afterStateHydrated(function (TextInput $component, Get $get, $record) {
-                        $split_values = explode("/", $record['tahun_ajaran']);
-                        $tahun_ajaran_awal = $split_values[0];
-                        $component->state($tahun_ajaran_awal);
+                        if (!empty($record['tahun_ajaran'])){
+                            $split_values = explode("/", $record['tahun_ajaran']);
+                            $tahun_ajaran_awal = $split_values[0];
+                            $component->state($tahun_ajaran_awal);
+                        }
                     })
                     ->afterStateUpdated(function (Get $get, Set $set){
                         $set('tahun_ajaran', $get('tahun_ajaran_awal').'/'.$get('tahun_ajaran_akhir'));
@@ -91,9 +93,11 @@ class TahunAjaran extends Model
                     ->gt('tahun_ajaran_awal')
                     ->live(onBlur: true)
                     ->afterStateHydrated(function (TextInput $component, Get $get, $record) {
-                        $split_values = explode("/", $record['tahun_ajaran']);
-                        $tahun_ajaran_akhir = $split_values[1];
-                        $component->state($tahun_ajaran_akhir);
+                        if (!empty($record['tahun_ajaran'])){
+                            $split_values = explode("/", $record['tahun_ajaran']);
+                            $tahun_ajaran_akhir = $split_values[1];
+                            $component->state($tahun_ajaran_akhir);
+                        }
                     })
                     ->afterStateUpdated(function (Get $get, Set $set){
                         $set('tahun_ajaran', $get('tahun_ajaran_awal').'/'.$get('tahun_ajaran_akhir'));

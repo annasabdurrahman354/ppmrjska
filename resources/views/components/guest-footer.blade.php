@@ -29,16 +29,16 @@
             <h4 class="text-xs font-semibold text-gray-900 uppercase dark:text-neutral-100">Program Pendidikan</h4>
             <div class="mt-3 grid space-y-3 text-sm">
                 <p><a class="inline-flex gap-x-2 text-gray-600 hover:text-green-600 dark:text-neutral-400 dark:hover:text-neutral-200" href="#">Agenda Pondok</a> <span class="inline text-green-600 dark:text-green-500">— Soon</span></p>
-                <p><a class="inline-flex gap-x-2 text-gray-600 hover:text-green-600 dark:text-neutral-400 dark:hover:text-neutral-200" href="{{route('guest.kegiatan-santri.index')}}">Kegiatan Santri</a></p>
-                <p><a class="inline-flex gap-x-2 text-gray-600 hover:text-green-600 dark:text-neutral-400 dark:hover:text-neutral-200" href="{{route('guest.kurikulum.index')}}">Kurikulum</a></p>
+                <p><a class="inline-flex gap-x-2 text-gray-600 hover:text-green-600 dark:text-neutral-400 dark:hover:text-neutral-200" href="#" aria-description="route('guest.kegiatan-santri.index')">Kegiatan Santri</a> <span class="inline text-green-600 dark:text-green-500">— Soon</span></p>
+                <p><a class="inline-flex gap-x-2 text-gray-600 hover:text-green-600 dark:text-neutral-400 dark:hover:text-neutral-200" href="#" aria-description="route('guest.kurikulum.index')">Kurikulum</a> <span class="inline text-green-600 dark:text-green-500">— Soon</span></p>
             </div>
         </div>
         <!-- End Col -->
         <div>
             <h4 class="text-xs font-semibold text-gray-900 uppercase dark:text-neutral-100">Tentang Kami</h4>
             <div class="mt-3 grid space-y-3 text-sm">
-                <p><a class="inline-flex gap-x-2 text-gray-600 hover:text-green-600 dark:text-neutral-400 dark:hover:text-neutral-200" href="{{route('guest.profil.index')}}">Profil</a></p>
-                <p><a class="inline-flex gap-x-2 text-gray-600 hover:text-green-600 dark:text-neutral-400 dark:hover:text-neutral-200" href="{{route('guest.visi-misi.index')}}">Visi Misi</a></p>
+                <p><a class="inline-flex gap-x-2 text-gray-600 hover:text-green-600 dark:text-neutral-400 dark:hover:text-neutral-200" href="#" aria-description="route('guest.profil.index')">Profil</a>  <span class="inline text-green-600 dark:text-green-500">— Soon</span></p>
+                <p><a class="inline-flex gap-x-2 text-gray-600 hover:text-green-600 dark:text-neutral-400 dark:hover:text-neutral-200" href="#" aria-description="route('guest.visi-misi.index')">Visi Misi</a> <span class="inline text-green-600 dark:text-green-500">— Soon</span></p>
                 <p><a class="inline-flex gap-x-2 text-gray-600 hover:text-green-600 dark:text-neutral-400 dark:hover:text-neutral-200" href="#">Fasilitas</a> <span class="inline text-green-600 dark:text-green-500">— Soon</span></p>
             </div>
         </div>
@@ -146,23 +146,20 @@
                 </div>
                 <!-- Social Brands -->
                 <div class="mt-2 md:mt-0 space-x-4">
-                    <a class="inline-block text-gray-500 hover:text-green-600 dark:text-neutral-500 dark:hover:text-neutral-200" href="#">
+                    <a class="inline-block text-gray-500 hover:text-green-600 dark:text-neutral-500 dark:hover:text-neutral-200" href="https://www.youtube.com/@PPMRoudlotulJannahSurakarta">
                         <svg class="flex-shrink-0 size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
                             <path fill-rule="evenodd" d="M21.7 8.037a4.26 4.26 0 0 0-.789-1.964 2.84 2.84 0 0 0-1.984-.839c-2.767-.2-6.926-.2-6.926-.2s-4.157 0-6.928.2a2.836 2.836 0 0 0-1.983.839 4.225 4.225 0 0 0-.79 1.965 30.146 30.146 0 0 0-.2 3.206v1.5a30.12 30.12 0 0 0 .2 3.206c.094.712.364 1.39.784 1.972.604.536 1.38.837 2.187.848 1.583.151 6.731.2 6.731.2s4.161 0 6.928-.2a2.844 2.844 0 0 0 1.985-.84 4.27 4.27 0 0 0 .787-1.965 30.12 30.12 0 0 0 .2-3.206v-1.516a30.672 30.672 0 0 0-.202-3.206Zm-11.692 6.554v-5.62l5.4 2.819-5.4 2.801Z" clip-rule="evenodd"/>
                         </svg>
 
                     </a>
-                    <a class="inline-block text-gray-500 hover:text-green-600 dark:text-neutral-500 dark:hover:text-neutral-200" href="#">
+                    <a class="inline-block text-gray-500 hover:text-green-600 dark:text-neutral-500 dark:hover:text-neutral-200" href="https://www.instagram.com/ppmroudlotuljannah/">
                         <svg class="flex-shrink-0 size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path fill="currentColor" fill-rule="evenodd" d="M3 8a5 5 0 0 1 5-5h8a5 5 0 0 1 5 5v8a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5V8Zm5-3a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V8a3 3 0 0 0-3-3H8Zm7.597 2.214a1 1 0 0 1 1-1h.01a1 1 0 1 1 0 2h-.01a1 1 0 0 1-1-1ZM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm-5 3a5 5 0 1 1 10 0 5 5 0 0 1-10 0Z" clip-rule="evenodd"/>
                         </svg>
 
                     </a>
-                    <a class="inline-block text-gray-500 hover:text-green-600 dark:text-neutral-500 dark:hover:text-neutral-200" href="#">
-                        <svg class="flex-shrink-0 size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M13.795 10.533 20.68 2h-3.073l-5.255 6.517L7.69 2H1l7.806 10.91L1.47 22h3.074l5.705-7.07L15.31 22H22l-8.205-11.467Zm-2.38 2.95L9.97 11.464 4.36 3.627h2.31l4.528 6.317 1.443 2.02 6.018 8.409h-2.31l-4.934-6.89Z"/>
-                        </svg>
-
+                    <a class="inline-block text-gray-500 hover:text-green-600 dark:text-neutral-500 dark:hover:text-neutral-200" href="https://www.tiktok.com/@ppmroudlotuljannah">
+                        <svg class="flex-shrink-0 size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 1000 1000" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd" clip-rule="evenodd"><path d="M906.25 0H93.75C42.19 0 0 42.19 0 93.75v812.49c0 51.57 42.19 93.75 93.75 93.75l812.5.01c51.56 0 93.75-42.19 93.75-93.75V93.75C1000 42.19 957.81 0 906.25 0zM684.02 319.72c-32.42-21.13-55.81-54.96-63.11-94.38-1.57-8.51-2.45-17.28-2.45-26.25H515l-.17 414.65c-1.74 46.43-39.96 83.7-86.8 83.7-14.57 0-28.27-3.63-40.35-9.99-27.68-14.57-46.63-43.58-46.63-76.97 0-47.96 39.02-86.98 86.97-86.98 8.95 0 17.54 1.48 25.66 4.01V421.89c-8.41-1.15-16.95-1.86-25.66-1.86-105.01 0-190.43 85.43-190.43 190.45 0 64.42 32.18 121.44 81.3 155.92 30.93 21.72 68.57 34.51 109.14 34.51 105.01 0 190.43-85.43 190.43-190.43V400.21c40.58 29.12 90.3 46.28 143.95 46.28V343.03c-28.89 0-55.8-8.59-78.39-23.31z"/></svg>
                     </a>
                 </div>
                 <!-- End Social Brands -->

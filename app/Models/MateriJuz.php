@@ -53,7 +53,7 @@ class MateriJuz extends Model
     {
         parent::boot();
         static::deleted(function ($record) {
-            PlotKurikulumMateri::where('materi_type', $this::class)->where('materi_id', $record->id)->delete();
+            PlotKurikulumMateri::where('materi_type', get_class($record))->where('materi_id', $record->id)->delete();
         });
     }
 }

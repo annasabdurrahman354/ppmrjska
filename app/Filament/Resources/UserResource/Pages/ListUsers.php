@@ -2,8 +2,11 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
+use App\Filament\Imports\SantriImporter;
 use App\Filament\Resources\UserResource;
+use App\Imports\SantriImport;
 use Filament\Actions;
+use Filament\Actions\ImportAction;
 use Filament\Pages\Concerns\ExposesTableToWidgets;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
@@ -23,11 +26,7 @@ class ListUsers extends ListRecords
             Actions\CreateAction::make(),
             \EightyNine\ExcelImport\ExcelImportAction::make('import_santri')
                 ->label('Import Santri')
-                ->mutateBeforeValidationUsing(function(array $data): array{
-                    $data['id'] = Str::ulid();
-                    $data['password'] = Hash::make($data['password']);
-                    return $data;
-                }),
+                ->use(SantriImport::class),
         ];
     }
 

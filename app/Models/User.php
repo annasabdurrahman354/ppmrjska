@@ -8,6 +8,7 @@ use App\Enums\StatusKehadiran;
 use App\Enums\StatusPondok;
 use Askedio\SoftCascade\Traits\SoftCascadeTrait;
 use BezhanSalleh\FilamentShield\Traits\HasPanelShield;
+use Carbon\Carbon;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
@@ -232,6 +233,11 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
         });
     }
 
+    public function scopeWhereAngkatan(Builder $query, string $angkatan): void
+    {
+        $query->where('angkatan_pondok',$angkatan);
+    }
+
     public function scopeWhereKelasIn(Builder $query, $kelas): void
     {
         $query->whereHas('angkatanPondok', function ($query) use ($kelas) {
@@ -252,6 +258,21 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
     public function cekKehadiran(JurnalKelas $jurnalKelas): bool
     {
         return $jurnalKelas->presensikelas()->where('user_id', $this->id)->where('status_kehadiran', StatusKehadiran::HADIR->value)->exists();
+    }
+
+    public function ingatkanMunaqosah($jadwalMunaqosah){
+        $ptn = "/^0/";  // Regex
+        $rpltxt = "+62";  // Replacement string
+        $phone = preg_replace($ptn, $rpltxt, $this->nomor_telepon);
+        $hari = Carbon::createFromFormat('d/m/Y H:i:s', $jadwalMunaqosah->waktu)->translatedFormat('l');
+        $tanggal =  Carbon::createFromFormat('d/m/Y H:i:s', $jadwalMunaqosah->waktu)->translatedFormat('d F Y');
+        $pukul =  Carbon::createFromFormat('d/m/Y H:i:s', $jadwalMunaqosah->waktu)->translatedFormat('H:i');
+        $materi =  "{$jadwalMunaqosah->materi}";
+        $hafalan =  "{$jadwalMunaqosah->hafalan}";
+        $guru =  $jadwalMunaqosah->dewanGuru;
+        $text = "%5B%20*REMINDER%20MUNAQOSYAH*%20%5D%0A%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%20%D9%88%D8%B1%D8%AD%D9%85%D8%A9%20%D8%A7%D9%84%D9%84%D9%87%20%D9%88%D8%A8%D8%B1%D9%83%D8%A7%D8%AA%D9%87.%20%0A%0AMengingatkan%20bahwa%20Anda%20*terjadwal%20Munaqosah*%20%3A%0A%0AHari%2C%20tanggal%20%3A%20{$hari}%2C%20{$tanggal}%0APukul%20%3A%20{$pukul}%0AMateri%20%3A%20{$materi}%0AHafalan%20%3A%20{$hafalan}%0ADewan%20Guru%20%3A%20{$guru}%0A%0AUntuk%20tempat%20pelaksanaan%20bisa%20dilihat%20dijarkoman%20grup.%0A%0A*Nb*%3A%0AApabila%20berhalangan%20harap%20konfirmasi%20dan%20mencari%20pengganti%20untuk%20mengisi%20slot%20kosong!%0A%0A%D8%A7%D9%84%D8%AD%D9%85%D8%AF%20%D9%84%D9%84%D9%87%20%D8%AC%D8%B2%D8%A7%D9%83%D9%85%20%D8%A7%D9%84%D9%84%D9%87%20%D8%AE%D9%8A%D8%B1%D8%A7.%20%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%20%D9%88%D8%B1%D8%AD%D9%85%D8%A9%20%D8%A7%D9%84%D9%84%D9%87%20%D9%88%D8%A8%D8%B1%D9%83%D8%A7%D8%AA%D9%87.%20%0A____%0AS%26T%20Keilmuan%20%7C%20DMC-Pasus%20%7C%20PPMRJSka";
+        $url = "https://wa.me/{$phone}?text={$text}";
+        return $url;
     }
 
     public function registerMediaConversions(Media $media = null): void
@@ -397,7 +418,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
         //});
 
         static::softDeleted(function ($record) {
-            JurnalKelas::where('dewan_guru_type', $this::class)->where('dewan_guru_id', $record->id)->update(['dewan_guru_type' => null, 'dewan_guru_id' => null]);
+            JurnalKelas::where('dewan_guru_type', get_class($record))->where('dewan_guru_id', $record->id)->update(['dewan_guru_type' => null, 'dewan_guru_id' => null]);
         });
 
         static::created(function ($record) {

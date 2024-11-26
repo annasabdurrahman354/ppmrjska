@@ -57,6 +57,12 @@ class PlotKelompokKegiatanSemester extends Model
                 ->searchable()
                 ->preload()
                 ->createOptionForm(TahunAjaran::getForm())
+                ->createOptionUsing(function($data){
+                    $tahunAjaran = new TahunAjaran();
+                    $tahunAjaran->fill($data);
+                    $tahunAjaran->save();
+                    return $tahunAjaran->tahun_ajaran;
+                })
                 ->required(),
             ToggleButtons::make('semester')
                 ->label('Semester')

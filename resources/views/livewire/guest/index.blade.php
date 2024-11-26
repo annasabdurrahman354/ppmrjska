@@ -634,8 +634,7 @@
                         <div class="text-center mb-16">
                             <span class="inline-block py-1 px-3 mb-4 text-xs font-semibold text-green-900 bg-lime-50 rounded-full">FREQUENTLY ASKED QUESTION</span>
                             <h1 class="font-heading text-5xl xs:text-6xl md:text-7xl font-bold font-messiri dark:text-white">
-                                <span data-config-id="auto-txt-2-2">Anda bertanya? </span>
-                                <span class="font-serif italic">Kami jawab</span>
+                                <span data-config-id="auto-txt-2-2">Ada Pertanyaan?</span>
                             </h1>
                         </div>
 

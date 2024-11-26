@@ -136,7 +136,7 @@ class DewanGuru extends Model implements FilamentUser, HasMedia, HasAvatar, HasN
     {
         parent::boot();
         static::softDeleted(function ($record) {
-            JurnalKelas::where('dewan_guru_type', $this::class)->where('dewan_guru_id', $record->id)->update(['dewan_guru_type' => null, 'dewan_guru_id' => null]);
+            JurnalKelas::where('dewan_guru_type', get_class($record))->where('dewan_guru_id', $record->id)->update(['dewan_guru_type' => null, 'dewan_guru_id' => null]);
         });
     }
 }

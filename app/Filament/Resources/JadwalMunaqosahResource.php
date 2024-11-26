@@ -55,45 +55,7 @@ class JadwalMunaqosahResource extends Resource
                     $query->where('status_terlaksana', true);
                 },
             ]))
-            ->columns([
-                Tables\Columns\TextColumn::make('id')
-                    ->label('ID')
-                    ->toggleable(isToggledHiddenByDefault: true)
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('materiMunaqosah.recordTitle')
-                    ->label('Materi Munaqosah')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('waktu')
-                    ->label('Waktu Munaqosah')
-                    ->dateTime()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('maksimal_pendaftar')
-                    ->label('Maks Pendaftar')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('total_plotjadwalmunaqosah')
-                    ->label('Pendaftar')
-                    ->numeric(),
-                Tables\Columns\TextColumn::make('terlaksana_plotjadwalmunaqosah')
-                    ->label('Terlaksana')
-                    ->numeric(),
-                Tables\Columns\TextColumn::make('batas_awal_pendaftaran')
-                    ->label('Batas Mulai Pendaftaran')
-                    ->dateTime()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('batas_akhir_pendaftaran')
-                    ->label('Batas Akhir Pendaftaran')
-                    ->dateTime()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])
+            ->columns(JadwalMunaqosah::getColumns())
             ->groups([
                 Group::make('materiMunaqosah.kelas')
                     ->label('Kelas')

@@ -62,16 +62,18 @@ class MateriMunaqosahResource extends Resource
                     ->label('ID')
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
-                Tables\Columns\TextColumn::make('kelas')
-                    ->label('Kelas')
-                    ->searchable(),
+                Tables\Columns\TextColumn::make('angkatan_pondok')
+                    ->label('Angkatan')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('semester')
                     ->label('Semester')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('tahun_ajaran')
                     ->label('Tahun Ajaran')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('jenis_materi')
                     ->label('Jenis Materi')
                     ->badge()

@@ -3,6 +3,7 @@
 namespace App\Livewire\Panel\Widgets;
 
 use App\Enums\StatusPondok;
+use App\Filament\Pages\Munaqosah\Munaqosah;
 use App\Models\JadwalMunaqosah;
 use App\Models\MateriMunaqosah;
 use App\Models\PlotJadwalMunaqosah;
@@ -49,7 +50,7 @@ class JadwalMunaqosahSayaCalendarWidget extends FullCalendarWidget
     {
         return JadwalMunaqosah::query()
             ->whereHas('materiMunaqosah', function ($query) {
-                $query->where('kelas', auth()->user()->kelas);
+                $query->where('angkatan_pondok', auth()->user()->angkatan_pondok);
             })
             ->where('waktu', '>=', $fetchInfo['start'])
             ->where('waktu', '<=', $fetchInfo['end'])
@@ -109,7 +110,7 @@ class JadwalMunaqosahSayaCalendarWidget extends FullCalendarWidget
 
                     $isLewatJadwal = $record->waktu < now();
                     $isLewatJadwalPendaftaran = $record->batas_akhir_pendaftaran < now();
-                    $kelasSasaran = $materiMunaqosah->kelas === auth()->user()->kelas;
+                    $kelasSasaran = $materiMunaqosah->angkatan_pondok === auth()->user()->angkatan_pondok;
 
                     if ($isTelahMelaksanakan || $isSudahAmbilBelumMelaksanakan || $isLewatJadwal || $isLewatJadwalPendaftaran || !$kelasSasaran) {
                         return true;
@@ -123,6 +124,7 @@ class JadwalMunaqosahSayaCalendarWidget extends FullCalendarWidget
                         'status_terlaksana' => false
                     ]);
                     $plotMunaqosah->save();
+                    redirect(Munaqosah::getUrl());
                 })
                 ->requiresConfirmation()
                 ->color('warning')
@@ -134,8 +136,7 @@ class JadwalMunaqosahSayaCalendarWidget extends FullCalendarWidget
     protected function viewAction(): Action
     {
         return ViewAction::make()
-            ->form(JadwalMunaqosah::getForm())
-            ->slideOver();
+            ->form(JadwalMunaqosah::getForm());
     }
 
     protected function headerActions(): array

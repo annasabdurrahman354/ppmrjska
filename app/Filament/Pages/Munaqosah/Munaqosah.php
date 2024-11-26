@@ -2,18 +2,19 @@
 
 namespace App\Filament\Pages\Munaqosah;
 
-use App\Filament\Resources\JadwalMunaqosahResource;
-use App\Models\JadwalMunaqosah;
+use App\Models\PlotJadwalMunaqosah;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
+use Carbon\Carbon;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\Url;
 
 class Munaqosah extends Page implements HasTable, HasForms, HasActions
@@ -35,17 +36,44 @@ class Munaqosah extends Page implements HasTable, HasForms, HasActions
 
     public function table(Table $table): Table
     {
-        return JadwalMunaqosahResource::table($table)
+        return $table
             ->heading('Jadwal Munaqosah Saya')
-            ->query(JadwalMunaqosah::query()
-                ->whereHas('plotJadwalMunaqosah', fn($query) => $query->where('user_id', auth()->user()->id)
-                )
-            )
-            ->modifyQueryUsing(fn (Builder $query) => $query->withCount([
-                'plotJadwalMunaqosah as total_plotjadwalmunaqosah',
-                'plotJadwalMunaqosah as terlaksana_plotjadwalmunaqosah' => function ($query) {
-                    $query->where('status_terlaksana', true);
-                }])
-            );
+            ->query(PlotJadwalMunaqosah::where('user_id', auth()->user()->id))
+            ->columns([
+                TextColumn::make('jadwalMunaqosah.materi')
+                    ->label('Materi Munaqosah')
+                    ->searchable(),
+                TextColumn::make('jadwalMunaqosah.waktu')
+                    ->label('Waktu Munaqosah')
+                    ->dateTime()
+                    ->sortable(),
+                TextColumn::make('jadwalMunaqosah.jumlahPendaftar')
+                    ->label('Pendaftar')
+                    ->numeric(),
+                TextColumn::make('jadwalMunaqosah.maksimal_pendaftar')
+                    ->label('Maks Pendaftar')
+                    ->numeric(),
+                TextColumn::make('jadwalMunaqosah.batas_akhir_pendaftaran')
+                    ->label('Batas Akhir Pendaftaran')
+                    ->dateTime()
+                    ->sortable(),
+            ])
+
+            ->actions([
+                DeleteAction::make('hapus_jadwal')
+                    ->label('Hapus Jadwal')
+                    ->requiresConfirmation()
+                    ->visible(function (PlotJadwalMunaqosah $plot) {
+                        if ($plot && $plot->jadwalMunaqosah && $plot->jadwalMunaqosah->waktu >= Carbon::now()->addDay()) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    })
+                    ->action(function (PlotJadwalMunaqosah $plot) {
+                        $plot->delete();
+                        redirect(Munaqosah::getUrl());
+                    })
+            ]);
     }
 }

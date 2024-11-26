@@ -15,7 +15,7 @@ return new class extends Migration
 
         Schema::create('materi_munaqosah', function (Blueprint $table) {
             $table->ulid('id')->primary();
-            $table->string('kelas');
+            $table->unsignedInteger('angkatan_pondok');
             $table->unsignedTinyInteger('semester');
             $table->string('tahun_ajaran');
             $table->string('jenis_materi');

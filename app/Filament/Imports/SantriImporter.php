@@ -37,7 +37,8 @@ class SantriImporter extends Importer
             ImportColumn::make('id')
                 ->requiredMapping()
                 ->rules(['required'])
-                ->examples(['ISI DENGAN URUTAN ROW SAJA']),
+                ->examples(['ISI DENGAN URUTAN ROW SAJA'])
+                ->castStateUsing(fn() => Str::ulid()),
             ImportColumn::make('nama')
                 ->requiredMapping()
                 ->guess(['Nama', 'Nama Lengkap'])
@@ -77,26 +78,11 @@ class SantriImporter extends Importer
             ImportColumn::make('password')
                 ->requiredMapping()
                 ->rules(['required'])
-                ->examples(['ISI DENGAN NIK'])
+                ->examples(['ISI DENGAN NIS'])
+                ->castStateUsing(function ($state): ?string {
+                    return Hash::make($state);
+                })
         ];
-    }
-
-    public function resolveRecord(): ?User
-    {
-        $user = User::create([
-            'id' => Str::ulid(),
-            'nama' => $this->data['nama'],
-            'nama_panggilan' => $this->data['nama_panggilan'],
-            'jenis_kelamin' => $this->data['jenis_kelamin'],
-            'nis' => $this->data['nis'],
-            'nomor_telepon' => $this->data['nomor_telepon'],
-            'email' => $this->data['email'],
-            'angkatan_pondok' => $this->data['angkatan_pondok'],
-            'status_pondok' => $this->data['status_pondok'],
-            'password' => Hash::make($this->data['password']),
-        ]);
-        info(json_encode($user));
-        return $user;
     }
 
     public static function getCompletedNotificationBody(Import $import): string

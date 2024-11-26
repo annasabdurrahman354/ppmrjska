@@ -94,6 +94,12 @@ class Album extends Model
                     Select::make('kategori_id')
                         ->label('Kategori')
                         ->createOptionForm(Kategori::getForm())
+                        ->createOptionUsing(function($data){
+                            $kategori = new Kategori();
+                            $kategori->fill($data);
+                            $kategori->save();
+                            return $kategori->id;
+                        })
                         ->relationship('kategori', 'nama')
                         ->searchable()
                         ->preload()
