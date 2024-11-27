@@ -13,6 +13,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Columns\TextColumn;
@@ -67,7 +68,14 @@ class JadwalMunaqosah extends Model
     protected function recordTitle(): Attribute
     {
         return Attribute::make(
-            get: fn () => 'Jadwal Munaqosah '.$this->materiMunaqosah->kelas. ' (Semester '.$this->materiMunaqosah->semester.'): '.$this->materiMunaqosah->jenis_materi->getLabel().' ('.(string) $this->waktu.')',
+            get: fn () => 'Angkatan '.$this->materiMunaqosah->angkatan_pondok. ': '.$this->materi.' ('.(string) $this->waktu.')',
+        );
+    }
+
+    protected function recordTitleCalendarResource(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => 'Angkatan '. $this->materiMunaqosah->angkatan_pondok. ' (Semester '.$this->materiMunaqosah->semester.'): '.$this->materi,
         );
     }
 
@@ -102,7 +110,7 @@ class JadwalMunaqosah extends Model
     protected function recordTitleCalendar(): Attribute
     {
         return Attribute::make(
-            get: fn () => 'Kelas ' . $this->materiMunaqosah->kelas. ' (Semester '.$this->materiMunaqosah->semester.'): '.$this->materiMunaqosah->jenis_materi->getLabel()
+            get: fn () => $this->materi.' - Semester '.$this->materiMunaqosah->semester
         );
     }
 
@@ -113,8 +121,13 @@ class JadwalMunaqosah extends Model
                 ->label('ID')
                 ->toggleable(isToggledHiddenByDefault: true)
                 ->searchable(),
-            TextColumn::make('materiMunaqosah.recordTitle')
+            TextColumn::make('materiMunaqosah.angkatan_pondok')
+                ->label('Angkatan')
+                ->searchable()
+                ->sortable(),
+            TextColumn::make('materiMunaqosah.materi')
                 ->label('Materi Munaqosah')
+                ->badge()
                 ->searchable(),
             TextColumn::make('waktu')
                 ->label('Waktu Munaqosah')
@@ -251,9 +264,10 @@ class JadwalMunaqosah extends Model
                 ->label('Pendaftar Jadwal Munaqosah')
                 ->schema([
                     TextEntry::make('user.nama'),
-                    TextEntry::make('status_terlaksana')
+                    IconEntry::make('status_terlaksana')
                         ->label('Status Terlaksana')
-                        ->suffixAction(
+                        ->boolean()
+                        ->action(
                             \Filament\Infolists\Components\Actions\Action::make('ubahStatusTerlaksana')
                                 ->icon('heroicon-m-clipboard')
                                 ->requiresConfirmation()

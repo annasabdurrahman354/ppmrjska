@@ -82,7 +82,7 @@ class MateriMunaqosah extends Model
     protected function recordTitle(): Attribute
     {
         return Attribute::make(
-            get: fn () => 'Angkatan '.$this->angkatan_pondok. ' (Semester '.$this->semester.'): '.$this->jenis_materi->getLabel(),
+            get: fn () => 'Munaqosah '. implode(',', $this->materi).' (Angkatan '.$this->angkatan_pondok.')',
         );
     }
 

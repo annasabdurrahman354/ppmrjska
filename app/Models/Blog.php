@@ -180,7 +180,6 @@ class Blog extends Model implements HasMedia
                         ->conversion('thumb')
                         ->moveFiles()
                         ->image()
-                        ->optimize('jpg')
                         ->imageEditor()
                         ->imageResizeMode('cover')
                         ->imageCropAspectRatio('3:2')

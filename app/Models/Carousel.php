@@ -85,7 +85,6 @@ class Carousel extends Model implements HasMedia
                         ->imageEditor()
                         ->imageResizeMode('cover')
                         ->imageCropAspectRatio('3:2')
-                        ->optimize('jpg')
                         ->maxSize(1024 * 3)
                         ->required()
                         ->columnSpanFull(),

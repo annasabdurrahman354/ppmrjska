@@ -62,7 +62,7 @@ class JadwalMunaqosahCalendarWidget extends FullCalendarWidget
             ->map(
                 fn (JadwalMunaqosah $jadwalMunaqosah) => [
                     'id' => $jadwalMunaqosah->id,
-                    'title' => $jadwalMunaqosah->recordTitleCalendar,
+                    'title' => $jadwalMunaqosah->recordTitleCalendarResource,
                     'start' => $jadwalMunaqosah->waktu,
                     //'url' => JadwalMunaqosahResource::getUrl(name: 'view', parameters: ['record' => $jadwalMunaqosah]),
                     //'shouldOpenUrlInNewTab' => true,

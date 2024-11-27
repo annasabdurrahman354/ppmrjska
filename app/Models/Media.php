@@ -133,7 +133,6 @@ class Media extends Model implements HasMedia
                         ->imageEditor()
                         ->imageResizeMode('cover')
                         ->imageCropAspectRatio('3:2')
-                        ->optimize('jpg')
                         ->maxSize(1024 * 3)
                         ->rules('dimensions:max_width=1080,max_height=720')
                         ->required()
