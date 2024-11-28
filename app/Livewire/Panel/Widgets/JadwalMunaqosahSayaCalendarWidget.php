@@ -62,18 +62,15 @@ class JadwalMunaqosahSayaCalendarWidget extends FullCalendarWidget
                     ->where('waktu', '<', now())
                     ->whereHas('plotJadwalMunaqosah', fn($query) => $query->where('user_id', auth()->user()->id)->where('status_terlaksana', true))
                     ->exists();
-
                 $isSudahAmbilBelumMelaksanakan = $materiMunaqosah->jadwalmunaqosah()
                     ->where('waktu', '>', now())
                     ->whereHas('plotJadwalMunaqosah', fn($query) => $query->where('user_id', auth()->user()->id)->where('status_terlaksana', false))
                     ->exists();
-
                 $isLewatJadwal = $jadwalMunaqosah->waktu < now();
-
                 $isLewatJadwalPendaftaran = $jadwalMunaqosah->batas_akhir_pendaftaran < now();
+                $isMaks = $jadwalMunaqosah->maksimal_pendaftar <= $jadwalMunaqosah->plotJadwalMunaqosah->count();
 
-                $color = ($isTelahMelaksanakan || $isSudahAmbilBelumMelaksanakan || $isLewatJadwal || $isLewatJadwalPendaftaran) ? 'red' : 'green';
-
+                $color = ($isTelahMelaksanakan || $isSudahAmbilBelumMelaksanakan || $isLewatJadwal || $isLewatJadwalPendaftaran || $isMaks) ? 'red' : 'green';
                 return [
                     'id' => $jadwalMunaqosah->id,
                     'title' => $jadwalMunaqosah->recordTitleCalendar,
@@ -100,19 +97,18 @@ class JadwalMunaqosahSayaCalendarWidget extends FullCalendarWidget
                             $query->where('user_id', auth()->user()->id)->where('status_terlaksana', true);
                         })
                         ->exists();
-
                     $isSudahAmbilBelumMelaksanakan = $materiMunaqosah->jadwalmunaqosah()
                         ->where('waktu', '>', now())
                         ->whereHas('plotJadwalMunaqosah', function ($query) {
                             $query->where('user_id', auth()->user()->id)->where('status_terlaksana', false);
                         })
                         ->exists();
-
                     $isLewatJadwal = $record->waktu < now();
                     $isLewatJadwalPendaftaran = $record->batas_akhir_pendaftaran < now();
                     $kelasSasaran = $materiMunaqosah->angkatan_pondok === auth()->user()->angkatan_pondok;
+                    $isMaks = $record->maksimal_pendaftar <= $record->plotJadwalMunaqosah->count();
 
-                    if ($isTelahMelaksanakan || $isSudahAmbilBelumMelaksanakan || $isLewatJadwal || $isLewatJadwalPendaftaran || !$kelasSasaran) {
+                    if ($isTelahMelaksanakan || $isSudahAmbilBelumMelaksanakan || $isLewatJadwal || $isLewatJadwalPendaftaran || !$kelasSasaran || $isMaks) {
                         return true;
                     }
                     return false;

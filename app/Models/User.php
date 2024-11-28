@@ -426,6 +426,16 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
                 $record->assignRole(Role::SANTRI->value);
             }
         });
+
+        static::updated(function ($record) {
+            if(in_array($record->status_pondok->value, [StatusPondok::LULUS->value])) {
+                $record->roles()->detach();
+                $record->assignRole(Role::ALUMNI->value);
+            }
+            if(in_array($record->status_pondok->value, [StatusPondok::KELUAR->value])) {
+                $record->roles()->detach();
+            }
+        });
     }
 
     public function scopeForAuthentication(Builder $query): Builder

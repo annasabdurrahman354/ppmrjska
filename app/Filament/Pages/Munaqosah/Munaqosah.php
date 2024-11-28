@@ -40,12 +40,39 @@ class Munaqosah extends Page implements HasTable, HasForms, HasActions
             ->heading('Jadwal Munaqosah Saya')
             ->query(PlotJadwalMunaqosah::where('user_id', auth()->user()->id))
             ->columns([
-                TextColumn::make('jadwalMunaqosah.materi')
-                    ->label('Materi Munaqosah')
-                    ->searchable(),
                 TextColumn::make('jadwalMunaqosah.waktu')
                     ->label('Waktu Munaqosah')
                     ->dateTime()
+                    ->sortable(),
+                TextColumn::make('jadwalMunaqosah.materiMunaqosah.materi')
+                    ->label('Materi Munaqosah')
+                    ->badge()
+                    ->searchable(),
+                TextColumn::make('jadwalMunaqosah.materiMunaqosah.detail')
+                    ->label('Detail Materi')
+                    ->badge()
+                    ->searchable(),
+                TextColumn::make('jadwalMunaqosah.materiMunaqosah.hafalan')
+                    ->label('Materi Hafalan')
+                    ->badge()
+                    ->listWithLineBreaks()
+                    ->limitList(3)
+                    ->expandableLimitedList()
+                    ->searchable(),
+                TextColumn::make('jadwalMunaqosah.materiMunaqosah.indikator_materi')
+                    ->label('Penilaian Materi')
+                    ->badge()
+                    ->listWithLineBreaks()
+                    ->limitList(3)
+                    ->expandableLimitedList(),
+                TextColumn::make('jadwalMunaqosah.materiMunaqosah.indikator_hafalan')
+                    ->label('Penilaian Hafalan')
+                    ->badge()
+                    ->listWithLineBreaks()
+                    ->limitList(3)
+                    ->expandableLimitedList(),
+                TextColumn::make('jadwalMunaqosah.materiMunaqosah.semester')
+                    ->label('Semester')
                     ->sortable(),
                 TextColumn::make('jadwalMunaqosah.jumlahPendaftar')
                     ->label('Pendaftar')

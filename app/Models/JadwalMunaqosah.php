@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\JenisMateriMunaqosah;
 use App\Enums\StatusPondok;
 use Awcodes\TableRepeater\Components\TableRepeater;
 use Awcodes\TableRepeater\Header;
@@ -68,14 +69,7 @@ class JadwalMunaqosah extends Model
     protected function recordTitle(): Attribute
     {
         return Attribute::make(
-            get: fn () => 'Angkatan '.$this->materiMunaqosah->angkatan_pondok. ': '.$this->materi.' ('.(string) $this->waktu.')',
-        );
-    }
-
-    protected function recordTitleCalendarResource(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => 'Angkatan '. $this->materiMunaqosah->angkatan_pondok. ' (Semester '.$this->materiMunaqosah->semester.'): '.$this->materi,
+            get: fn () => $this->materiMunaqosah->recordTitle.': '.(string) $this->waktu,
         );
     }
 
@@ -83,13 +77,6 @@ class JadwalMunaqosah extends Model
     {
         return Attribute::make(
             get: fn () => $this->plotJadwalMunaqosah()->count(),
-        );
-    }
-
-    protected function materi(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => implode(', ', $this->materiMunaqosah->materi). ' ('.$this->materiMunaqosah->detail.')',
         );
     }
 
@@ -103,14 +90,31 @@ class JadwalMunaqosah extends Model
     protected function dewanGuru(): Attribute
     {
         return Attribute::make(
-            get: fn () => implode(', ', $this->materiMunaqosah->dewanGuru->nama_panggilan),
+            get: fn () => $this->materiMunaqosah->dewanGuru->nama_panggilan,
         );
     }
 
     protected function recordTitleCalendar(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->materi.' - Semester '.$this->materiMunaqosah->semester
+            get: function () {
+                if($this->materiMunaqosah->jenis_materi == JenisMateriMunaqosah::HAFALAN){
+                    return 'Materi Hafalan -  Semester ' . $this->materiMunaqosah->semester;
+                }
+                return implode(',', $this->materiMunaqosah->materi).'- Semester '.$this->materiMunaqosah->semester;
+            },
+        );
+    }
+
+    protected function recordTitleCalendarResource(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                if($this->materiMunaqosah->jenis_materi == JenisMateriMunaqosah::HAFALAN){
+                    return 'Hafalan (A.'. $this->materiMunaqosah->angkatan_pondok . '-S.' . $this->materiMunaqosah->semester.')';
+                }
+                return implode(',', $this->materiMunaqosah->materi).' (A.'.$this->materiMunaqosah->angkatan_pondok.'-S.'.$this->materiMunaqosah->semester.')';
+            },
         );
     }
 
@@ -128,6 +132,13 @@ class JadwalMunaqosah extends Model
             TextColumn::make('materiMunaqosah.materi')
                 ->label('Materi Munaqosah')
                 ->badge()
+                ->searchable(),
+            TextColumn::make('materiMunaqosah.hafalan')
+                ->label('Materi Hafalan')
+                ->badge()
+                ->listWithLineBreaks()
+                ->limitList(3)
+                ->expandableLimitedList()
                 ->searchable(),
             TextColumn::make('waktu')
                 ->label('Waktu Munaqosah')

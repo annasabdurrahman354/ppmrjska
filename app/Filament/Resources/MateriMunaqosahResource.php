@@ -88,6 +88,9 @@ class MateriMunaqosahResource extends Resource
                 Tables\Columns\TextColumn::make('hafalan')
                     ->label('Materi Hafalan')
                     ->badge()
+                    ->listWithLineBreaks()
+                    ->limitList(3)
+                    ->expandableLimitedList()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('indikator_materi')
                     ->label('Penilaian Materi')

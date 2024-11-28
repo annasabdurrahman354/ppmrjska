@@ -14,6 +14,8 @@ enum Role : string implements HasLabel {
     case KETUA_KELAS = 'ketua kelas';
     case SANTRI = 'santri';
 
+    case ALUMNI = 'alumni';
+
     public function getLabel(): ?string
     {
         return match ($this) {
@@ -24,6 +26,7 @@ enum Role : string implements HasLabel {
             self::DMC_PASUS_KOORDINATOR => 'DMC-Pasus Koordinator',
             self::KETUA_KELAS => 'Ketua Kelas',
             self::SANTRI => 'Santri',
+            self::ALUMNI => 'Alumni',
         };
     }
 }

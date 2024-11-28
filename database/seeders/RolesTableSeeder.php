@@ -96,6 +96,15 @@ class RolesTableSeeder extends Seeder
             ]
         );
 
+        DB::table('roles')->insert(
+            [
+                'name' => Role::ALUMNI,
+                'guard_name' => 'web',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        );
+
         $this->command->info(PHP_EOL . 'Done Creating roles..');
     }
 }
